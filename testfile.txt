@@ -1,1 +1,2 @@
-Nu laver jeg lige en ændring i testfilen, for at teste github applikationen :)
+så resolver vi en edit konflikt!
+rawr, rawr!
