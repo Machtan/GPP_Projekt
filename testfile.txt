@@ -1,2 +1,4 @@
 så resolver vi en edit konflikt!
 rawr, rawr!
+
+Hej Stinus. Nu laver vi en edit-fejl på din branch ;)
