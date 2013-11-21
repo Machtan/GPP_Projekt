@@ -1,7 +1,7 @@
 package main;
 
 /**
- *
+ * This should be the entry point for the application
  * @author jakoblautrupnysom
  */
 public class GPP_Flyprojekt {
