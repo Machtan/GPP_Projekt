@@ -1,23 +1,26 @@
 package interfaces;
 
 import java.awt.Point;
+import java.util.ArrayList;
 
 /**
+ * <TODO> The seating handler SHOULD have a constructor taking an 'IFlight'
+ * argument, which calls setSeating(flight.getSeating());
  * @author Jakob Lautrup Nysom (jaln@itu.dk)
  * @version 21-Nov-2013
  */
 public interface ISeatingHandler {
-    int getNumberOfFreeSeats();
-    Point[] getCloseFreeSeats(Point seat, int amount); // Returns an 
-    // auto-calculated guess about where a group of 'amount' people might sit 
-    // close to each other
+    void setSeating(ISeating seating); // This should set the seating for the 
+    // handler. Call it in the constructor!
     
-    void setTaken(Point seat); // temporary
+    int getNumberOfFreeSeats();
+    
+    Point getSeatAt(Point mousePosition);
+    
+    void setChosen(Point seat); // temporary
     void setFree(Point seat); // temporary
     
-    Point[] getSeatPositions(); // A list of positions for all the seats
-    
-    void setSeating(); // Sets the seating for the handler... perhaps this will
-    // be better to do in the constructor
-    ISeating getSeating(); // Returns the state of the seating
+    ArrayList<Point> getTakenSeats(); // A list of positions for the taken seats
+    ArrayList<Point> getFreeSeats(); // A list of positions for the free seats
+    ArrayList<Point> getChosenSeats(); // A list of positions for the chosen seats
 }

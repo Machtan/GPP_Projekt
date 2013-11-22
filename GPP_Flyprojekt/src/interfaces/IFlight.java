@@ -10,4 +10,5 @@ public interface IFlight {
     String getDestination();
     Date getDepartureTime();
     Date getArrivalTime();
+    ISeating getSeating();
 }

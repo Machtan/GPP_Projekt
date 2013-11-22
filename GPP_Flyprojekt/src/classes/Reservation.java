@@ -1,5 +1,6 @@
 package classes;
 
+import interfaces.IFlight;
 import java.awt.Point;
 import java.util.ArrayList;
 

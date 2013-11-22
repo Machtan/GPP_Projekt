@@ -15,5 +15,5 @@ public interface IDatabaseHandler {
     void updateReservation(Reservation res);
     
     IFlight[] getFlights();
-    void updateFlightSeating(IFlight);
+    void updateFlightSeating(IFlight flight);
 }
