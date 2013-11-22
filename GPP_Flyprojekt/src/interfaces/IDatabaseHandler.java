@@ -1,5 +1,5 @@
 package interfaces;
-
+import classes.Reservation;
 /**
  * @author Jakob Lautrup Nysom (jaln@itu.dk)
  * @version 21-Nov-2013
@@ -10,9 +10,9 @@ public interface IDatabaseHandler {
     void disconnect();
     
     Reservation[] getReservations();
-    void addReservation(Reservation);
-    void deleteReservation(Reservation);
-    void updateReservation(Reservation);
+    void addReservation(Reservation res);
+    void deleteReservation(Reservation res);
+    void updateReservation(Reservation res);
     
     IFlight[] getFlights();
     void updateFlightSeating(IFlight);

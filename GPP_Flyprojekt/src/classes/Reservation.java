@@ -13,7 +13,7 @@ public class Reservation {
     public String reservationID;
     public Person passenger;
     public ArrayList<Person> additionalPassengers;
-    public ArrayList<Seat> seats; // Seats in the form (0,1), (0,2) etc.
+    public ArrayList<Point> seats; // Seats in the form (0,1), (0,2) etc.
     public IFlight flight;
     
     /**
@@ -26,7 +26,7 @@ public class Reservation {
      * @param flight The flight this reservation is on
      */
     public Reservation(String reservationID, Person passenger, 
-            ArrayList<Person> additionalPassengers, Point[] seats, 
+            ArrayList<Person> additionalPassengers, ArrayList<Point> seats, 
             IFlight flight) {
         this.reservationID = reservationID;
         this.passenger = passenger;
@@ -39,7 +39,7 @@ public class Reservation {
      * Overloaded constructor for creating empty reservations
      */
     public Reservation () {
-        this("", null, new ArrayList<Person>(), new Point[0], null);
+        this("", null, new ArrayList<Person>(), new ArrayList<Point>(), null);
     }
     
     /**

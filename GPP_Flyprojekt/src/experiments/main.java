@@ -1,5 +1,7 @@
 package experiments;
 
+import classes.Date;
+
 /**
  * This class is just there to run various experiments to learn how java works
  * ;)
@@ -15,5 +17,8 @@ public class main {
         for (PersonData pd : PersonData.values()) {
             System.out.println(pd);
         }
+        
+        Date test = new Date(2013, 11, 22, 9, 9);
+        System.out.println("TestDate: "+test);
     }  
 } 
