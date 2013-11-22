@@ -12,7 +12,7 @@ public enum PersonData {
     NAME("Navn"), NATIONALITY("Nationalitet"), CPR("CPR-nummer");
     
     // The name of the field
-    private String fieldName;
+    private final String fieldName;
     
     /**
      * Initialise with the corresponding field name string.

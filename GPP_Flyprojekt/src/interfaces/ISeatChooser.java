@@ -15,5 +15,8 @@ import java.util.ArrayList;
 public interface ISeatChooser {
     public void setFlight(IFlight flight); // Sets the flight to choose a 
     // seating on.
+    public void setChosen(ArrayList<Point> seats); // Sets the given seats to
+    // be chosen in the seating handler
+    
     public ArrayList<Point> getSeats(int numberOfSeats); // Returns the 
 }
