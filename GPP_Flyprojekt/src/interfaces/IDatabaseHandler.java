@@ -9,11 +9,12 @@ public interface IDatabaseHandler {
     void connect();
     void disconnect();
     
-    Reservation[] getReservations();
+    Reservation[] getReservations(IFlight flight);
     void addReservation(Reservation res);
     void deleteReservation(Reservation res);
     void updateReservation(Reservation res);
     
-    IFlight[] getFlights();
-    void updateFlightSeating(IFlight flight);
+    IFlight[] getFlights();    
+    IAirport getAirport();
+    
 }

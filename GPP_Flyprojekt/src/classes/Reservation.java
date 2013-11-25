@@ -16,6 +16,8 @@ public class Reservation {
     public ArrayList<Person> additionalPassengers;
     public ArrayList<Point> seats; // Seats in the form (0,1), (0,2) etc.
     public IFlight flight;
+    public String tlf;
+    public String cardnumber;
     
     /**
      * Creates a new reservation from the given parameters
@@ -28,19 +30,21 @@ public class Reservation {
      */
     public Reservation(String reservationID, Person passenger, 
             ArrayList<Person> additionalPassengers, ArrayList<Point> seats, 
-            IFlight flight) {
+            IFlight flight,String tlf,String cardnumber) {
         this.reservationID = reservationID;
         this.passenger = passenger;
         this.additionalPassengers = additionalPassengers;
         this.seats = seats;
         this.flight = flight;
+        this.tlf = tlf;
+        this.cardnumber = cardnumber;
     }
     
     /**
      * Overloaded constructor for creating empty reservations
      */
     public Reservation () {
-        this("", null, new ArrayList<Person>(), new ArrayList<Point>(), null);
+        this("", null, new ArrayList<Person>(), new ArrayList<Point>(), null,"","");
     }
     
     /**

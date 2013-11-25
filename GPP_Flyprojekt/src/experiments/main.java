@@ -1,6 +1,6 @@
 package experiments;
 
-import classes.Date;
+import java.util.Date;
 
 /**
  * This class is just there to run various experiments to learn how java works

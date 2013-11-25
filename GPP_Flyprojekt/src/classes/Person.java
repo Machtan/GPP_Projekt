@@ -7,6 +7,7 @@ package classes;
  */
 class Person {
     
+    public String id;
     public String name;
     public String nationality;
     public String cpr;
@@ -17,7 +18,8 @@ class Person {
      * @param nationality The person's nationality
      * @param cpr The public service code or whatever for the person
      */
-    public Person(String name, String nationality, String cpr) {
+    public Person(String id, String name, String nationality, String cpr) {
+        this.id = id;
         this.name = name;
         this.nationality = nationality;
         this.cpr = cpr;
@@ -27,6 +29,6 @@ class Person {
      * Default constructor for the Person class
      */
     public Person () {
-        this("", "", "");
+        this("","", "", "");
     }
 }
