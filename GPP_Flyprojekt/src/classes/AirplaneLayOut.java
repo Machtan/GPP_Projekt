@@ -4,13 +4,13 @@ package classes;
  *
  * @author Patrick Evers Bjørkman (pebj@itu.dk)
  */
-public class AirPlaneLayOut {
+public class AirplaneLayOut {
       public String id;
     public String placementphoto;
-    public AirPlaneSeat[] airPlaneSeats;
+    public AirplaneSeat[] airPlaneSeats;
     public int numberOfRows;
 
-    public AirPlaneLayOut(String id, String placementphoto, int numberOfRows, AirPlaneSeat[] airPlaneSeats) {
+    public AirplaneLayOut(String id, String placementphoto, int numberOfRows, AirplaneSeat[] airPlaneSeats) {
         this.id = id;
         this.placementphoto = placementphoto;
         this.numberOfRows = numberOfRows;

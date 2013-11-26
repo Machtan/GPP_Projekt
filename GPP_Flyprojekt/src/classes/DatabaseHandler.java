@@ -6,11 +6,14 @@ import interfaces.IFlight;
 import java.awt.Point;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import classes.Utils.*;
 
 /**
  *
@@ -25,16 +28,17 @@ public class DatabaseHandler implements IDatabaseHandler {
     String password = "testuser";
     Connection conn = null;
     String AirportID = "";
-/*
- * Constructor for DatabaseHandler, provide AirportID to filter out entries
- * relevant to the specific airport.
- */
+    /**
+     * Constructor for DatabaseHandler, provide AirportID to filter out entries
+     * relevant to the specific airport.
+     */
     public DatabaseHandler(String AirportID) {
         this.AirportID = AirportID;
     }
-/*
- * Connect to the database.
- */
+    
+    /**
+     * Connect to the database.
+     */
     @Override
     public void connect() {
         try {
@@ -44,12 +48,10 @@ public class DatabaseHandler implements IDatabaseHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
-/*
- * Disconnect from the database.
- */
+    /**
+     * Disconnect from the database.
+     */
     @Override
     public void disconnect() {
         try {
@@ -60,9 +62,10 @@ public class DatabaseHandler implements IDatabaseHandler {
             Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-/*
- * Get reservations from a flight.
- */
+    
+    /**
+     * Get reservations from a flight.
+     */
     @Override
     public Reservation[] getReservations(IFlight flight) {
         Person[] people = getPeople();
@@ -95,40 +98,39 @@ public class DatabaseHandler implements IDatabaseHandler {
                         seatpoints_array.add(new Point(Integer.parseInt(cordinates[0]), Integer.parseInt(cordinates[1])));
                     }
                 }
-
                 reservations.add(new Reservation(id, peopleMapped.get(passengerid), additionalPassengers_array, seatpoints_array, flight, tlf, cardNumber));
             }
-
-
-
         } catch (SQLException ex) {
             Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
         return (Reservation[]) reservations.toArray(new Reservation[0]);
     }
-/*
- * Add a new reservation to the database.
- */
+    
+    /**
+     * Add a new reservation to the database.
+     */
     @Override
     public void addReservation(Reservation res) {
         if (res != null) {
             Statement stmt;
             try {
                 stmt = conn.createStatement();
-                StringBuilder result = new StringBuilder();
-                for (Person person : res.additionalPassengers) {
-                    result.append(person.id + ",");
-                }
-                if (res.additionalPassengers.size() > 0) {
-                    result = result.delete(result.length() - 1, result.length());
-                }
-                StringBuilder result2 = new StringBuilder();
-                for (Point point : res.seats) {
-                    result2.append(point.x + "," + point.y + ";");
-                }
-                if (res.seats.size() > 0) {
-                    result2 = result2.delete(result2.length() - 1, result2.length());
-                }
+
+                String result = Utils.formatAndJoinVars(res.additionalPassengers, "%s", ",", "id");
+                String result2 = Utils.formatAndJoinVars(res.seats, "%s,%s;", "", "x", "y");
+               
+                String values = "NULL ,  '" + 
+                    Utils.joinList(new ArrayList<String> (
+                        Arrays.asList(
+                            res.flight.getID(),
+                            res.passenger.id, 
+                            result, 
+                            result2, 
+                            res.tlf, 
+                            res.cardnumber)
+                        ), "',  '") 
+                    + "'\n";
+                
                 String query = "INSERT INTO  `Airport`.`Reservation` (\n"
                         + "`ID` ,\n"
                         + "`FlightID` ,\n"
@@ -139,14 +141,13 @@ public class DatabaseHandler implements IDatabaseHandler {
                         + "`Cardnumber`\n"
                         + ")\n"
                         + "VALUES (\n"
-                        + "NULL ,  '" + res.flight.getID() + "',  '" + res.passenger.id + "',  '" + result.toString() + "',  '" + result2.toString() + "',  '" + res.tlf + "',  '" + res.cardnumber + "'\n"
+                        + values
                         + ");";
                 stmt.executeUpdate(query);
 
             } catch (SQLException ex) {
                 Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
-
         }
     }
 /*
@@ -164,37 +165,25 @@ public class DatabaseHandler implements IDatabaseHandler {
             } catch (SQLException ex) {
                 Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
-
         }
     }
-/*
- * update a reservation.
- */
+    /**
+     * update a reservation.
+     */
     @Override
     public void updateReservation(Reservation res) {
-   if (res != null) {
+        if (res != null) {
             Statement stmt;
             try {
                 stmt = conn.createStatement();
-                StringBuilder result = new StringBuilder();
-                for (Person person : res.additionalPassengers) {
-                    result.append(person.id + ",");
-                }
-                if (res.additionalPassengers.size() > 0) {
-                    result = result.delete(result.length() - 1, result.length());
-                }
-                StringBuilder result2 = new StringBuilder();
-                for (Point point : res.seats) {
-                    result2.append(point.x + "," + point.y + ";");
-                }
-                if (res.seats.size() > 0) {
-                    result2 = result2.delete(result2.length() - 1, result2.length());
-                }
+                String result = Utils.formatAndJoinVars(res.additionalPassengers, "%s", ",", "id");
+                String result2 = Utils.formatAndJoinVars(res.seats, "%s,%s;", "", "x", "y");
+                
                 String query = "UPDATE `Airport`.`Reservation` SET \n"
                         + "`FlightID` = "+ res.flight.getID() + " ,\n"
                         + "`Passenger`= "+ res.passenger.id +  " ,\n"
-                        + "`additionalPassengers` = '"+ result.toString() + "',\n"
-                        + "`Seats` = '"+ result2.toString() + "',\n"
+                        + "`additionalPassengers` = '"+ result + "',\n"
+                        + "`Seats` = '"+ result2 + "',\n"
                         + "`Tlf` = '"+ res.tlf + "',\n"
                         + "`Cardnumber` = '"+ res.cardnumber + "' \n"
                         + " WHERE ID = '" + res.reservationID +"';"
@@ -204,18 +193,17 @@ public class DatabaseHandler implements IDatabaseHandler {
             } catch (SQLException ex) {
                 Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
-
         }
     }
-/*
- * get flights.
- */
+    /**
+     * get flights.
+     */
     @Override
     public Flight[] getFlights() {
-        AirPlane[] airPlanes = getAirPlanes();
+        Airplane[] airPlanes = getAirplanes();
         //For performance reasons, convert to hashmap with airplaneID as KEY.
-        HashMap<String, AirPlane> airPlanesMapped = new HashMap<String, AirPlane>();
-        for (AirPlane item : airPlanes) {
+        HashMap<String, Airplane> airPlanesMapped = new HashMap<String, Airplane>();
+        for (Airplane item : airPlanes) {
             airPlanesMapped.put(item.id, item);
         }
         //Get all flights
@@ -234,18 +222,18 @@ public class DatabaseHandler implements IDatabaseHandler {
                 Date departureTime = rs.getDate(6);
                 Date arrivalTime = rs.getDate(7);
                 if (airportID.equals(this.AirportID) && airPlanesMapped.containsKey(airplaneID)) {
-                    AirPlane airPlane = airPlanesMapped.get(airplaneID);
+                    Airplane airPlane = airPlanesMapped.get(airplaneID);
                     boolean[][] seatinfo = new boolean[airPlane.airplaneLayout.numberOfRows][];
                     for (int row = 0; row < seatinfo.length; row++) {
                         //Find highest for this row
-                        AirPlaneSeat highestSeat = null;
-                        for (AirPlaneSeat seat : airPlane.airplaneLayout.airPlaneSeats) {
-                            if (seat.rowIndex == row && (highestSeat == null || seat.collumnIndex > highestSeat.collumnIndex)) {
+                        AirplaneSeat highestSeat = null;
+                        for (AirplaneSeat seat : airPlane.airplaneLayout.airPlaneSeats) {
+                            if (seat.rowIndex == row && (highestSeat == null || seat.columnIndex > highestSeat.columnIndex)) {
                                 highestSeat = seat;
                             }
                         }
                         if (highestSeat != null) {
-                            seatinfo[row] = new boolean[highestSeat.collumnIndex + 1];
+                            seatinfo[row] = new boolean[highestSeat.columnIndex + 1];
                         }
                     }
                     Seating seating = new Seating(seatinfo);
@@ -265,9 +253,9 @@ public class DatabaseHandler implements IDatabaseHandler {
         return (Flight[]) flights.toArray(new Flight[0]);
     }
 
-/*
- * get general airport information.
- */
+    /**
+     * get general airport information.
+     */
     @Override
     public IAirport getAirport() {
         Airport airport = null;
@@ -290,9 +278,9 @@ public class DatabaseHandler implements IDatabaseHandler {
         }
         return airport;
     }
-/*
- * get all passengers.
- */
+    /**
+     * get all passengers.
+     */
     Person[] getPeople() {
 
         ArrayList<Person> result = new ArrayList<Person>();
@@ -313,17 +301,17 @@ public class DatabaseHandler implements IDatabaseHandler {
         }
         return (Person[]) result.toArray(new Person[0]);
     }
-/*
- * get all airplanes.
- */
-    AirPlane[] getAirPlanes() {
-        AirPlaneLayOut[] airPlaneLayouts = getAirplaneLayOuts();
+    /**
+     * get all airplanes.
+     */
+    Airplane[] getAirplanes() {
+        AirplaneLayOut[] airPlaneLayouts = getAirplaneLayOuts();
         //For performance reasons, convert to hashmap with airPlaneLayOutID as KEY.
-        HashMap<String, AirPlaneLayOut> airPlaneLayoutsMapped = new HashMap<String, AirPlaneLayOut>();
-        for (AirPlaneLayOut item : airPlaneLayouts) {
+        HashMap<String, AirplaneLayOut> airPlaneLayoutsMapped = new HashMap<String, AirplaneLayOut>();
+        for (AirplaneLayOut item : airPlaneLayouts) {
             airPlaneLayoutsMapped.put(item.id, item);
         }
-        ArrayList<AirPlane> result = new ArrayList<AirPlane>();
+        ArrayList<Airplane> result = new ArrayList<Airplane>();
         Statement stmt;
         try {
             stmt = conn.createStatement();
@@ -334,21 +322,21 @@ public class DatabaseHandler implements IDatabaseHandler {
                 String name = rs.getString(2);
                 String airPlaneLayOutID = rs.getString(3);
                 if (airPlaneLayoutsMapped.containsKey(airPlaneLayOutID)) {
-                    result.add(new AirPlane(id, name, airPlaneLayoutsMapped.get(airPlaneLayOutID)));
+                    result.add(new Airplane(id, name, airPlaneLayoutsMapped.get(airPlaneLayOutID)));
                 }
             }
         } catch (SQLException ex) {
             Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return (AirPlane[]) result.toArray(new AirPlane[0]);
+        return (Airplane[]) result.toArray(new Airplane[0]);
     }
 /*
  * get airplane layouts
  */
-    AirPlaneLayOut[] getAirplaneLayOuts() {
-        ArrayList<AirPlaneSeat> airPlaneSeats = getAirplaneSeats();
+    AirplaneLayOut[] getAirplaneLayOuts() {
+        ArrayList<AirplaneSeat> airPlaneSeats = getAirplaneSeats();
 
-        ArrayList<AirPlaneLayOut> result = new ArrayList<AirPlaneLayOut>();
+        ArrayList<AirplaneLayOut> result = new ArrayList<AirplaneLayOut>();
         Statement stmt;
         try {
             stmt = conn.createStatement();
@@ -357,26 +345,26 @@ public class DatabaseHandler implements IDatabaseHandler {
             while (rs.next()) {
                 String id = rs.getString(1);
                 String placementPhoto = rs.getString(2);
-                ArrayList<AirPlaneSeat> res = new ArrayList<AirPlaneSeat>();
-                for (AirPlaneSeat item : airPlaneSeats) {
+                ArrayList<AirplaneSeat> res = new ArrayList<AirplaneSeat>();
+                for (AirplaneSeat item : airPlaneSeats) {
                     if (item.airplaneLayoutID.equals(id)) {
                         res.add(item);
                     }
                 }
                 int rows = rs.getInt(3);
-                result.add(new AirPlaneLayOut(id, placementPhoto, rows, (AirPlaneSeat[]) res.toArray(new AirPlaneSeat[0])));
+                result.add(new AirplaneLayOut(id, placementPhoto, rows, (AirplaneSeat[]) res.toArray(new AirplaneSeat[0])));
 
             }
         } catch (SQLException ex) {
             Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return (AirPlaneLayOut[]) result.toArray(new AirPlaneLayOut[0]);
+        return (AirplaneLayOut[]) result.toArray(new AirplaneLayOut[0]);
     }
 /*
  * get airplaneseat setup.
  */
-    ArrayList<AirPlaneSeat> getAirplaneSeats() {
-        ArrayList<AirPlaneSeat> result = new ArrayList<AirPlaneSeat>();
+    ArrayList<AirplaneSeat> getAirplaneSeats() {
+        ArrayList<AirplaneSeat> result = new ArrayList<AirplaneSeat>();
         Statement stmt;
         try {
             stmt = conn.createStatement();
@@ -389,8 +377,8 @@ public class DatabaseHandler implements IDatabaseHandler {
                 int positionX = rs.getInt(3);
                 int positionY = rs.getInt(4);
                 int rowIndex = rs.getInt(5);
-                int collumnIndex = rs.getInt(6);
-                result.add(new AirPlaneSeat(id, airPlaneLayOutID, positionX, positionY, rowIndex, collumnIndex));
+                int columnIndex = rs.getInt(6);
+                result.add(new AirplaneSeat(id, airPlaneLayOutID, positionX, positionY, rowIndex, columnIndex));
 
 
             }

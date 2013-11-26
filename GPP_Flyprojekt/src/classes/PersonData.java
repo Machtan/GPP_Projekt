@@ -1,4 +1,4 @@
-package experiments;
+package classes;
 
 /**
  * The PersonData enum holds the names and values of the fields holding personal

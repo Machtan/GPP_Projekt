@@ -13,18 +13,13 @@ import javax.swing.ImageIcon;
  * @version 22-Nov-2013
  */
 public class MainMenu extends javax.swing.JFrame {
-
+    
     /**
-     * Creates new form MainMenu
-     */ 
-    public MainMenu() {
-        initComponents();
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        
-        this.setTitle("SUPERFLITE 9001"); // Purrfect
-        
-        // Change the icon :o!
-        String filepath = "images/Plane.png";
+     * Changes the icon of the application
+     * @param filepath the path to the image in the project 
+     * (eg. images/plane.png)
+     */
+    public void setIcon(String filepath) {
         BufferedImage image;
         try {
             ClassLoader cl = this.getClass().getClassLoader();
@@ -41,6 +36,20 @@ public class MainMenu extends javax.swing.JFrame {
         } catch (URISyntaxException ex) {
             System.err.println("DERP!");
         }
+    }
+    
+    /**
+     * Creates new form MainMenu
+     */ 
+    public MainMenu() {
+        initComponents();
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        
+        this.setTitle("SUPERFLITE 9001"); // Purrfect
+        
+        // Change the icon :o!
+        String filepath = "images/Plane.png";
+        setIcon(filepath);
     }
 
     /**
