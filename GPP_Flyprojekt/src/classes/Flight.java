@@ -13,13 +13,13 @@ public class Flight implements IFlight {
     String origin;
     String destination;
     String airportID;
-    AirPlane airplane;
+    Airplane airplane;
     Date departureTime;
     Date arrivalTime;
     Seating seating;
     
  
-    public Flight(String ID, String Origin, String Destination, String AirportID, AirPlane airplane, Date DepartureTime, Date ArrivalTime, Seating seating) {
+    public Flight(String ID, String Origin, String Destination, String AirportID, Airplane airplane, Date DepartureTime, Date ArrivalTime, Seating seating) {
         this.id = ID;
         this.origin = Origin;
         this.destination = Destination;
