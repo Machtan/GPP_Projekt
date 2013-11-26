@@ -39,11 +39,26 @@ public class Seating implements ISeating {
 
     @Override
     public int getVacantRow() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return getVacantRowAfter(0);
     }
 
     @Override
     public int getVacantRowAfter(int row) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        for (int x = row; x < seating.length; x++) {
+            for (int y = 0; y < seating[x].length; y++) {
+                if(seating[x][y])
+                    return x;
+            }
+        }
+        
+        return -1;
+    }
+
+    @Override
+    public void setSeatStatus(Point seat, boolean newStatus)
+    {
+        if (seat.x < seating.length && seat.y < seating[seat.y].length) {
+            seating[seat.x][seat.y] = newStatus;
+        }
     }
 }
