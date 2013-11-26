@@ -3,6 +3,7 @@ package classes;
 import java.awt.Color;
 import java.awt.GridLayout;
 import java.util.HashMap;
+import java.util.Set;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -20,17 +21,19 @@ public class PersonDataPanel extends JPanel {
      */
     public PersonDataPanel (HashMap<PersonData, String> data) {
         super();
-        GridLayout grid = new GridLayout(2, 0);
+        GridLayout grid = new GridLayout(0, 2);
         this.setLayout(grid);
         this.setBorder(BorderFactory.createLineBorder(Color.black));
         
-        for (PersonData d : data.keySet()) {
-            JLabel identifier = new JLabel(d+":");
-            JLabel value = new JLabel(data.get(d));
+        for (PersonData field : PersonData.values()) {
+            System.out.println("pd: "+field);
+            if (!data.keySet().contains(field)) {
+                continue;
+            }
+            JLabel identifier = new JLabel(field+":");
+            JLabel value = new JLabel(data.get(field));
             this.add(identifier);
             this.add(value);
         }
-    
     }
-    
 }
