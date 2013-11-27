@@ -1,5 +1,6 @@
 package interfaces;
 
+import classes.SeatingHandler;
 import java.awt.Point;
 import java.util.ArrayList;
 
@@ -15,7 +16,7 @@ public interface ISeatingHandler {
     
     int getNumberOfFreeSeats();
     
-    Point getSeatAt(Point mousePosition);
+    //Point getSeatAt(Point mousePosition);
     
     void setChosen(Point seat); // temporary
     void setFree(Point seat); // temporary

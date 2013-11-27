@@ -7,7 +7,7 @@ import java.util.Iterator;
 
 /**
  *
- * @author Patrick Evers Bjørkman (pebj@itu.dk)
+ * @author Patrick Evers Bjørkman (pebj@itu.dk) & Stinus Møhl Thomsen (smot@itu.dk)
  */
 public class Seating implements ISeating {
 
@@ -44,10 +44,10 @@ public class Seating implements ISeating {
 
     @Override
     public int getVacantRowAfter(int row) {
-        for (int x = row; x < seating.length; x++) {
-            for (int y = 0; y < seating[x].length; y++) {
+        for (int y = row; y < seating.length; y++) {
+            for (int x = 0; x < seating[y].length; x++) {
                 if(seating[x][y])
-                    return x;
+                    return y;
             }
         }
         

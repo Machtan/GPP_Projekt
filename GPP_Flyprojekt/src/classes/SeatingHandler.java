@@ -20,7 +20,7 @@ public class SeatingHandler implements ISeatingHandler
     private ISeating seating;
     private ArrayList<Point> chosenSeats;
 
-    public SeatingHandler(Seating seating)
+    public SeatingHandler(ISeating seating)
     {
         setSeating(seating);
     }
@@ -38,12 +38,6 @@ public class SeatingHandler implements ISeatingHandler
     }
 
     @Override
-    public Point getSeatAt(Point mousePosition)
-    {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
     public void setChosen(Point seat)
     {
         if(seating.getSeatStatus(seat))
@@ -55,6 +49,11 @@ public class SeatingHandler implements ISeatingHandler
     {
         if(!seating.getSeatStatus(seat))
             seating.setSeatStatus(seat, true);
+        
+        for(int seatNr = 0 ; seatNr < chosenSeats.size() ; seatNr++)
+            if (chosenSeats.get(seatNr).x == seat.x && 
+                    chosenSeats.get(seatNr).y == seat.y)
+                chosenSeats.remove(seatNr);
     }
 
     @Override
@@ -65,7 +64,8 @@ public class SeatingHandler implements ISeatingHandler
             if(!seating.getSeatStatus(seat))
                 seating.setSeatStatus(seat, true);
             else
-                throw new IllegalStateException("Seat in array not taken");
+                throw new UnsupportedOperationException("Fail not supported yet.");
+                //throw new SeatNotTakenException(seat);
             
             chosenSeats.add(seat);
         }
@@ -107,4 +107,13 @@ public class SeatingHandler implements ISeatingHandler
         return chosenSeats;
     }
     
+    /*
+    public class SeatNotTakenException extends Exception 
+    {
+        public SeatNotTakenException(Point seat) 
+        {
+            super("Seat: " + seat.x + ";" + seat.y + " is not taken");
+        }
+    }
+    */
 }
