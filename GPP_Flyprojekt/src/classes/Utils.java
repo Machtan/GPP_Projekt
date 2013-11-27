@@ -1,6 +1,14 @@
 package classes;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
+import javax.imageio.ImageIO;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 /**
  * The Utils class <More docs goes here>
@@ -105,5 +113,21 @@ public class Utils {
             String formatString, String separator, String... fields) {
         ArrayList<String> formatted = quickFormatList(objs, formatString, fields);
         return joinList(formatted, separator);
+    }
+    
+    public static ImageIcon getIcon(String path) {
+        BufferedImage image;
+        try {
+            ClassLoader cl = Utils.class.getClassLoader();
+            URL url = cl.getResource(path);
+            if (url != null) {
+                ImageIcon icon = new ImageIcon(url, "");
+                return icon;
+            } else {
+                System.err.println("Bad file path: "+path);
+            }
+        } catch (Exception ex) {
+        }
+        return null;
     }
 }

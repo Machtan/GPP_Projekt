@@ -3,7 +3,6 @@ package classes;
 import java.awt.Color;
 import java.awt.GridLayout;
 import java.util.HashMap;
-import java.util.Set;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;

@@ -1,13 +1,18 @@
 package experiments;
 
 import classes.PersonData;
+import classes.PersonDataList;
 import classes.PersonDataPanel;
 import classes.Utils;
 import java.util.ArrayList;
 import java.util.Date;
 import classes.Utils.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 /**
  * This class is just there to run various experiments to learn how java works
@@ -66,22 +71,42 @@ public class main {
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         
-        HashMap<PersonData, String> data = new HashMap<PersonData, String>();
-        data.put(PersonData.NAME, "Patrick The Devilish");
-        data.put(PersonData.CPR, "6666666666");
-        data.put(PersonData.NATIONALITY, "Demonic");
-        PersonDataPanel pane = new PersonDataPanel(data);
-        frame.add(pane, "North");
         
-        HashMap<PersonData, String> data2 = new HashMap<PersonData, String>();
-        data2.put(PersonData.NAME, "Stinus The Brave");
-        data2.put(PersonData.CPR, "1337133700");
-        data2.put(PersonData.NATIONALITY, "Equestrian");
-        PersonDataPanel pane2 = new PersonDataPanel(data2);
-        frame.add(pane2, "South");
+        HashMap<PersonData, String> patrick = new HashMap<PersonData, String>();
+        patrick.put(PersonData.NAME, "Patrick The Bringer of Cutlery");
+        patrick.put(PersonData.CPR, "6666666666");
+        patrick.put(PersonData.NATIONALITY, "Demonic");
+        //PersonDataPanel pane = new PersonDataPanel(patrick);
+        //frame.add(pane, "North");
         
+        final HashMap<PersonData, String> stinus = new HashMap<PersonData, String>();
+        stinus.put(PersonData.NAME, "Stinus The Lord of Cake");
+        stinus.put(PersonData.CPR, "1337133700");
+        stinus.put(PersonData.NATIONALITY, "Equestrian");
+        //PersonDataPanel pane2 = new PersonDataPanel(stinus);
+        //frame.add(pane2, "South");
+        
+        //------------------
+        final PersonDataList pdl = new PersonDataList();
+        pdl.addPerson(patrick);
+        pdl.addPerson(stinus);
+        frame.add(pdl, "South");
+        
+        frame.add(new JLabel("TESTING"), "North");
+        
+        JButton addButton = new JButton("Add Stuff");
+        addButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                pdl.addPerson(stinus);
+            }
+            
+        });
+        frame.add(addButton, "East");
         
         frame.pack();
         frame.setVisible(true);
+        
+        
     }  
 } 
