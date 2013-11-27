@@ -5,12 +5,13 @@ import java.util.Iterator;
 
 /**
  * The ISeating interface <More docs goes here>
- * @author Jakob Lautrup Nysom (jaln@itu.dk)
+ * @author Jakob Lautrup Nysom (jaln@itu.dk) & Stinus Møhl Thomsen (smot@itu.dk)
  * @version 22-Nov-2013
  */
 public interface ISeating {
     boolean getSeatStatus(Point seat); // Whether a seat is taken
     //int getRowWidth(int row); // The number of seats on the row
+    void setSeatStatus(Point seat,boolean newStatus);// Change seat status
     
     Iterator<Point> getSeatIterator(); // Allows for iterating over all seat 
     // positions
