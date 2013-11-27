@@ -1,5 +1,6 @@
 package interfaces;
 
+import classes.SeatChooser;
 import java.awt.Point;
 import java.util.ArrayList;
 
@@ -17,6 +18,8 @@ public interface ISeatChooser {
     // seating on.
     public void setChosen(ArrayList<Point> seats); // Sets the given seats to
     // be chosen in the seating handler
+    
+    public void setRequestedSeats(int number);
     
     public ArrayList<Point> getSeats(int numberOfSeats); // Returns the 
 }
