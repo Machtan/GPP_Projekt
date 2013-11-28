@@ -115,6 +115,11 @@ public class Utils {
         return joinList(formatted, separator);
     }
     
+    /**
+     * Returns an icon from a given path to a local image resource
+     * @param path
+     * @return 
+     */
     public static ImageIcon getIcon(String path) {
         BufferedImage image;
         try {

@@ -305,10 +305,10 @@ public class DatabaseHandler implements IDatabaseHandler {
      * get all airplanes.
      */
     Airplane[] getAirplanes() {
-        AirplaneLayOut[] airPlaneLayouts = getAirplaneLayOuts();
+        AirplaneLayout[] airPlaneLayouts = getAirplaneLayOuts();
         //For performance reasons, convert to hashmap with airPlaneLayOutID as KEY.
-        HashMap<String, AirplaneLayOut> airPlaneLayoutsMapped = new HashMap<String, AirplaneLayOut>();
-        for (AirplaneLayOut item : airPlaneLayouts) {
+        HashMap<String, AirplaneLayout> airPlaneLayoutsMapped = new HashMap<String, AirplaneLayout>();
+        for (AirplaneLayout item : airPlaneLayouts) {
             airPlaneLayoutsMapped.put(item.id, item);
         }
         ArrayList<Airplane> result = new ArrayList<Airplane>();
@@ -333,10 +333,10 @@ public class DatabaseHandler implements IDatabaseHandler {
 /*
  * get airplane layouts
  */
-    AirplaneLayOut[] getAirplaneLayOuts() {
+    AirplaneLayout[] getAirplaneLayOuts() {
         ArrayList<AirplaneSeat> airPlaneSeats = getAirplaneSeats();
 
-        ArrayList<AirplaneLayOut> result = new ArrayList<AirplaneLayOut>();
+        ArrayList<AirplaneLayout> result = new ArrayList<AirplaneLayout>();
         Statement stmt;
         try {
             stmt = conn.createStatement();
@@ -352,13 +352,13 @@ public class DatabaseHandler implements IDatabaseHandler {
                     }
                 }
                 int rows = rs.getInt(3);
-                result.add(new AirplaneLayOut(id, placementPhoto, rows, (AirplaneSeat[]) res.toArray(new AirplaneSeat[0])));
+                result.add(new AirplaneLayout(id, placementPhoto, rows, (AirplaneSeat[]) res.toArray(new AirplaneSeat[0])));
 
             }
         } catch (SQLException ex) {
             Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return (AirplaneLayOut[]) result.toArray(new AirplaneLayOut[0]);
+        return (AirplaneLayout[]) result.toArray(new AirplaneLayout[0]);
     }
 /*
  * get airplaneseat setup.

@@ -1,33 +1,54 @@
 package classes;
 
-import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import classes.Utils.*;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
+import javax.swing.JScrollPane;
+import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
+import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
+import javax.swing.SpringLayout;
+import external.SpringUtilities;
+import java.awt.Component;
 
 /**
  * The PersonDataList class <More docs goes here>
  * @author Jakob Lautrup Nysom (jaln@itu.dk)
  * @version 27-Nov-2013
  */
-public class PersonDataList extends JPanel {
+public class PersonDataList extends JScrollPane {
+    
+    private int WIDTH = 350;
+    private int HEIGHT = 400;
     
     private ArrayList<HashMap<PersonData, String>> persons;
-    GridLayout grid;
+    private JPanel panel;
+    
+    private ArrayList<ArrayList<Component>> comps;
+    
+    SpringLayout layout;
     
     /**
      * Constructor for the PersonDataList class
      */
     public PersonDataList () {
-        super();
+        super(VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_NEVER);
+        panel = new JPanel();
+        this.setViewportView(panel);
+        this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        
         persons = new ArrayList<HashMap<PersonData, String>>();
-        grid = new GridLayout(0, 1);
+        comps = new ArrayList<ArrayList<Component>>();
+        
+        layout = new SpringLayout();
+        panel.setLayout(layout);
+        
         updateLayout();
         this.setVisible(true);
     }
@@ -43,97 +64,92 @@ public class PersonDataList extends JPanel {
     /**
      * Updates the layout for the list
      */
-    public void updateLayout() {
+    private void updateLayout() {
         System.out.println(String.format("Updating Layout. %s persons present", persons.size()));
-        this.removeAll(); // Reset
-        
-        JPanel numberColumn = new JPanel(); // Init
-        JPanel nameColumn = new JPanel();
-        JPanel statusColumn = new JPanel();
-        JPanel editColumn = new JPanel();
-        JPanel deleteColumn = new JPanel();
-        
-        numberColumn.setLayout(grid); // Set layout
-        nameColumn.setLayout(grid);
-        statusColumn.setLayout(grid);
-        editColumn.setLayout(grid);
-        deleteColumn.setLayout(grid);
-        
-        JLabel statusLabel;
-        for (int i = 0; i < persons.size(); i++) {
-            HashMap<PersonData, String> person = persons.get(i);
-            
-            numberColumn.add(new JLabel(""+(i+1)));
-            nameColumn.add(new JLabel(person.get(PersonData.NAME)));
-            
-            boolean verified = verifyPerson(person);
-            if (verified) {
-                ImageIcon icon = Utils.getIcon("images/okaystatus.png");
-                statusLabel = new JLabel(icon);
-                statusLabel.setToolTipText("All fields verified!");
-            } else {
-                ImageIcon icon = Utils.getIcon("images/notokaystatus.png");
-                statusLabel = new JLabel(icon);
-                statusLabel.setToolTipText("Some fields are invalid!");
-            }
-            statusColumn.add(statusLabel);
-            
-            final int j = i;
-            JButton editButton = new JButton(Utils.getIcon("images/editicon.png"));
-            editButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    editPerson(j);
-                }
-            });
-            editColumn.add(editButton);
-            
-            JButton deleteButton = new JButton(Utils.getIcon("images/deleteicon.png"));
-            deleteButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    deletePerson(j);
-                }
-            });
-            deleteColumn.add(deleteButton);
-        }
-        
-        this.add(numberColumn, "West");
-        this.add(nameColumn, "West");
-        this.add(statusColumn, "West");
-        this.add(editColumn, "West");
-        this.add(deleteColumn, "West");
-        
+        SpringUtilities.makeCompactGrid(panel, persons.size(), 5, 5, 5, 5, 5);
+        this.validate();
         this.repaint();
-        if (this.getParent() != null) {
-            System.out.println("Preferred size: "+this.getParent().getPreferredSize());
-            System.out.println("Actual size:    "+this.getParent().getSize());
-            //this.getParent().setSize(this.getParent().getSize()); //notworking
-            System.out.println("new size:    "+this.getParent().getPreferredSize());
-            this.getParent().getParent().validate();
-            System.out.println("newer size:    "+this.getParent().getSize());
-            //this.get
-        }
     }
     
-    /**
-     * Deletes the entry for the person at the given index and updates the 
-     * layout
-     * @param index 
-     */
-    public void deletePerson(int index) {
-        System.out.println("Removing "+persons.get(index).get(PersonData.NAME));
-        persons.remove(index);
+    public void addPerson(final HashMap<PersonData, String> person) {
+        persons.add(person);
+        
+        ArrayList<Component> lineComps = new ArrayList<Component>();
+        
+        JLabel lineLabel = new JLabel(""+persons.size());
+        JLabel nameLabel = new JLabel(person.get(PersonData.NAME));
+
+        boolean verified = verifyPerson(person);
+        
+        JLabel statusLabel;
+        if (verified) {
+            ImageIcon icon = Utils.getIcon("images/okaystatus.png");
+            statusLabel = new JLabel(icon);
+            statusLabel.setToolTipText("All fields verified!");
+        } else {
+            ImageIcon icon = Utils.getIcon("images/notokaystatus.png");
+            statusLabel = new JLabel(icon);
+            statusLabel.setToolTipText("Some fields are invalid!");
+        }
+
+        JButton editButton = new JButton(Utils.getIcon("images/editicon.png"));
+        editButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                editPerson(person);
+            }
+        });
+        editButton.setFocusable(false);
+
+        JButton deleteButton = new JButton(Utils.getIcon("images/deleteicon.png"));
+        deleteButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                deletePerson(person);
+            }
+        });
+        deleteButton.setFocusable(false);
+        
+        lineComps.add(lineLabel);
+        lineComps.add(nameLabel);
+        lineComps.add(statusLabel);
+        lineComps.add(editButton);
+        lineComps.add(deleteButton);
+        for (Component comp : lineComps) {
+            panel.add(comp);
+        }
+        comps.add(lineComps);
+        
         updateLayout();
     }
     
     /**
-     * Opens the editor for the person on the given index in the 'persons' 
-     * arrayList
-     * @param index 
+     * Deletes the entry for the person and updates the layout
+     * @param person 
      */
-    public void editPerson(int index) {
-        System.out.println("Editing "+persons.get(index).get(PersonData.NAME));
+    public void deletePerson(HashMap<PersonData, String> person) {
+        System.out.println("Removing "+person.get(PersonData.NAME));
+        
+        ArrayList<Component> lineComps = comps.remove(persons.indexOf(person));
+        persons.remove(person);
+        for (Component comp : lineComps) {
+            panel.remove(comp);
+        }
+        
+        // Update the line number labels
+        for (int i = 0; i < comps.size(); i++) {
+            ((JLabel)comps.get(i).get(0)).setText(""+(i+1));
+        }
+        
+        updateLayout();
+    }
+    
+    /**
+     * Opens the editor for the given person
+     * @param person
+     */
+    public void editPerson(HashMap<PersonData, String> person) {
+        System.out.println("Editing "+person.get(PersonData.NAME));
         //openPersonForEditing(index, persons.get(index));
         throw new UnsupportedOperationException("editPerson not yet implemented");
     }
@@ -151,20 +167,12 @@ public class PersonDataList extends JPanel {
     } 
     
     /**
-     * Adds a single person to the list and updates the layout
-     * @param person The person
-     */
-    public void addPerson(HashMap<PersonData, String> person) {
-        persons.add(person);
-        updateLayout();
-    }
-    
-    /**
      * Adds a list of persons to the list and updates the layout
      * @param persons 
      */
     public void addPersons(ArrayList<HashMap<PersonData, String>> persons) {
-        this.persons.addAll(persons);
-        updateLayout();
-    }   
+        for (HashMap<PersonData, String> person : persons) {
+            addPerson(person);
+        }
+    }
 }

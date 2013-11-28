@@ -2,17 +2,24 @@ package experiments;
 
 import classes.PersonData;
 import classes.PersonDataList;
-import classes.PersonDataPanel;
-import classes.Utils;
 import java.util.ArrayList;
-import java.util.Date;
 import classes.Utils.*;
+import java.awt.Point;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
+import java.util.HashSet;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
+import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
+import javax.swing.SpringLayout;
 
 /**
  * This class is just there to run various experiments to learn how java works
@@ -44,31 +51,8 @@ public class main {
         }
     }
     
-    /**
-     * Constructor for the main class
-     */
-    public static void main (String[] args) throws Exception {
-        for (PersonData pd : PersonData.values()) {
-            System.out.println(pd);
-        }
-        
-        test("Hello");
-        test("Hello", "World");
-        
-        ArrayList<Derp> derps = new ArrayList<Derp>();
-        derps.add(new Derp("hello", "new", "world"));
-        derps.add(new Derp("Something", "went", "wrong"));
-        ArrayList<String> formats = Utils.quickFormatList(derps, "%s %s %s", "a", "b", "c");
-        System.out.println(Utils.joinList(formats, ", "));
-        
-        String[] targs = new String[] {"spooky", "weird", "dusty"};
-        System.out.println(String.format("hello %s, %s and %s world", targs));
-        
-        Date test = new Date(2013, 11, 22, 9, 9);
-        System.out.println("TestDate: "+test);
-        
-        // YAAY
-        JFrame frame = new JFrame();
+    public static void testPersonDataList() {
+        final JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         
         
@@ -102,11 +86,107 @@ public class main {
             }
             
         });
+        addButton.setFocusable(false);
         frame.add(addButton, "East");
         
         frame.pack();
         frame.setVisible(true);
+    }
+    
+    private static class ScrollablePanel extends JPanel {
         
+        private int WIDTH = 200;
+        private int HEIGHT = 200;
         
+        public ScrollablePanel() {
+            super();
+            this.setLayout(new GridLayout(0, 1));
+        }
+
+        public void addText(String text) {
+            this.add(new JLabel(text));
+            revalidate();
+        }
+        public void addLines(ArrayList<String> lines) {
+            for (String line : lines) {
+                addText(line);
+            }
+        }
+    }
+    
+    public static void testScrolling() {
+        JFrame frame = new JFrame();
+        frame.setPreferredSize(new Dimension(240,200));
+        frame.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        
+        ScrollablePanel pane = new ScrollablePanel();
+        ScrollablePanel pane2 = new ScrollablePanel();
+        for (int i = 1; i < 25; i++) {
+            pane.addText("Line "+i);
+            pane2.addText("Leniency +"+i);
+        }
+        
+        //frame.add(pane, "West");
+        //frame.add(pane2, "East");
+        
+        JScrollPane scrollPane = new JScrollPane(pane, VERTICAL_SCROLLBAR_AS_NEEDED, 
+        HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setPreferredSize(new Dimension(120, 200));
+        JScrollPane scrollPane2 = new JScrollPane(pane2, VERTICAL_SCROLLBAR_AS_NEEDED, 
+        HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane2.setPreferredSize(new Dimension(120, 200));
+        //frame.setContentPane(scrollPane);
+        //frame.setContentPane(scrollPane2);
+        frame.add(scrollPane, "West");
+        frame.add(scrollPane2, "East");
+
+        //frame.setResizable(false);
+        frame.pack();
+        frame.setVisible(true);
+    }
+    
+    public static void testSpringLayout() {
+        JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        
+        SpringLayout layout = new SpringLayout();
+        frame.setLayout(layout);
+        JLabel label = new JLabel("Name: ");
+        JLabel name = new JLabel("Bob Im Bap");
+        frame.add(label);
+        frame.add(name);
+        
+        layout.putConstraint(SpringLayout.WEST, label, 5, SpringLayout.WEST, frame);
+        layout.putConstraint(SpringLayout.NORTH, label, 5, SpringLayout.NORTH, frame);
+        
+        layout.putConstraint(SpringLayout.WEST, name, 50, SpringLayout.EAST, label);
+        layout.putConstraint(SpringLayout.NORTH, name, 5, SpringLayout.NORTH, frame);
+        
+        frame.pack();
+        frame.setVisible(true);
+        
+        frame.pack();
+        frame.setVisible(true);
+    }
+    
+    public void testPointsInSets() {
+        Point p1 = new Point(2, 0);
+        Point p2 = new Point(2, 0);
+        Point p3 = (Point)p1.clone();
+        
+        HashSet set = new HashSet();
+        set.add(p1);
+        System.out.println(String.format("%s.contains(%s) -> %s", set, p2, set.contains(p2)));
+        
+        System.out.println(String.format("%s == %s -> %s", p1, p2, p1==p2));
+        System.out.println(String.format("%s == %s -> %s", p1, p3, p1==p3));
+        System.out.println(String.format("%s.equals(%s) -> %s", p1, p2, p1.equals(p2)));
+    }
+    
+    /**
+     * Constructor for the main class
+     */
+    public static void main (String[] args) throws Exception {
+        testPersonDataList();
     }  
 } 

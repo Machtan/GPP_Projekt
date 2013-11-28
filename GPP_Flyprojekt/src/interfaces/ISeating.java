@@ -4,7 +4,8 @@ import java.awt.Point;
 import java.util.Iterator;
 
 /**
- * The ISeating interface <More docs goes here>
+ * The ISeating interface
+ * This implementation assumes 
  * @author Jakob Lautrup Nysom (jaln@itu.dk) & Stinus Møhl Thomsen (smot@itu.dk)
  * @version 22-Nov-2013
  */
