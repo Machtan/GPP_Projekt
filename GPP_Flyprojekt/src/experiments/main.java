@@ -2,10 +2,10 @@ package experiments;
 
 import classes.PersonData;
 import classes.PersonDataList;
+import classes.PersonEditor;
 import java.util.ArrayList;
 import classes.Utils.*;
 import java.awt.Point;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -87,7 +87,8 @@ public class main {
             
         });
         addButton.setFocusable(false);
-        frame.add(addButton, "East");
+        
+        frame.add(new PersonEditor(pdl), "East");
         
         frame.pack();
         frame.setVisible(true);

@@ -15,6 +15,8 @@ import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
 import javax.swing.SpringLayout;
 import external.SpringUtilities;
+import interfaces.IPersonDataList;
+import interfaces.IPersonEditor;
 import java.awt.Component;
 
 /**
@@ -22,7 +24,7 @@ import java.awt.Component;
  * @author Jakob Lautrup Nysom (jaln@itu.dk)
  * @version 27-Nov-2013
  */
-public class PersonDataList extends JScrollPane {
+public class PersonDataList extends JScrollPane implements IPersonDataList {
     
     private int WIDTH = 350;
     private int HEIGHT = 400;
@@ -32,7 +34,8 @@ public class PersonDataList extends JScrollPane {
     
     private ArrayList<ArrayList<Component>> comps;
     
-    SpringLayout layout;
+    private IPersonEditor editor;
+    private SpringLayout layout;
     
     /**
      * Constructor for the PersonDataList class
@@ -151,7 +154,13 @@ public class PersonDataList extends JScrollPane {
     public void editPerson(HashMap<PersonData, String> person) {
         System.out.println("Editing "+person.get(PersonData.NAME));
         //openPersonForEditing(index, persons.get(index));
-        throw new UnsupportedOperationException("editPerson not yet implemented");
+        if (this.editor == null) {
+            System.err.println("NO EDITOR SET FOR THE PERSONDATALIST!");
+        } else {
+            // This should move the person from the list to the editor for editing
+            this.deletePerson(person); 
+            this.editor.editPerson(person);
+        }
     }
     
     /**
@@ -174,5 +183,10 @@ public class PersonDataList extends JScrollPane {
         for (HashMap<PersonData, String> person : persons) {
             addPerson(person);
         }
+    }
+
+    @Override
+    public void setEditor(IPersonEditor editor) {
+        this.editor = editor;
     }
 }
