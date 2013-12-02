@@ -9,8 +9,7 @@ import java.util.HashMap;
  */
 public class AirplaneLayout {  
     public String id;
-    public String placementImagePath;
-    
+    public String placementImagePath;    
     public AirplaneSeat[] airplaneSeats;
     
     public AirplaneLayout(String id, String placementImagePath, AirplaneSeat[] airplaneSeats) {

@@ -97,7 +97,8 @@ public class SeatChooser extends JPanel implements ISeatChooser
     private boolean indenfor(int i, int j) 
     { 
         //denne her skal tjekke om man har tryket på en at knaperne/plaserne
-        return 0 <= i && i < cols && 0 <= j && j < rows; 
+        // return 0 <= i && i < cols && 0 <= j && j < rows; 
+        return false;
     }
 
     @Override

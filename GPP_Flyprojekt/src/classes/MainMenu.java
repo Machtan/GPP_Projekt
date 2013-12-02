@@ -20,6 +20,7 @@ public class MainMenu extends javax.swing.JFrame {
      * (eg. images/plane.png)
      */
     public void setIcon(String filepath) {
+        
         BufferedImage image;
         try {
             ClassLoader cl = this.getClass().getClassLoader();
@@ -37,11 +38,10 @@ public class MainMenu extends javax.swing.JFrame {
             System.err.println("DERP!");
         }
     }
-    DatabaseHandler database;
     /**
      * Creates new form MainMenu
      */ 
-    public MainMenu(DatabaseHandler database) {
+    public MainMenu() {
         initComponents();
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         
@@ -50,7 +50,6 @@ public class MainMenu extends javax.swing.JFrame {
         // Change the icon :o!
         String filepath = "images/Plane.png";
         setIcon(filepath);
-        this.database = database;
     }
 
     /**
@@ -122,7 +121,7 @@ public class MainMenu extends javax.swing.JFrame {
 
     private void showFlightBrowserButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showFlightBrowserButtonActionPerformed
         // TODO add your handling code here:
-        FlightBrowser menu = new FlightBrowser(database);
+        FlightBrowser menu = new FlightBrowser();
         menu.pack();
         menu.setVisible(true);
         

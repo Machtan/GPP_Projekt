@@ -21,19 +21,25 @@ import classes.Utils.*;
  */
 public class DatabaseHandler implements IDatabaseHandler {
     //MYSQL database connection information.
-    String url = "jdbc:mysql://mysql.itu.dk/";
-    String dbName = "Airport";
-    String driver = "com.mysql.jdbc.Driver";
-    String userName = "patr0805";
-    String password = "testuser";
+    final String AirportID = "1";
+    final String url = "jdbc:mysql://mysql.itu.dk/";
+    final String dbName = "Airport";
+    final String driver = "com.mysql.jdbc.Driver";
+    final String userName = "patr0805";
+    final String password = "testuser";
     Connection conn = null;
-    String AirportID = "";
+    static DatabaseHandler handler = new DatabaseHandler();
     /**
      * Constructor for DatabaseHandler, provide AirportID to filter out entries
      * relevant to the specific airport.
      */
-    public DatabaseHandler(String AirportID) {
-        this.AirportID = AirportID;
+    public DatabaseHandler() {
+    this.handler = this;
+    }
+    
+    public static DatabaseHandler getHandle()
+    {
+        return handler;
     }
     
     /**
@@ -41,13 +47,16 @@ public class DatabaseHandler implements IDatabaseHandler {
      */
     @Override
     public void connect() {
+      
         try {
             Class.forName(driver).newInstance();
             conn = DriverManager.getConnection(url + dbName, userName, password);
 
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }      
+        
+      
     }
     /**
      * Disconnect from the database.
@@ -223,11 +232,22 @@ public class DatabaseHandler implements IDatabaseHandler {
                 Date arrivalTime = rs.getDate(7);
                 if (airportID.equals(this.AirportID) && airPlanesMapped.containsKey(airplaneID)) {
                     Airplane airPlane = airPlanesMapped.get(airplaneID);
-                    boolean[][] seatinfo = new boolean[airPlane.airplaneLayout.numberOfRows][];
+                    //Find highest row.
+                    int numberOfRows = 0;
+                    for (AirplaneSeat seat: airPlane.airplaneLayout.airplaneSeats)
+                        {
+                            numberOfRows = Math.max(seat.rowIndex,numberOfRows);                           
+                        }
+                        if (numberOfRows > 0)
+                        {
+                            numberOfRows++;
+                        }
+                    
+                    boolean[][] seatinfo = new boolean[numberOfRows][];
                     for (int row = 0; row < seatinfo.length; row++) {
                         //Find highest for this row
                         AirplaneSeat highestSeat = null;
-                        for (AirplaneSeat seat : airPlane.airplaneLayout.airPlaneSeats) {
+                        for (AirplaneSeat seat : airPlane.airplaneLayout.airplaneSeats) {
                             if (seat.rowIndex == row && (highestSeat == null || seat.columnIndex > highestSeat.columnIndex)) {
                                 highestSeat = seat;
                             }
@@ -351,8 +371,7 @@ public class DatabaseHandler implements IDatabaseHandler {
                         res.add(item);
                     }
                 }
-                int rows = rs.getInt(3);
-                result.add(new AirplaneLayout(id, placementPhoto, rows, (AirplaneSeat[]) res.toArray(new AirplaneSeat[0])));
+                result.add(new AirplaneLayout(id, placementPhoto, (AirplaneSeat[]) res.toArray(new AirplaneSeat[0])));
 
             }
         } catch (SQLException ex) {
