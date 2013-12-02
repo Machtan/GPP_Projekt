@@ -1,6 +1,5 @@
 package classes;
 
-import external.SpringUtilities;
 import interfaces.IPersonDataList;
 import interfaces.IPersonEditor;
 import java.awt.Dimension;
@@ -8,13 +7,11 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
-import java.util.Set;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.SpringLayout;
 
 /**
  * The PersonEditor class <More docs goes here>
@@ -47,8 +44,10 @@ public class PersonEditor extends JPanel implements IPersonEditor {
         panel.setLayout(layout);
         
         for (PersonData data : PersonData.values()) {
+            JPanel topPanel = new JPanel();
+            
             JLabel fieldLabel = new JLabel(data+"");
-            fieldLabel.setMaximumSize(new Dimension((int)Math.round(FNAMEW*WIDTH), FNAMEH));
+            topPanel.add(fieldLabel, "West");
             
             JTextField valueField = new JTextField("");
             valueField.getDocument().putProperty("filterNewlines", Boolean.TRUE);
@@ -58,7 +57,12 @@ public class PersonEditor extends JPanel implements IPersonEditor {
             
             textFields.put(data, valueField);
             
-            panel.add(fieldLabel);
+            StatusLabel statusLabel = new StatusLabel(valueField, data);
+            topPanel.add(statusLabel, "East");
+            
+            valueField.addFocusListener(statusLabel);
+            
+            panel.add(topPanel);
             panel.add(valueField);
         }
         
@@ -104,5 +108,18 @@ public class PersonEditor extends JPanel implements IPersonEditor {
                 textFields.get(key).setText("");
             }   
         }
+        prepareFields();
+    }
+    
+    /**
+     * Focus cycles through the text fields to update the status labels, and to
+     * set it so that the first box is focused when the next entry is to be used
+     */
+    private void prepareFields() {
+        for (PersonData field : PersonData.values()) {
+            textFields.get(field).requestFocusInWindow();
+        }
+        JTextField first = textFields.get(PersonData.values()[0]);
+        first.requestFocusInWindow();
     }
 }

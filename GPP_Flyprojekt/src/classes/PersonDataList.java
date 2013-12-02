@@ -57,10 +57,15 @@ public class PersonDataList extends JScrollPane implements IPersonDataList {
     }
     
     /**
-     * This should return whether the data in the given hashmap is valid
+     * Returns whether all fields on the given person are valid
      * @return 
      */
     private boolean verifyPerson(HashMap<PersonData, String> person) {
+        for (PersonData field : person.keySet()) {
+            if (!Validator.validate(field, person.get(field))) {
+                return false;
+            }
+        }
         return true;
     }
     
@@ -74,6 +79,7 @@ public class PersonDataList extends JScrollPane implements IPersonDataList {
         this.repaint();
     }
     
+    @Override
     public void addPerson(final HashMap<PersonData, String> person) {
         persons.add(person);
         
