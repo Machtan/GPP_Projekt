@@ -2,6 +2,7 @@ package classes;
 
 import interfaces.IFlight;
 import interfaces.ISeating;
+import java.util.ArrayList;
 import java.util.Date;
 /**
  *
@@ -16,10 +17,12 @@ public class Flight implements IFlight {
     Airplane airplane;
     Date departureTime;
     Date arrivalTime;
-    Seating seating;
-    
+    Airplane plane;
+    ArrayList<Reservation> reservations;
  
-    public Flight(String ID, String Origin, String Destination, String AirportID, Airplane airplane, Date DepartureTime, Date ArrivalTime, Seating seating) {
+    public Flight(String ID, String Origin, String Destination, String AirportID, 
+            Airplane airplane, Date DepartureTime, Date ArrivalTime, 
+            Airplane plane, ArrayList<Reservation> reservations) {
         this.id = ID;
         this.origin = Origin;
         this.destination = Destination;
@@ -27,7 +30,8 @@ public class Flight implements IFlight {
         this.airplane = airplane;
         this.departureTime = DepartureTime;
         this.arrivalTime = ArrivalTime;
-        this.seating = seating;
+        this.plane = plane;
+        this.reservations = reservations;
     }
 
     
@@ -53,13 +57,20 @@ public class Flight implements IFlight {
     }
 
     @Override
-    public ISeating getSeating() {
-        return seating;
+    public String getID() {
+      return id;
     }
 
     @Override
-    public String getID() {
-      return id;
+    public Airplane getPlane()
+    {
+        return plane;
+    }
+
+    @Override
+    public ArrayList<Reservation> getReservations()
+    {
+       return reservations;
     }
 
     

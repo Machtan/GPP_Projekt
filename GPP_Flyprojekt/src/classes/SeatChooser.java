@@ -12,6 +12,7 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import javax.swing.JPanel;
 
 /**
@@ -26,6 +27,7 @@ public class SeatChooser extends JPanel implements ISeatChooser
     private ISeatingHandler seatingHandler;
     int numberOfSeats = 1;
     int seatSize = 12;
+    private HashMap<Point, Point> positionToSeat;
     
     
     public SeatChooser(IFlight flight)
@@ -48,6 +50,21 @@ public class SeatChooser extends JPanel implements ISeatChooser
             public void mouseExited(MouseEvent e){}
         });
         setFlight(flight);
+    }
+    
+    @Override
+    public void setFlight(IFlight flight)
+    {
+        this.flight = flight;
+        this.seatingHandler = new SeatingHandler(flight);
+        for(Point seat : seatingHandler.getFreeSeats())
+        {
+            positionToSeat.put(seatingHandler.getSeatPosition(seat), seat);
+        }
+        for(Point seat : seatingHandler.getTakenSeats())
+        {
+            positionToSeat.put(seatingHandler.getSeatPosition(seat), seat);
+        }
     }
     
     private void onMouseClicked(MouseEvent e) 
@@ -96,9 +113,8 @@ public class SeatChooser extends JPanel implements ISeatChooser
     
     private boolean indenfor(int i, int j) 
     { 
-        //denne her skal tjekke om man har tryket på en at knaperne/plaserne
-        // return 0 <= i && i < cols && 0 <= j && j < rows; 
-        return false;
+        //denne her skal tjekke om man har tryket paa en at knaperne/plaserne
+        return 0 <= i && i < cols && 0 <= j && j < rows; 
     }
 
     @Override
@@ -107,36 +123,29 @@ public class SeatChooser extends JPanel implements ISeatChooser
         super.paintComponent(g); //To change body of generated methods, choose Tools | Templates.
         
         
-        for(Point seat : seatingHandler.getTakenSeats())
+        for(Point seat : seatingHandler.getSeatsPositions(seatingHandler.getTakenSeats()))
         {
             g.setColor(Color.red);
-            g.fillRect(seat.x*seatSize+1, seat.y*seatSize+1, seatSize-1, seatSize-1);
+            g.fillRect(seat.x*seatSize+1 - seatSize/2, seat.y*seatSize+1 - seatSize/2, seatSize-1, seatSize-1);
             g.setColor(Color.black);
-            g.drawRect(seat.x*seatSize+1, seat.y*seatSize+1, seatSize-1, seatSize-1);
+            g.drawRect(seat.x*seatSize+1 - seatSize/2, seat.y*seatSize+1 - seatSize/2, seatSize-1, seatSize-1);
         }
         
-        for(Point seat : seatingHandler.getFreeSeats())
+        for(Point seat : seatingHandler.getSeatsPositions(seatingHandler.getFreeSeats()))
         {
             g.setColor(Color.green);
-            g.fillRect(seat.x*seatSize+1, seat.y*seatSize+1, seatSize-1, seatSize-1);
+            g.fillRect(seat.x*seatSize+1 - seatSize/2, seat.y*seatSize+1 - seatSize/2, seatSize-1, seatSize-1);
             g.setColor(Color.black);
-            g.drawRect(seat.x*seatSize+1, seat.y*seatSize+1, seatSize-1, seatSize-1);
+            g.drawRect(seat.x*seatSize+1 - seatSize/2, seat.y*seatSize+1 - seatSize/2, seatSize-1, seatSize-1);
         }
         
-        for(Point seat : seatingHandler.getChosenSeats())
+        for(Point seat : seatingHandler.getSeatsPositions(seatingHandler.getChosenSeats()))
         {
             g.setColor(Color.blue);
-            g.fillRect(seat.x*seatSize+1, seat.y*seatSize+1, seatSize-1, seatSize-1);
+            g.fillRect(seat.x*seatSize+1 - seatSize/2, seat.y*seatSize+1 - seatSize/2, seatSize-1, seatSize-1);
             g.setColor(Color.black);
-            g.drawRect(seat.x*seatSize+1, seat.y*seatSize+1, seatSize-1, seatSize-1);
+            g.drawRect(seat.x*seatSize+1 - seatSize/2, seat.y*seatSize+1 - seatSize/2, seatSize-1, seatSize-1);
         }
-    }
-
-    @Override
-    public void setFlight(IFlight flight)
-    {
-        this.flight = flight;
-        this.seatingHandler = new SeatingHandler(flight.getSeating());
     }
 
     @Override

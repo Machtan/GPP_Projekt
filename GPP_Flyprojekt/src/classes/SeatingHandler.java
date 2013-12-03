@@ -20,15 +20,15 @@ public class SeatingHandler implements ISeatingHandler
     private ISeating seating;
     private ArrayList<Point> chosenSeats;
 
-    public SeatingHandler(ISeating seating)
+    public SeatingHandler(IFlight flight)
     {
-        setSeating(seating);
+        setFlight(flight);
     }
 
     @Override
-    public void setSeating(ISeating seating)
+    public void setFlight(IFlight flight)
     {
-        this.seating = seating;
+        seating = new Seating(flight);
     }
 
     @Override
@@ -40,20 +40,8 @@ public class SeatingHandler implements ISeatingHandler
     @Override
     public void setChosen(Point seat)
     {
-        if(seating.getSeatStatus(seat))
+        if(seating.getSeatFree(seat.x,seat.y))
             chosenSeats.add(seat);
-    }
-
-    @Override
-    public void setFree(Point seat)
-    {
-        if(!seating.getSeatStatus(seat))
-            seating.setSeatStatus(seat, true);
-        
-        for(int seatNr = 0 ; seatNr < chosenSeats.size() ; seatNr++)
-            if (chosenSeats.get(seatNr).x == seat.x && 
-                    chosenSeats.get(seatNr).y == seat.y)
-                chosenSeats.remove(seatNr);
     }
 
     @Override
@@ -61,11 +49,8 @@ public class SeatingHandler implements ISeatingHandler
     {
         for(Point seat : seats)
         {
-            if(!seating.getSeatStatus(seat))
-                seating.setSeatStatus(seat, true);
-            else
+            if(seating.getSeatFree(seat.x,seat.y))
                 throw new UnsupportedOperationException("Fail not supported yet.");
-                //throw new SeatNotTakenException(seat);
             
             chosenSeats.add(seat);
         }
@@ -79,7 +64,7 @@ public class SeatingHandler implements ISeatingHandler
         while(iter.hasNext())
         {
             Point iterPoint = iter.next();
-            if(!seating.getSeatStatus(iterPoint))
+            if(!seating.getSeatFree(iterPoint.x,iterPoint.y))
                 takenSeats.add(iterPoint);
         }
         
@@ -94,10 +79,9 @@ public class SeatingHandler implements ISeatingHandler
         while(iter.hasNext())
         {
             Point iterPoint = iter.next();
-            if(seating.getSeatStatus(iterPoint))
+            if(seating.getSeatFree(iterPoint.x,iterPoint.y))
                 freeSeats.add(iterPoint);
         }
-        
         return freeSeats;
     }
 
@@ -106,14 +90,43 @@ public class SeatingHandler implements ISeatingHandler
     {
         return chosenSeats;
     }
-    
-    /*
-    public class SeatNotTakenException extends Exception 
+
+    @Override
+    public ArrayList<Point> getSeatsAt(Point mousePosition, int number)
     {
-        public SeatNotTakenException(Point seat) 
+        Iterator<Point> iter = seating.getSeatIterator();
+        Point seatPoint = iter.next();
+        while(iter.hasNext())
         {
-            super("Seat: " + seat.x + ";" + seat.y + " is not taken");
+            Point iterPoint = iter.next();
+            if(Math.sqrt(Math.pow((mousePosition.x - iterPoint.x),2)+
+                    Math.pow((mousePosition.y - iterPoint.y),2)) < 
+                    Math.sqrt(Math.pow((mousePosition.x - seatPoint.x),2)+
+                    Math.pow((mousePosition.y - seatPoint.y),2)))
+                seatPoint = iterPoint;
+                
         }
+        
+        if(!seating.getSeatStatus(seatPoint))
+            return null;
+        
+        return seating.getVacantSeatsAtPoint(seatPoint, number);
     }
-    */
+
+    @Override
+    public ArrayList<Point> getSeatsPositions(ArrayList<Point> seats)
+    {
+        ArrayList<Point> seatsPositions = new ArrayList<Point>();
+        for(Point seat : seats)
+        {
+            seatsPositions.add(getSeatPosition(seat));
+        }
+        return seatsPositions;
+    }
+
+    @Override
+    public Point getSeatPosition(Point seat)
+    {
+        return seating.getSeatPosition(seat.x, seat.y);
+    }
 }

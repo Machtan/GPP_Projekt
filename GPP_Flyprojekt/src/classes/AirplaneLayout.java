@@ -7,9 +7,10 @@ import java.util.HashMap;
  *
  * @author Patrick Evers Bjørkman (pebj@itu.dk)
  */
-public class AirplaneLayout {  
+public class AirplaneLayout {
     public String id;
-    public String placementImagePath;    
+    public String placementImagePath;
+    
     public AirplaneSeat[] airplaneSeats;
     
     public AirplaneLayout(String id, String placementImagePath, AirplaneSeat[] airplaneSeats) {

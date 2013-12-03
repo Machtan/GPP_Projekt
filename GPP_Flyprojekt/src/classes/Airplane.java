@@ -4,7 +4,7 @@ package classes;
  *
  * @author Patrick Evers Bjørkman (pebj@itu.dk)
  */
-class Airplane {
+public class Airplane {
     public String id;
     public String name;
     public AirplaneLayout airplaneLayout;
