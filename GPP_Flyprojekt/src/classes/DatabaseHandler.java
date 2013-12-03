@@ -232,38 +232,7 @@ public class DatabaseHandler implements IDatabaseHandler {
                 Date arrivalTime = rs.getDate(7);
                 if (airportID.equals(this.AirportID) && airPlanesMapped.containsKey(airplaneID)) {
                     Airplane airPlane = airPlanesMapped.get(airplaneID);
-                    //Find highest row.
-                    int numberOfRows = 0;
-                    for (AirplaneSeat seat: airPlane.airplaneLayout.airplaneSeats)
-                        {
-                            numberOfRows = Math.max(seat.rowIndex,numberOfRows);                           
-                        }
-                        if (numberOfRows > 0)
-                        {
-                            numberOfRows++;
-                        }
-                    
-                    boolean[][] seatinfo = new boolean[numberOfRows][];
-                    for (int row = 0; row < seatinfo.length; row++) {
-                        //Find highest for this row
-                        AirplaneSeat highestSeat = null;
-                        for (AirplaneSeat seat : airPlane.airplaneLayout.airplaneSeats) {
-                            if (seat.rowIndex == row && (highestSeat == null || seat.columnIndex > highestSeat.columnIndex)) {
-                                highestSeat = seat;
-                            }
-                        }
-                        if (highestSeat != null) {
-                            seatinfo[row] = new boolean[highestSeat.columnIndex + 1];
-                        }
-                    }
-                    Seating seating = new Seating(seatinfo);
-                    Flight newflight = new Flight(id, origin, destination, airportID, airPlane, departureTime, arrivalTime, seating);
-                    Reservation[] reservations = getReservations(newflight);
-                    for (Reservation reservation : reservations) {
-                        for (Point point : reservation.seats) {
-                            seatinfo[point.x][point.y] = true;
-                        }
-                    }
+                    Flight newflight = new Flight(id, origin, destination, airportID, airPlane, departureTime, arrivalTime);
                     flights.add(newflight);
                 }
             }

@@ -23,7 +23,7 @@ public class Seating implements ISeating {
         for (Reservation res : flight.getReservations()) {
             takenSeats.addAll(res.seats);
         }
-        
+        seatPositions = new HashMap<Point, Point>(); 
         for (AirplaneSeat seat : seats) {
             Point seatPlacement = new Point(seat.rowIndex, seat.columnIndex);
             Point seatPosition = new Point(seat.positionX, seat.positionY);

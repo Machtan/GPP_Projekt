@@ -17,11 +17,9 @@ public class Flight implements IFlight {
     Airplane airplane;
     Date departureTime;
     Date arrivalTime;
-    Airplane plane;
  
     public Flight(String ID, String Origin, String Destination, String AirportID, 
-            Airplane airplane, Date DepartureTime, Date ArrivalTime, 
-            Airplane plane) {
+            Airplane airplane, Date DepartureTime, Date ArrivalTime) {
         this.id = ID;
         this.origin = Origin;
         this.destination = Destination;
@@ -29,7 +27,6 @@ public class Flight implements IFlight {
         this.airplane = airplane;
         this.departureTime = DepartureTime;
         this.arrivalTime = ArrivalTime;
-        this.plane = plane;
     }
 
     
@@ -62,7 +59,7 @@ public class Flight implements IFlight {
     @Override
     public Airplane getPlane()
     {
-        return plane;
+        return airplane;
     }
 
     @Override
