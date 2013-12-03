@@ -18,11 +18,10 @@ public class Flight implements IFlight {
     Date departureTime;
     Date arrivalTime;
     Airplane plane;
-    ArrayList<Reservation> reservations;
  
     public Flight(String ID, String Origin, String Destination, String AirportID, 
             Airplane airplane, Date DepartureTime, Date ArrivalTime, 
-            Airplane plane, ArrayList<Reservation> reservations) {
+            Airplane plane) {
         this.id = ID;
         this.origin = Origin;
         this.destination = Destination;
@@ -31,7 +30,6 @@ public class Flight implements IFlight {
         this.departureTime = DepartureTime;
         this.arrivalTime = ArrivalTime;
         this.plane = plane;
-        this.reservations = reservations;
     }
 
     
@@ -68,9 +66,9 @@ public class Flight implements IFlight {
     }
 
     @Override
-    public ArrayList<Reservation> getReservations()
+    public Reservation[] getReservations()
     {
-       return reservations;
+       return DatabaseHandler.getHandle().getReservations(this);
     }
 
     

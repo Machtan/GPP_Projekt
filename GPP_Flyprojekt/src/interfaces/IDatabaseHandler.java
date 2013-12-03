@@ -1,5 +1,6 @@
 package interfaces;
 import classes.Reservation;
+import java.util.ArrayList;
 /**
  * @author Jakob Lautrup Nysom (jaln@itu.dk)
  * @version 21-Nov-2013
