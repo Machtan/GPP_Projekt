@@ -57,7 +57,7 @@ public class PersonEditor extends JPanel implements IPersonEditor {
             
             textFields.put(data, valueField);
             
-            StatusLabel statusLabel = new StatusLabel(valueField, data);
+            StatusLabel statusLabel = new StatusLabel(valueField, data, new Validator());
             topPanel.add(statusLabel, "East");
             
             valueField.addFocusListener(statusLabel);

@@ -135,4 +135,14 @@ public class Utils {
         }
         return null;
     }
+    
+    /**
+     * Prints a formatted string more easily
+     * fp is short for FormattedPrint
+     * @param formatString the format specification
+     * @param args The arguments to be formatted
+     */
+    public static void fp(String formatString, Object... args) {
+        System.out.println(String.format(formatString, args));
+    }
 }

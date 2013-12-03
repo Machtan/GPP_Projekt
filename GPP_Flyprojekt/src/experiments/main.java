@@ -3,8 +3,12 @@ package experiments;
 import classes.PersonData;
 import classes.PersonDataList;
 import classes.PersonEditor;
+import classes.ReservationData;
 import java.util.ArrayList;
 import classes.Utils.*;
+import classes.ValidatedListPanel;
+import classes.Validator;
+import interfaces.IValidatable;
 import java.awt.Point;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -171,7 +175,7 @@ public class main {
         frame.setVisible(true);
     }
     
-    public void testPointsInSets() {
+    public static void testPointsInSets() {
         Point p1 = new Point(2, 0);
         Point p2 = new Point(2, 0);
         Point p3 = (Point)p1.clone();
@@ -185,10 +189,28 @@ public class main {
         System.out.println(String.format("%s.equals(%s) -> %s", p1, p2, p1.equals(p2)));
     }
     
-    /**
-     * Constructor for the main class
-     */
+    public static void testValidatableLists() {
+        JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        
+        HashMap<IValidatable, String> data = new HashMap<IValidatable, String>();
+        data.put(PersonData.CPR, "1222334455");
+        data.put(PersonData.NAME, "Bob the bad");
+        data.put(PersonData.NATIONALITY, "DEMONIC DUCK");
+        data.put(ReservationData.CARDNUMBER, "20009");
+        data.put(ReservationData.PHONENUMBER, "34343434");
+        
+        ValidatedListPanel panel = new ValidatedListPanel(data, new Validator(), 
+                200, 200, PersonData.CPR, PersonData.NAME, PersonData.NATIONALITY, 
+                ReservationData.CARDNUMBER, ReservationData.PHONENUMBER);
+        frame.add(panel);
+        
+        frame.pack();
+        frame.setVisible(true);
+    }
+    
     public static void main (String[] args) throws Exception {
-        testPersonDataList();
+        testValidatableLists();
+        //testPersonDataList();
     }  
 } 

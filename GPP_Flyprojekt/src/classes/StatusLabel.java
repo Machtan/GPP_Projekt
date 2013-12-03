@@ -1,8 +1,9 @@
 package classes;
 
+import interfaces.IValidatable;
+import interfaces.IValidator;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
@@ -14,25 +15,30 @@ import javax.swing.JTextField;
 public class StatusLabel extends JLabel implements FocusListener {
     
     JTextField field;
-    PersonData fieldType;
+    IValidatable fieldType;
+    IValidator validator;
     
     /**
      * Constructor for the StatusLabel class
-     * @param field
-     * @param fieldType
+     * @param field The text field to validate
+     * @param fieldType The type of field to validate (this is for the validator)
+     * @param validator The validator to validate the field with
      */
-    public StatusLabel (JTextField field, PersonData fieldType) {
+    public StatusLabel (JTextField field, IValidatable fieldType, 
+            IValidator validator) {
         this.field = field;
         this.fieldType = fieldType;
+        this.validator = validator;
         verifyField();
     }
     
     /**
      * Updates the status label, so that it reflects the validity of the 
      * field it is tracking
+     * @return Whether the field is valid
      */
-    private void verifyField() {
-        boolean valid = Validator.validate(fieldType, field.getText());
+    public boolean verifyField() {
+        boolean valid = validator.validate(fieldType, field.getText());
         String iconPath;
         String toolTipText;
         if (valid) {
@@ -45,11 +51,11 @@ public class StatusLabel extends JLabel implements FocusListener {
         
         this.setToolTipText(toolTipText);
         this.setIcon(Utils.getIcon(iconPath));
+        return valid;
     }
 
     @Override
-    public void focusGained(FocusEvent e) {
-    }
+    public void focusGained(FocusEvent e) {}
 
     @Override
     public void focusLost(FocusEvent e) {

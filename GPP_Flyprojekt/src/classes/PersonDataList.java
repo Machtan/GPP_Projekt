@@ -62,7 +62,7 @@ public class PersonDataList extends JScrollPane implements IPersonDataList {
      */
     private boolean verifyPerson(HashMap<PersonData, String> person) {
         for (PersonData field : person.keySet()) {
-            if (!Validator.validate(field, person.get(field))) {
+            if (!new Validator().validate(field, person.get(field))) {
                 return false;
             }
         }
