@@ -1,5 +1,6 @@
 package interfaces;
 
+import classes.AirplaneSeat;
 import java.awt.Point;
 import java.util.Iterator;
 
@@ -10,14 +11,8 @@ import java.util.Iterator;
  * @version 22-Nov-2013
  */
 public interface ISeating {
-    boolean getSeatStatus(Point seat); // Whether a seat is taken
-    //int getRowWidth(int row); // The number of seats on the row
-    void setSeatStatus(Point seat,boolean newStatus);// Change seat status
-    
-    Iterator<Point> getSeatIterator(); // Allows for iterating over all seat 
+    public Point getSeatPosition(int row, int column);
+    public boolean getSeatFree(int row, int column); // Whether a seat is taken    
+    public Iterator<Point> getSeatIterator();  // Allows for iterating over all seat 
     // positions
-    
-    int getVacantRow(); // Returns the first row with an empty seat
-    int getVacantRowAfter(int row); // Returns the first row with an empty seat
-    // after the given row
 }

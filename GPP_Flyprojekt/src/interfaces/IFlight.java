@@ -1,4 +1,7 @@
 package interfaces;
+import classes.Airplane;
+import classes.Reservation;
+import java.util.ArrayList;
 import java.util.Date;
 /**
  * The IFlight interface <More docs goes here>
@@ -11,5 +14,6 @@ public interface IFlight {
     String getDestination();
     Date getDepartureTime();
     Date getArrivalTime();
-    ISeating getSeating();
+    Airplane getPlane();
+    ArrayList<Reservation> getReservations();
 }
