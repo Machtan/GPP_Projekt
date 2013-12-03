@@ -15,5 +15,5 @@ public interface IFlight {
     Date getDepartureTime();
     Date getArrivalTime();
     Airplane getPlane();
-    ArrayList<Reservation> getReservations();
+    Reservation[] getReservations();
 }
