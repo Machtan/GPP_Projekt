@@ -56,19 +56,23 @@ public class Validator implements IValidator {
         return !nationality.equals("");
     }
     
-    //@Override
-    public static boolean validate(PersonData field, String value) {
-        switch(field) {
-            case NAME: {
-                return validateName(value);
+    @Override
+    public <T> boolean validate(T field, String value) {
+        if (PersonData.class.isInstance(field)) {
+            switch((PersonData)field) {
+                case NAME: {
+                    return validateName(value);
+                }
+                case CPR: {
+                    return validateCPR(value);
+                }
+                case NATIONALITY: {
+                    return validateNationality(value);
+                }   
+                default: return false;
             }
-            case CPR: {
-                return validateCPR(value);
-            }
-            case NATIONALITY: {
-                return validateNationality(value);
-            }   
-            default: return false;
+        } else {
+            return false;
         }
     }
     
