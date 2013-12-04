@@ -76,10 +76,16 @@ public class main {
         //frame.add(pane2, "South");
         
         //------------------
-        final PersonDataList pdl = new PersonDataList();
+        final PersonDataList pdl = new PersonDataList(350,500,"Redigér Passager", 
+                "Slet Passager");
         pdl.addPerson(patrick);
         pdl.addPerson(stinus);
-        frame.add(pdl, "South");
+        
+        PersonEditor editor = new PersonEditor(300,300);
+        pdl.setEditor(editor);
+        
+        frame.add(pdl, "West");
+        frame.add(editor, "East");
         
         frame.add(new JLabel("TESTING"), "North");
         
@@ -92,8 +98,6 @@ public class main {
             
         });
         addButton.setFocusable(false);
-        
-        frame.add(new PersonEditor(pdl), "East");
         
         frame.pack();
         frame.setVisible(true);
@@ -210,7 +214,7 @@ public class main {
     }
     
     public static void main (String[] args) throws Exception {
-        testValidatableLists();
-        //testPersonDataList();
+        //testValidatableLists();
+        testPersonDataList();
     }  
 } 

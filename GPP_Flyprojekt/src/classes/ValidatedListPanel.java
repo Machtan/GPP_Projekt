@@ -1,10 +1,10 @@
 package classes;
 
 import interfaces.IValidatable;
+import interfaces.IValidatedList;
 import interfaces.IValidator;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -16,12 +16,11 @@ import javax.swing.JTextField;
  * @author Jakob Lautrup Nysom (jaln@itu.dk)
  * @version 03-Dec-2013
  */
-public class ValidatedListPanel extends JScrollPane {
+public class ValidatedListPanel extends JScrollPane implements IValidatedList {
     
-    private IValidator validator;
-    private final HashMap<IValidatable, String> data;
-    private final HashMap<IValidatable, JTextField> textFields;
-    private JPanel panel;
+    protected IValidator validator;
+    protected final HashMap<IValidatable, JTextField> textFields;
+    protected JPanel panel;
     private final int width;
     private final int height;
     private final int SCRPAD = 16; // How much padding should be left for the scrollbar
@@ -58,15 +57,17 @@ public class ValidatedListPanel extends JScrollPane {
         this.width = width;
         this.height = height;
         this.validator = validator;
-        this.data = new HashMap<IValidatable, String>();
-        for (IValidatable fieldName : fields) {
-            data.put(fieldName, "");
-        }
+        
         textFields = new HashMap<IValidatable, JTextField>();
         initComponents(fields);
         
     }
     
+    /**
+     * Lays out the GUI
+     * @param fields The order of fields to create, and how each field will be
+     * validated (according to their data type in a validator).
+     */
     private void initComponents(IValidatable[] fields) {
         panel = new JPanel();
         panel.setLayout(new GridLayout(0, 1));
@@ -106,20 +107,54 @@ public class ValidatedListPanel extends JScrollPane {
         this.setPreferredSize(new Dimension(width, height));        
     }
     
+    /**
+     * Returns a HashMap of the data contained in the list
+     * @return 
+     */
+    @Override
     public HashMap<IValidatable, String> getData() {
-        return this.data;
+        HashMap<IValidatable, String> data = new HashMap<IValidatable, String>();
+        for (IValidatable key : textFields.keySet()) {
+            data.put(key, textFields.get(key).getText());
+        }
+        return data;
     }
     
-    public void setData(HashMap<IValidatable, String> data) {
+    /**
+     * Adds data from the given HashMap to the corresponding fields on the list
+     * @param <T>
+     * @param data 
+     */
+    @Override
+    public <T extends IValidatable> void setData(HashMap<T, String> data) {
         for (IValidatable key : data.keySet()) {
-            if (this.data.containsKey(key)) {
-                this.data.put(key, data.get(key));
+            if (textFields.containsKey(key)) {
+                this.textFields.get(key).setText(data.get(key));
             }
         }
     }
     
+    /**
+     * Sets the validator responsible for validating the fields of this list
+     * @param validator The validator to be used
+     */
+    @Override
     public void setValidator(IValidator validator) {
         this.validator = validator;
+    }
+    
+    /**
+     * Returns whether all fields of the list are empty
+     * @return 
+     */
+    @Override
+    public boolean isEmpty() {
+        for (IValidatable key : textFields.keySet()) {
+            if (!textFields.get(key).getText().equals("")) {
+                return false;
+            }
+        }
+        return true;
     }
     
 }

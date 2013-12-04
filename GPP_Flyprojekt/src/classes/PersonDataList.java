@@ -16,8 +16,10 @@ import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
 import javax.swing.SpringLayout;
 import external.SpringUtilities;
 import interfaces.IPersonDataList;
-import interfaces.IPersonEditor;
+import interfaces.IValidatedList;
 import java.awt.Component;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
  * The PersonDataList class <More docs goes here>
@@ -26,25 +28,34 @@ import java.awt.Component;
  */
 public class PersonDataList extends JScrollPane implements IPersonDataList {
     
-    private int WIDTH = 350;
-    private int HEIGHT = 400;
+    private int width;
+    private int height;
+    private String editButtonTip;
+    private String deleteButtonTip;
     
     private ArrayList<HashMap<PersonData, String>> persons;
     private JPanel panel;
     
     private ArrayList<ArrayList<Component>> comps;
     
-    private IPersonEditor editor;
+    private IValidatedList editor;
     private SpringLayout layout;
     
     /**
      * Constructor for the PersonDataList class
      */
-    public PersonDataList () {
+    public PersonDataList (int width, int height, String editButtonTip, 
+            String deleteButtonTip) {
         super(VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_NEVER);
         panel = new JPanel();
+        
+        this.width = width;
+        this.height = height;
+        this.editButtonTip = editButtonTip;
+        this.deleteButtonTip = deleteButtonTip;
+        
         this.setViewportView(panel);
-        this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        this.setPreferredSize(new Dimension(width, height));
         
         persons = new ArrayList<HashMap<PersonData, String>>();
         comps = new ArrayList<ArrayList<Component>>();
@@ -73,7 +84,6 @@ public class PersonDataList extends JScrollPane implements IPersonDataList {
      * Updates the layout for the list
      */
     private void updateLayout() {
-        System.out.println(String.format("Updating Layout. %s persons present", persons.size()));
         SpringUtilities.makeCompactGrid(panel, persons.size(), 5, 5, 5, 5, 5);
         this.validate();
         this.repaint();
@@ -108,6 +118,7 @@ public class PersonDataList extends JScrollPane implements IPersonDataList {
                 editPerson(person);
             }
         });
+        editButton.setToolTipText(editButtonTip);
         editButton.setFocusable(false);
 
         JButton deleteButton = new JButton(Utils.getIcon("images/deleteicon.png"));
@@ -117,6 +128,7 @@ public class PersonDataList extends JScrollPane implements IPersonDataList {
                 deletePerson(person);
             }
         });
+        deleteButton.setToolTipText(deleteButtonTip);
         deleteButton.setFocusable(false);
         
         lineComps.add(lineLabel);
@@ -163,9 +175,25 @@ public class PersonDataList extends JScrollPane implements IPersonDataList {
         if (this.editor == null) {
             System.err.println("NO EDITOR SET FOR THE PERSONDATALIST!");
         } else {
-            // This should move the person from the list to the editor for editing
+            if (! editor.isEmpty()) {
+                Object[] options = {"Ja", "Nej"};
+                int n = JOptionPane.showOptionDialog(new JFrame(),
+                    "Der er allerede data under rettelse.\nOverskriv og fortsæt?",
+                    "Advarsel",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE,
+                    null, options, options[1]);
+                switch(n) {
+                    case 0:
+                        break; //Yes => delete and send to the editor
+                    case 1:
+                        return; //No => just exit :)
+                }
+            }
+            // Move the person from the list to the editor for editing
             this.deletePerson(person); 
-            this.editor.editPerson(person);
+            this.editor.setData(person);
+            
         }
     }
     
@@ -192,7 +220,7 @@ public class PersonDataList extends JScrollPane implements IPersonDataList {
     }
 
     @Override
-    public void setEditor(IPersonEditor editor) {
+    public void setEditor(IValidatedList editor) {
         this.editor = editor;
     }
 }

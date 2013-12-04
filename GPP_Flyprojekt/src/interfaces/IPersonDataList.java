@@ -9,6 +9,16 @@ import java.util.HashMap;
  * @version 29-Nov-2013
  */
 public interface IPersonDataList {
+    
+    /**
+     * Adds a person to the list and updates the layout
+     * @param person The person to be added
+     */
     void addPerson(final HashMap<PersonData, String> person);
-    void setEditor(final IPersonEditor editor);
+
+    /**
+     * Sets the target for the edit button on the list
+     * @param editor The IValidatedList to load the data into
+     */
+    void setEditor(final IValidatedList editor);
 }
