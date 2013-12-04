@@ -107,7 +107,7 @@ public class SeatingHandler implements ISeatingHandler
                 
         }
         
-        if(!seating.getSeatStatus(seatPoint))
+        if(!seating.getSeatFree(seatPoint.x,seatPoint.y))
             return null;
         
         return seating.getVacantSeatsAtPoint(seatPoint, number);

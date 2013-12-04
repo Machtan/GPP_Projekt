@@ -55,4 +55,68 @@ public class Seating implements ISeating {
     public Iterator<Point> getSeatIterator() {
         return seatPositions.keySet().iterator();
     }
+    
+    // --- the old ISeatingHandler ---
+    
+    private ArrayList<Point> chosenSeats;
+
+    @Override
+    public int getNumberOfFreeSeats()
+    {
+        return getFreeSeats().size();
+    }
+
+    @Override
+    public void setChosen(Point seat)
+    {
+        if(getSeatFree(seat.x,seat.y))
+            chosenSeats.add(seat);
+    }
+
+    @Override
+    public void changeTakenToChosen(ArrayList<Point> seats)
+    {
+        for(Point seat : seats)
+        {
+            if(getSeatFree(seat.x,seat.y))
+                throw new UnsupportedOperationException("Fail not supported yet.");
+            
+            chosenSeats.add(seat);
+        }
+    }
+
+    @Override
+    public ArrayList<Point> getTakenSeats()
+    {
+        ArrayList<Point> takenSeats = new ArrayList<Point>();
+        Iterator<Point> iter = getSeatIterator();
+        while(iter.hasNext())
+        {
+            Point iterPoint = iter.next();
+            if(!getSeatFree(iterPoint.x,iterPoint.y))
+                takenSeats.add(iterPoint);
+        }
+        
+        return takenSeats;
+    }
+
+    @Override
+    public ArrayList<Point> getFreeSeats()
+    {
+        ArrayList<Point> freeSeats = new ArrayList<Point>();
+        Iterator<Point> iter = getSeatIterator();
+        while(iter.hasNext())
+        {
+            Point iterPoint = iter.next();
+            if(getSeatFree(iterPoint.x,iterPoint.y))
+                freeSeats.add(iterPoint);
+        }
+        return freeSeats;
+    }
+
+    @Override
+    public ArrayList<Point> getChosenSeats()
+    {
+        return chosenSeats;
+    }
 }
