@@ -38,15 +38,23 @@ public class StatusLabel extends JLabel implements FocusListener {
      * @return Whether the field is valid
      */
     public boolean verifyField() {
-        boolean valid = validator.validate(fieldType, field.getText());
         String iconPath;
         String toolTipText;
-        if (valid) {
-             iconPath = "images/okaystatus.png";
-             toolTipText = "The field is valid";
-        } else {
-            iconPath = "images/notokaystatus.png";
-            toolTipText = fieldType.getErrorTip();
+        boolean valid;
+        try {
+            valid = validator.validate(fieldType, field.getText());
+            
+            if (valid) {
+                 iconPath = "images/okaystatus.png";
+                 toolTipText = "The field is valid";
+            } else {
+                iconPath = "images/notokaystatus.png";
+                toolTipText = fieldType.getErrorTip();
+            }
+        } catch (IValidator.NoValidatorException ex) {
+            valid = false;
+            iconPath = "images/warningstatus.png";
+            toolTipText = validator.getNoValidatorTip();
         }
         
         this.setToolTipText(toolTipText);

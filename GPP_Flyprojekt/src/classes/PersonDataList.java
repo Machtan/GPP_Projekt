@@ -17,6 +17,7 @@ import javax.swing.SpringLayout;
 import external.SpringUtilities;
 import interfaces.IPersonDataList;
 import interfaces.IValidatedList;
+import interfaces.IValidator;
 import java.awt.Component;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -27,11 +28,12 @@ import javax.swing.JOptionPane;
  * @version 27-Nov-2013
  */
 public class PersonDataList extends JScrollPane implements IPersonDataList {
+    private final IValidator validator;
     
-    private int width;
-    private int height;
-    private String editButtonTip;
-    private String deleteButtonTip;
+    private final int width;
+    private final int height;
+    private final String editButtonTip;
+    private final String deleteButtonTip;
     
     private ArrayList<HashMap<PersonData, String>> persons;
     private JPanel panel;
@@ -43,11 +45,17 @@ public class PersonDataList extends JScrollPane implements IPersonDataList {
     
     /**
      * Constructor for the PersonDataList class
+     * @param validator
+     * @param width
+     * @param height
+     * @param editButtonTip
+     * @param deleteButtonTip
      */
-    public PersonDataList (int width, int height, String editButtonTip, 
-            String deleteButtonTip) {
+    public PersonDataList (IValidator validator, int width, int height, 
+            String editButtonTip, String deleteButtonTip) {
         super(VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_NEVER);
         panel = new JPanel();
+        this.validator = validator;
         
         this.width = width;
         this.height = height;
@@ -71,9 +79,9 @@ public class PersonDataList extends JScrollPane implements IPersonDataList {
      * Returns whether all fields on the given person are valid
      * @return 
      */
-    private boolean verifyPerson(HashMap<PersonData, String> person) {
+    private boolean verifyPerson(HashMap<PersonData, String> person) throws IValidator.NoValidatorException {
         for (PersonData field : person.keySet()) {
-            if (!new Validator().validate(field, person.get(field))) {
+            if (!validator.validate(field, person.get(field))) {
                 return false;
             }
         }
@@ -97,19 +105,24 @@ public class PersonDataList extends JScrollPane implements IPersonDataList {
         
         JLabel lineLabel = new JLabel(""+persons.size());
         JLabel nameLabel = new JLabel(person.get(PersonData.NAME));
-
-        boolean verified = verifyPerson(person);
         
-        JLabel statusLabel;
-        if (verified) {
-            ImageIcon icon = Utils.getIcon("images/okaystatus.png");
-            statusLabel = new JLabel(icon);
-            statusLabel.setToolTipText("All fields verified!");
-        } else {
-            ImageIcon icon = Utils.getIcon("images/notokaystatus.png");
-            statusLabel = new JLabel(icon);
-            statusLabel.setToolTipText("Some fields are invalid!");
+        // Prepare the status label for this person
+        String iconPath;
+        String tooltip;
+        try {
+            if (verifyPerson(person)) {
+                iconPath = "images/okaystatus.png";
+                tooltip = "Alle felter godkendt";
+            } else {
+                iconPath = "images/notokaystatus.png";
+                tooltip = "Der er ugyldige felter!";
+            }
+        } catch (IValidator.NoValidatorException ex) {
+            iconPath = "images/warningstatus.png";
+            tooltip = validator.getNoValidatorTip();
         }
+        JLabel statusLabel = new JLabel(Utils.getIcon(iconPath));
+        statusLabel.setToolTipText(tooltip);
 
         JButton editButton = new JButton(Utils.getIcon("images/editicon.png"));
         editButton.addActionListener(new ActionListener() {

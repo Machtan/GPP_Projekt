@@ -2,6 +2,7 @@ package classes;
 
 //import interfaces.IValidator;
 
+import interfaces.IValidatable;
 import interfaces.IValidator;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -57,7 +58,7 @@ public class Validator implements IValidator {
     }
     
     @Override
-    public <T> boolean validate(T field, String value) {
+    public boolean validate(IValidatable field, String value) throws IValidator.NoValidatorException {
         if (PersonData.class.isInstance(field)) {
             switch((PersonData)field) {
                 case NAME: {
@@ -69,11 +70,16 @@ public class Validator implements IValidator {
                 case NATIONALITY: {
                     return validateNationality(value);
                 }   
-                default: return false;
             }
-        } else {
-            return false;
         }
+        // If it cannot be validated, tell the programmer
+        throw new IValidator.NoValidatorException(field); 
+    }
+
+    @Override
+    public String getNoValidatorTip() {
+        return "Feltet kan ikke valideres. \n"+
+                "Underret venligst systemadministratoren om dette.";
     }
     
 }

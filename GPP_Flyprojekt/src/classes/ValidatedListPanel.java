@@ -112,8 +112,12 @@ public class ValidatedListPanel extends JPanel implements IValidatedList {
         }
         
         scrollPane.setViewportView(panel);
-        scrollPane.setMaximumSize(new Dimension(width, height));
-        add(scrollPane);
+        if (panel.getPreferredSize().height < height) { // If everything fits:
+            scrollPane.setMaximumSize(new Dimension(width, height));
+        } else { // If everything doesn't fit:
+            scrollPane.setPreferredSize(new Dimension(width, height));
+        }
+        this.add(scrollPane);
         this.setPreferredSize(new Dimension(width, height));        
     }
     

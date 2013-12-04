@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -17,17 +19,40 @@ import javax.swing.ImageIcon;
  */
 public class Utils {
     /**
-     * Joins a list of strings by a given separator.
-     * If a list of objects is passed, their .toString() method will be used.
-     * @param arr The array to join
+     * Joins a Collection of objects by a given separator.
+     * The objects are represented by their toString() method
+     * @param <T> Anything with a toString method
+     * @param arr The Collection to join
      * @param separator The separator string
      * @return A string with the joined elements
      */
-    public static <T> String joinList (ArrayList<T> arr, String separator) {
+    public static <T> String joinList (Collection<T> arr, String separator) {
         StringBuilder sb=new StringBuilder();
+        Iterator iter = arr.iterator();
+        
         int lastIndex = arr.size() - 1;
-        for(int i = 0; i < arr.size(); i++) {
-            String s = arr.get(i).toString();
+        int i = 0;
+        while (iter.hasNext()) {
+            String s = iter.next().toString();
+            s = (i == lastIndex)? s: s+separator;
+            sb.append(s);
+            i++;
+        }
+        return sb.toString();
+    }
+    
+    /**
+     * Same as above, just with arrays instead of array lists
+     * @param <T>
+     * @param arr
+     * @param separator
+     * @return 
+     */
+    public static <T> String joinList(T[] arr, String separator) {
+        StringBuilder sb=new StringBuilder();
+        int lastIndex = arr.length - 1;
+        for(int i = 0; i < arr.length; i++) {
+            String s = arr[i].toString();
             s = (i == lastIndex)? s: s+separator;
             sb.append(s);
         }

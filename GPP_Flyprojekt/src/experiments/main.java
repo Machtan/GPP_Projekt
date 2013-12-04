@@ -2,7 +2,6 @@ package experiments;
 
 import classes.PersonData;
 import classes.PersonDataList;
-import classes.PersonEditor;
 import classes.ReservationData;
 import classes.ReservationEditor;
 import java.util.ArrayList;
@@ -77,16 +76,13 @@ public class main {
         //frame.add(pane2, "South");
         
         //------------------
-        final PersonDataList pdl = new PersonDataList(350,500,"Redigér Passager", 
+        final PersonDataList pdl = new PersonDataList(new Validator(), 350,500,"Redigér Passager", 
                 "Slet Passager");
         pdl.addPerson(patrick);
         pdl.addPerson(stinus);
         
-        PersonEditor editor = new PersonEditor(300,300);
-        pdl.setEditor(editor);
         
         frame.add(pdl, "West");
-        frame.add(editor, "East");
         
         frame.add(new JLabel("TESTING"), "North");
         
