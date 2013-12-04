@@ -81,6 +81,13 @@ public class Seating implements ISeating {
         if(getSeatFree(seat))
             isSeatChosen.put(seat,true);
     }
+    
+    @Override
+    public void removeChosen(Point seat)
+    {
+        if(getSeatChosen(seat))
+            isSeatChosen.remove(seat);
+    }
 
     @Override
     public void changeTakenToChosen(ArrayList<Point> seats)

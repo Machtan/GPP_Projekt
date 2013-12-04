@@ -69,52 +69,79 @@ public class SeatChooser extends JPanel implements ISeatChooser
     
     private void onMouseClicked(MouseEvent e) 
     {
-        int i = e.getX()/seatSize, j = e.getY()/seatSize;
-	if (indenfor(i, j))
-        {
-            seating.setChosen(new Point());
-            repaint();
-        }
-    }
-    
-    private void choseSeat(Point seat)
-    {
-        for(int seatNr = 0 ; seatNr < seatingHandler.getChosenSeats().size() ; seatNr++)
-            if (seatingHandler.getChosenSeats().get(seatNr).x == seat.x && 
-                    seatingHandler.getChosenSeats().get(seatNr).y == seat.y)
-            {
-                seatingHandler.setFree(seat);
-                return;
-            }
+        Point clickPosition = new Point(e.getX(),e.getY());
+	if (indenfor(clickPosition))
+            choseSeat(positionToSeat.get(clickToSeatPosition(clickPosition)));
         
-        if (seatingHandler.getChosenSeats().size() < numberOfSeats)
-        {
-            seatingHandler.setChosen(seat);
-            Point TMPseat = seat;
-            int TMPnumberOfSeats = seatingHandler.getChosenSeats().size();
-            while(numberOfSeats > seatingHandler.getChosenSeats().size())
-            {
-                TMPseat.x--;
-                seatingHandler.setChosen(TMPseat);
-                if(TMPnumberOfSeats == seatingHandler.getChosenSeats().size())
-                    break;
-                TMPnumberOfSeats = seatingHandler.getChosenSeats().size();
-            }
-            while(numberOfSeats > seatingHandler.getChosenSeats().size())
-            {
-                TMPseat.x++;
-                seatingHandler.setChosen(TMPseat);
-                if(TMPnumberOfSeats == seatingHandler.getChosenSeats().size())
-                    break;
-                TMPnumberOfSeats = seatingHandler.getChosenSeats().size();
-            }
-        }
+        repaint();
     }
     
-    private boolean indenfor(int i, int j) 
+    //test if the click is inside the SeatChocser
+    private boolean indenfor(Point clickPosition) 
     { 
         //denne her skal tjekke om man har tryket paa en at knaperne/plaserne
         return 0 <= i && i < cols && 0 <= j && j < rows; 
+    }
+    
+    //get the position of the seat closet to the click position
+    private Point clickToSeatPosition(Point clickPosition)
+    {
+        Iterator<Point> iter = positionToSeat.keySet().iterator();
+        Point seatPosition = iter.next();
+        while(iter.hasNext())
+        {
+            Point iterPoint = iter.next();
+            if(Math.sqrt(Math.pow((clickPosition.x - iterPoint.x),2)+
+                    Math.pow((clickPosition.y - iterPoint.y),2)) < 
+                    Math.sqrt(Math.pow((clickPosition.x - seatPosition.x),2)+
+                    Math.pow((clickPosition.y - seatPosition.y),2)))
+                seatPosition = iterPoint;
+                
+        }
+        
+        return seatPosition;
+    }
+    
+    //chose one or multibel seats
+    private void choseSeat(Point seat)
+    {
+        //if you click on a seat you have chosen, then unchose it
+        for(Point seatNr : seating.getChosenSeats())
+        {
+            if (seatNr.x == seat.x && 
+                    seatNr.y == seat.y)
+            {
+                seating.removeChosen(seat);
+                return;
+            }
+        }
+        
+        //chose a seat if more seats is needet
+        if (seating.getChosenSeats().size() < numberOfSeats)
+        {
+            seating.setChosen(seat);
+            
+            //chose seats in same row
+            Point TMPseat = seat;
+            int TMPnumberOfSeats = seating.getChosenSeats().size();
+            while(numberOfSeats > seating.getChosenSeats().size())
+            {
+                TMPseat.x--;
+                seating.setChosen(TMPseat);
+                if(TMPnumberOfSeats == seating.getChosenSeats().size())
+                    break;
+                TMPnumberOfSeats = seating.getChosenSeats().size();
+            }
+            TMPseat = seat;
+            while(numberOfSeats > seating.getChosenSeats().size())
+            {
+                TMPseat.x++;
+                seating.setChosen(TMPseat);
+                if(TMPnumberOfSeats == seating.getChosenSeats().size())
+                    break;
+                TMPnumberOfSeats = seating.getChosenSeats().size();
+            }
+        }
     }
 
     @Override
@@ -125,6 +152,7 @@ public class SeatChooser extends JPanel implements ISeatChooser
         //paint text for how many free seats ther is
         
         //paint a pikture of the airplane
+        g.drawImage(Utils.getIcon(imgpath), 0, 0, this);
         
         //Paint all the seats in difrint colors: red = taken, green = free, blue = chosen.
         Iterator<Point> iter = seating.getSeatIterator();

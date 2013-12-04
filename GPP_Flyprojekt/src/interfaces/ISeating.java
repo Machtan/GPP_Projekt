@@ -23,6 +23,7 @@ public interface ISeating {
     int getNumberOfFreeSeats();
     
     void setChosen(Point seat); // temporary
+    void removeChosen(Point seat); // temporary
     
     void changeTakenToChosen(ArrayList<Point> seats); // Used when a reservation
     // is loaded to change 'taken' seats to the 'chosen' state.
