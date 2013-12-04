@@ -5,22 +5,26 @@ import interfaces.IValidatedList;
 import interfaces.IValidator;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import static javax.swing.ScrollPaneConstants.*;
 
 /**
  * The ValidatedListPanel class <More docs goes here>
  * @author Jakob Lautrup Nysom (jaln@itu.dk)
  * @version 03-Dec-2013
  */
-public class ValidatedListPanel extends JScrollPane implements IValidatedList {
+public class ValidatedListPanel extends JPanel implements IValidatedList {
     
     protected IValidator validator;
     protected final HashMap<IValidatable, JTextField> textFields;
+    protected final HashMap<IValidatable, StatusLabel> labels;
     protected JPanel panel;
+    protected JScrollPane scrollPane;
     private final int width;
     private final int height;
     private final int SCRPAD = 16; // How much padding should be left for the scrollbar
@@ -52,13 +56,15 @@ public class ValidatedListPanel extends JScrollPane implements IValidatedList {
      */
     public ValidatedListPanel (IValidator validator, int width, int height, 
             IValidatable... fields) {
-        super(VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_NEVER);
+        super();
+        scrollPane = new JScrollPane(VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_NEVER);
         
         this.width = width;
         this.height = height;
         this.validator = validator;
         
         textFields = new HashMap<IValidatable, JTextField>();
+        labels = new HashMap<IValidatable, StatusLabel>();
         initComponents(fields);
         
     }
@@ -73,6 +79,7 @@ public class ValidatedListPanel extends JScrollPane implements IValidatedList {
         panel.setLayout(new GridLayout(0, 1));
         
         for (IValidatable fieldName : fields) {
+            // Ready the top panel and some useful dimensions
             JPanel topPanel = new JPanel();
             topPanel.setLayout(null);
             int maxWidth = width-SCRPAD;
@@ -85,25 +92,28 @@ public class ValidatedListPanel extends JScrollPane implements IValidatedList {
 
             JTextField valueField = new JTextField("");
             valueField.getDocument().putProperty("filterNewlines", Boolean.TRUE);
-
             valueField.setMaximumSize(new Dimension(maxWidth, LABH));
 
-            textFields.put(fieldName, valueField);
+            textFields.put(fieldName, valueField); 
 
             StatusLabel statusLabel = new StatusLabel(valueField, fieldName, validator);
-            topPanel.add(statusLabel);
             statusLabel.setBounds(maxWidth - XPAD - ICONW, YPAD, ICONW, LABH);
-
+            topPanel.add(statusLabel);
+            
+            labels.put(fieldName, statusLabel);
+            
             valueField.addFocusListener(statusLabel);
             
+            // Ready the GUI
             topPanel.validate();
             topPanel.repaint();
             panel.add(topPanel);
             panel.add(valueField);
         }
         
-        this.setViewportView(panel);
-        this.setMaximumSize(new Dimension(width, height));
+        scrollPane.setViewportView(panel);
+        scrollPane.setMaximumSize(new Dimension(width, height));
+        add(scrollPane);
         this.setPreferredSize(new Dimension(width, height));        
     }
     
@@ -155,6 +165,31 @@ public class ValidatedListPanel extends JScrollPane implements IValidatedList {
             }
         }
         return true;
+    }
+    
+    /**
+     * Returns whether all data in the list is valid
+     * @return 
+     */
+    @Override
+    public boolean areFieldsValid() {
+        for (IValidatable key : labels.keySet()) {
+            if (!labels.get(key).verifyField()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public IValidatable[] getInvalidFields() {
+        ArrayList<IValidatable> fields = new ArrayList<IValidatable>();
+        for (IValidatable key : labels.keySet()) {
+            if (!labels.get(key).verifyField()) {
+                fields.add(key);
+            }
+        }
+        return fields.toArray(new IValidatable[fields.size()]);
     }
     
 }

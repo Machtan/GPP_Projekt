@@ -4,6 +4,7 @@ import classes.PersonData;
 import classes.PersonDataList;
 import classes.PersonEditor;
 import classes.ReservationData;
+import classes.ReservationEditor;
 import java.util.ArrayList;
 import classes.Utils.*;
 import classes.ValidatedListPanel;
@@ -213,8 +214,13 @@ public class main {
         frame.setVisible(true);
     }
     
+    public static void testReservationEditor() {
+        new ReservationEditor();
+    }
+    
     public static void main (String[] args) throws Exception {
         //testValidatableLists();
-        testPersonDataList();
+        //testPersonDataList();
+        testReservationEditor();
     }  
 } 

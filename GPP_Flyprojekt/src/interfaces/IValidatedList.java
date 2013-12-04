@@ -33,5 +33,17 @@ public interface IValidatedList {
      * @return 
      */
     public boolean isEmpty();
+    
+    /**
+     * Returns whether all fields in the list are valid
+     * @return 
+     */
+    public boolean areFieldsValid();
+    
+    /**
+     * Returns an array of the fields in the list that are invalid
+     * @return 
+     */
+    public IValidatable[] getInvalidFields();
 
 }
