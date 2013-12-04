@@ -15,6 +15,7 @@ public class Seating implements ISeating {
 
     private HashMap<Point, Point> seatPositions; //1 is (row, col) : 2 is (x, y)
     private HashMap<Point, Boolean> isSeatFree;
+    private HashMap<Point, Boolean> isSeatChosen;
     private AirplaneSeat[] seats;
 
     public Seating(IFlight flight) {
@@ -34,18 +35,27 @@ public class Seating implements ISeating {
     }
     
     @Override
-    public Point getSeatPosition(int row, int column) throws IndexOutOfBoundsException {
-        if (seatPositions.keySet().contains(new Point(row, column))) {
-            return seatPositions.get(new Point(row, column));
+    public Point getSeatPosition(Point seat) throws IndexOutOfBoundsException {
+        if (seatPositions.keySet().contains(seat)) {
+            return seatPositions.get(seat);
         } else {
             throw new IndexOutOfBoundsException("No seat at the given placement");
         }
     }
     
     @Override
-    public boolean getSeatFree(int row, int column) throws IndexOutOfBoundsException {
-        if (seatPositions.keySet().contains(new Point(row, column))) {
-            return isSeatFree.get(new Point(row, column));
+    public boolean getSeatFree(Point seat) throws IndexOutOfBoundsException {
+        if (seatPositions.keySet().contains(seat)) {
+            return isSeatFree.get(seat);
+        } else {
+            throw new IndexOutOfBoundsException("No seat at the given placement");
+        }
+    }
+    
+     @Override
+    public boolean getSeatChosen(Point seat) throws IndexOutOfBoundsException {
+        if (seatPositions.keySet().contains(seat)) {
+            return isSeatChosen.get(seat);
         } else {
             throw new IndexOutOfBoundsException("No seat at the given placement");
         }
@@ -57,8 +67,7 @@ public class Seating implements ISeating {
     }
     
     // --- the old ISeatingHandler ---
-    
-    private ArrayList<Point> chosenSeats;
+    // the next methos use the privios methos to giv data in better ways
 
     @Override
     public int getNumberOfFreeSeats()
@@ -69,8 +78,8 @@ public class Seating implements ISeating {
     @Override
     public void setChosen(Point seat)
     {
-        if(getSeatFree(seat.x,seat.y))
-            chosenSeats.add(seat);
+        if(getSeatFree(seat))
+            isSeatChosen.put(seat,true);
     }
 
     @Override
@@ -78,10 +87,10 @@ public class Seating implements ISeating {
     {
         for(Point seat : seats)
         {
-            if(getSeatFree(seat.x,seat.y))
+            if(getSeatFree(seat))
                 throw new UnsupportedOperationException("Fail not supported yet.");
             
-            chosenSeats.add(seat);
+            isSeatChosen.put(seat,true);
         }
     }
 
@@ -93,7 +102,7 @@ public class Seating implements ISeating {
         while(iter.hasNext())
         {
             Point iterPoint = iter.next();
-            if(!getSeatFree(iterPoint.x,iterPoint.y))
+            if(!getSeatFree(iterPoint))
                 takenSeats.add(iterPoint);
         }
         
@@ -108,7 +117,7 @@ public class Seating implements ISeating {
         while(iter.hasNext())
         {
             Point iterPoint = iter.next();
-            if(getSeatFree(iterPoint.x,iterPoint.y))
+            if(getSeatFree(iterPoint))
                 freeSeats.add(iterPoint);
         }
         return freeSeats;
@@ -117,6 +126,14 @@ public class Seating implements ISeating {
     @Override
     public ArrayList<Point> getChosenSeats()
     {
+        ArrayList<Point> chosenSeats = new ArrayList<Point>();
+        Iterator<Point> iter = getSeatIterator();
+        while(iter.hasNext())
+        {
+            Point iterPoint = iter.next();
+            if(getSeatChosen(iterPoint))
+                chosenSeats.add(iterPoint);
+        }
         return chosenSeats;
     }
 }

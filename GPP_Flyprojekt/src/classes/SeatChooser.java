@@ -13,6 +13,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import javax.swing.JPanel;
 
 /**
@@ -24,7 +25,7 @@ import javax.swing.JPanel;
 public class SeatChooser extends JPanel implements ISeatChooser
 {
     private IFlight flight;
-    private ISeatingHandler seatingHandler;
+    private ISeating seating;
     int numberOfSeats = 1;
     int seatSize = 12;
     private HashMap<Point, Point> positionToSeat;
@@ -56,14 +57,13 @@ public class SeatChooser extends JPanel implements ISeatChooser
     public void setFlight(IFlight flight)
     {
         this.flight = flight;
-        this.seatingHandler = new SeatingHandler(flight);
-        for(Point seat : seatingHandler.getFreeSeats())
+        this.seating = new Seating(flight);
+        
+        Iterator<Point> iter = seating.getSeatIterator();
+        while(iter.hasNext())
         {
-            positionToSeat.put(seatingHandler.getSeatPosition(seat), seat);
-        }
-        for(Point seat : seatingHandler.getTakenSeats())
-        {
-            positionToSeat.put(seatingHandler.getSeatPosition(seat), seat);
+            Point iterPoint = iter.next();
+            positionToSeat.put(seating.getSeatPosition(iterPoint), iterPoint);
         }
     }
     
@@ -72,7 +72,7 @@ public class SeatChooser extends JPanel implements ISeatChooser
         int i = e.getX()/seatSize, j = e.getY()/seatSize;
 	if (indenfor(i, j))
         {
-            seatingHandler.setChosen(new Point());
+            seating.setChosen(new Point());
             repaint();
         }
     }
@@ -122,29 +122,25 @@ public class SeatChooser extends JPanel implements ISeatChooser
     {
         super.paintComponent(g); //To change body of generated methods, choose Tools | Templates.
         
+        //paint text for how many free seats ther is
         
-        for(Point seat : seatingHandler.getSeatsPositions(seatingHandler.getTakenSeats()))
+        //paint a pikture of the airplane
+        
+        //Paint all the seats in difrint colors: red = taken, green = free, blue = chosen.
+        Iterator<Point> iter = seating.getSeatIterator();
+        while(iter.hasNext())
         {
+            Point iterPoint = iter.next();
+            
             g.setColor(Color.red);
-            g.fillRect(seat.x*seatSize+1 - seatSize/2, seat.y*seatSize+1 - seatSize/2, seatSize-1, seatSize-1);
+            if(seating.getSeatFree(iterPoint))
+                g.setColor(Color.green);
+            if(seating.getSeatChosen(iterPoint))
+                g.setColor(Color.blue);
+            
+            g.fillRect(seating.getSeatPosition(iterPoint).x*seatSize+1 - seatSize/2, seating.getSeatPosition(iterPoint).y*seatSize+1 - seatSize/2, seatSize-1, seatSize-1);
             g.setColor(Color.black);
-            g.drawRect(seat.x*seatSize+1 - seatSize/2, seat.y*seatSize+1 - seatSize/2, seatSize-1, seatSize-1);
-        }
-        
-        for(Point seat : seatingHandler.getSeatsPositions(seatingHandler.getFreeSeats()))
-        {
-            g.setColor(Color.green);
-            g.fillRect(seat.x*seatSize+1 - seatSize/2, seat.y*seatSize+1 - seatSize/2, seatSize-1, seatSize-1);
-            g.setColor(Color.black);
-            g.drawRect(seat.x*seatSize+1 - seatSize/2, seat.y*seatSize+1 - seatSize/2, seatSize-1, seatSize-1);
-        }
-        
-        for(Point seat : seatingHandler.getSeatsPositions(seatingHandler.getChosenSeats()))
-        {
-            g.setColor(Color.blue);
-            g.fillRect(seat.x*seatSize+1 - seatSize/2, seat.y*seatSize+1 - seatSize/2, seatSize-1, seatSize-1);
-            g.setColor(Color.black);
-            g.drawRect(seat.x*seatSize+1 - seatSize/2, seat.y*seatSize+1 - seatSize/2, seatSize-1, seatSize-1);
+            g.drawRect(seating.getSeatPosition(iterPoint).x*seatSize+1 - seatSize/2, seating.getSeatPosition(iterPoint).y*seatSize+1 - seatSize/2, seatSize-1, seatSize-1);
         }
     }
 
@@ -153,34 +149,24 @@ public class SeatChooser extends JPanel implements ISeatChooser
     {
         try
         {
-            seatingHandler.changeTakenToChosen(seats);
+            seating.changeTakenToChosen(seats);
         }
         catch (UnsupportedOperationException e)
         {
-            System.out.println("her burte man nok gåre noget ved den");
+            System.out.println("here is a error i am no sure how to conter");
         }
     }
 
     @Override
     public ArrayList<Point> getSeats(int numberOfSeats)
     {
-        if(seatingHandler.getChosenSeats().size() == numberOfSeats)
-            return seatingHandler.getChosenSeats();
+        if(seating.getChosenSeats().size() == numberOfSeats)
+            return seating.getChosenSeats();
         else
             throw new UnsupportedOperationException("Fail not supported yet.");
             //throw new NotEnoughSeatsException();
         //return null;
     }
-    
-    /*
-    public class NotEnoughSeatsException extends Exception 
-    {
-        public NotEnoughSeatsException() 
-        {
-            super("Not enough seats chosen!");
-        }
-    }
-    */
 
     @Override
     public void setRequestedSeats(int number)

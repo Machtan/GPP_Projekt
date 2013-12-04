@@ -12,8 +12,9 @@ import java.util.Iterator;
  * @version 22-Nov-2013
  */
 public interface ISeating {
-    public Point getSeatPosition(int row, int column);
-    public boolean getSeatFree(int row, int column); // Whether a seat is taken    
+    public Point getSeatPosition(Point seat);
+    public boolean getSeatFree(Point seat); // Whether a seat is taken  
+    public boolean getSeatChosen(Point seat); // Whether a seat is chosen  
     public Iterator<Point> getSeatIterator();  // Allows for iterating over all seat 
     // positions
     
