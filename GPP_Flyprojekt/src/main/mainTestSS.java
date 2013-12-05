@@ -26,11 +26,11 @@ public class mainTestSS
         database.connect();
         Flight fligt;
         fligt = database.getFlights()[0];
-        Reservation res = fligt.getReservations()[0];
-        if(res == null)
-            return;
         SeatChooser vis = new SeatChooser(fligt);
+        
+        vis.setRequestedSeats(2);
         JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         frame.add(vis);
         frame.pack();
         frame.setVisible(true);

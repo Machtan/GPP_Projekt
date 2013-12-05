@@ -82,7 +82,6 @@ public class SeatChooser extends JPanel implements ISeatChooser
     private void onMouseClicked(MouseEvent e) 
     {
         Point clickPosition = new Point(e.getX(),e.getY());
-        System.out.println("Point of click position; "+ clickPosition);
 	if (indenfor(clickPosition))
             choseSeat(positionToSeat.get(clickToSeatPosition(clickPosition)));
         
@@ -122,16 +121,12 @@ public class SeatChooser extends JPanel implements ISeatChooser
                 seatPosition = iterPoint;
                 
         }
-        
-        System.out.println("Point of seat position; "+ seatPosition);
         return seatPosition;
     }
     
     //chose one or multibel seats
     private void choseSeat(Point seat)
     {
-        System.out.println("Point of seat index; "+ seat);
-        
         //if you click on a seat you have chosen, then unchose it
         for(Point seatNr : seating.getChosenSeats())
         {
@@ -146,24 +141,29 @@ public class SeatChooser extends JPanel implements ISeatChooser
         //chose a seat if more seats is needet
         if (seating.getChosenSeats().size() < numberOfSeats)
         {
-            seating.setChosen(seat);
+            if(seating.getSeatFree(seat))
+                seating.setChosen(seat);
+            else
+                return;
             
             //chose seats in same row
-            Point TMPseat = seat;
+            Point TMPseat = (Point) seat.clone();
             int TMPnumberOfSeats = seating.getChosenSeats().size();
             while(numberOfSeats > seating.getChosenSeats().size())
             {
                 TMPseat.x--;
-                seating.setChosen(TMPseat);
+                if(seating.getSeatExists(TMPseat))
+                    seating.setChosen(TMPseat);
                 if(TMPnumberOfSeats == seating.getChosenSeats().size())
                     break;
                 TMPnumberOfSeats = seating.getChosenSeats().size();
             }
-            TMPseat = seat;
+            TMPseat = (Point) seat.clone();
             while(numberOfSeats > seating.getChosenSeats().size())
             {
                 TMPseat.x++;
-                seating.setChosen(TMPseat);
+                if(seating.getSeatExists(TMPseat))
+                    seating.setChosen(TMPseat);
                 if(TMPnumberOfSeats == seating.getChosenSeats().size())
                     break;
                 TMPnumberOfSeats = seating.getChosenSeats().size();

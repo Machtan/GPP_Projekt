@@ -5,7 +5,9 @@ import interfaces.ISeating;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 /**
  *
@@ -42,7 +44,7 @@ public class Seating implements ISeating {
         if (seatPositions.keySet().contains(seat)) {
             return seatPositions.get(seat);
         } else {
-            throw new IndexOutOfBoundsException("No seat at the given placement");
+            throw new IndexOutOfBoundsException("No seat at the given placement: " + seat.toString());
         }
     }
     
@@ -55,18 +57,26 @@ public class Seating implements ISeating {
         }
     }
     
-     @Override
+    @Override
     public boolean getSeatChosen(Point seat) throws IndexOutOfBoundsException {
         if (seatPositions.keySet().contains(seat)) {
             return isSeatChosen.get(seat);
         } else {
-            throw new IndexOutOfBoundsException("No seat at the given placement");
+            throw new IndexOutOfBoundsException("No seat at the given placement: " + seat.toString());
         }
+    }
+     
+    @Override
+    public boolean getSeatExists(Point seat) {
+        return seatPositions.keySet().contains(seat);
     }
 
     @Override
     public Iterator<Point> getSeatIterator() {
-        return seatPositions.keySet().iterator();
+        HashSet<Point> keySet = new HashSet<Point>();
+        for(Point key : seatPositions.keySet())
+            keySet.add((Point) key.clone());
+        return keySet.iterator();
     }
     
     // --- the old ISeatingHandler ---
@@ -138,6 +148,14 @@ public class Seating implements ISeating {
     {
         ArrayList<Point> chosenSeats = new ArrayList<Point>();
         Iterator<Point> iter = getSeatIterator();
+        
+        /*System.out.println("Testing Iterator:");
+        Iterator<Point> iter2 = getSeatIterator();
+        while (iter2.hasNext()) {
+            System.out.println("- "+iter2.next());
+        }
+        System.out.println("DONE");*/// <TODO> permanent fixing the (1, 0) => (-1, 0) error 
+        
         while(iter.hasNext())
         {
             Point iterPoint = iter.next();
