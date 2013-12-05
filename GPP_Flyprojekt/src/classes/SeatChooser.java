@@ -11,9 +11,14 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 /**
@@ -29,11 +34,17 @@ public class SeatChooser extends JPanel implements ISeatChooser
     int numberOfSeats = 1;
     int seatSize = 12;
     private HashMap<Point, Point> positionToSeat;
+    URL url;
     
     
     public SeatChooser(IFlight flight)
     {
         super();
+        try {
+            url = SeatChooser.class.getClassLoader().getResource("images/Plane.png");
+        } catch (Exception ex) {
+            System.out.println("DU ØDELAGDE MIT PROGRAM DIN LORTE-EXCEPTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        }
         this.addMouseListener(new MouseListener() 
         {
             @Override
@@ -58,6 +69,7 @@ public class SeatChooser extends JPanel implements ISeatChooser
     {
         this.flight = flight;
         this.seating = new Seating(flight);
+        positionToSeat = new HashMap<Point, Point>();
         
         Iterator<Point> iter = seating.getSeatIterator();
         while(iter.hasNext())
@@ -70,6 +82,7 @@ public class SeatChooser extends JPanel implements ISeatChooser
     private void onMouseClicked(MouseEvent e) 
     {
         Point clickPosition = new Point(e.getX(),e.getY());
+        System.out.println("Point of click position; "+ clickPosition);
 	if (indenfor(clickPosition))
             choseSeat(positionToSeat.get(clickToSeatPosition(clickPosition)));
         
@@ -79,8 +92,19 @@ public class SeatChooser extends JPanel implements ISeatChooser
     //test if the click is inside the SeatChocser
     private boolean indenfor(Point clickPosition) 
     { 
-        //denne her skal tjekke om man har tryket paa en at knaperne/plaserne
-        return 0 <= i && i < cols && 0 <= j && j < rows; 
+        try
+        {
+            //denne her skal tjekke om man har tryket paa en at knaperne/plaserne
+            return 0 <= clickPosition.x && 
+                    clickPosition.x < ImageIO.read(url).getWidth() && 
+                    0 <= clickPosition.y && 
+                    clickPosition.y < ImageIO.read(url).getHeight();
+        }
+        catch (IOException ex)
+        {
+            Logger.getLogger(SeatChooser.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
     
     //get the position of the seat closet to the click position
@@ -99,12 +123,15 @@ public class SeatChooser extends JPanel implements ISeatChooser
                 
         }
         
+        System.out.println("Point of seat position; "+ seatPosition);
         return seatPosition;
     }
     
     //chose one or multibel seats
     private void choseSeat(Point seat)
     {
+        System.out.println("Point of seat index; "+ seat);
+        
         //if you click on a seat you have chosen, then unchose it
         for(Point seatNr : seating.getChosenSeats())
         {
@@ -150,9 +177,17 @@ public class SeatChooser extends JPanel implements ISeatChooser
         super.paintComponent(g); //To change body of generated methods, choose Tools | Templates.
         
         //paint text for how many free seats ther is
+        g.drawString("" + seating.getFreeSeats().size() + " of " + (seating.getFreeSeats().size() + seating.getTakenSeats().size()) + " are free", 0, 0);
         
         //paint a pikture of the airplane
-        g.drawImage(Utils.getIcon(imgpath), 0, 0, this);
+        try
+        {
+            g.drawImage(ImageIO.read(url), 0, 0, this);
+        }
+        catch (IOException ex)
+        {
+            Logger.getLogger(SeatChooser.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         //Paint all the seats in difrint colors: red = taken, green = free, blue = chosen.
         Iterator<Point> iter = seating.getSeatIterator();

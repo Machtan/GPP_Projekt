@@ -20,6 +20,8 @@ public class Seating implements ISeating {
 
     public Seating(IFlight flight) {
         seats = flight.getPlane().airplaneLayout.airplaneSeats;
+        isSeatFree = new HashMap<Point, Boolean>();
+        isSeatChosen = new HashMap<Point, Boolean>();
         ArrayList<Point> takenSeats = new ArrayList<Point>();
         for (Reservation res : flight.getReservations()) {
             takenSeats.addAll(res.seats);
@@ -30,6 +32,7 @@ public class Seating implements ISeating {
             Point seatPosition = new Point(seat.positionX, seat.positionY);
             seatPositions.put(seatPlacement, seatPosition);
             isSeatFree.put(seatPlacement, !takenSeats.contains(seatPlacement));
+            isSeatChosen.put(seatPlacement, false);
         }
        
     }
@@ -48,7 +51,7 @@ public class Seating implements ISeating {
         if (seatPositions.keySet().contains(seat)) {
             return isSeatFree.get(seat);
         } else {
-            throw new IndexOutOfBoundsException("No seat at the given placement");
+            throw new IndexOutOfBoundsException("No seat at the given placement: " + seat.toString());
         }
     }
     
@@ -86,7 +89,7 @@ public class Seating implements ISeating {
     public void removeChosen(Point seat)
     {
         if(getSeatChosen(seat))
-            isSeatChosen.remove(seat);
+            isSeatChosen.put(seat,false);
     }
 
     @Override
