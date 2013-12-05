@@ -1,16 +1,13 @@
 package classes;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.UIManager;
 
 /**
  * The Utils class <More docs goes here>
@@ -145,18 +142,21 @@ public class Utils {
      * @param path
      * @return 
      */
-    public static ImageIcon getIcon(String path) {
-        BufferedImage image;
+    public static Icon getIcon(String path) {
         try {
             ClassLoader cl = Utils.class.getClassLoader();
             URL url = cl.getResource(path);
+            
             if (url != null) {
                 ImageIcon icon = new ImageIcon(url, "");
                 return icon;
             } else {
                 System.err.println("Bad file path: "+path);
+                //return UIManager.getIcon("FileView.floppyDriveIcon");
+                return UIManager.getIcon("Tree.leafIcon");
             }
         } catch (Exception ex) {
+            System.out.println("Exception while fetching image @ "+path);
         }
         return null;
     }

@@ -34,6 +34,15 @@ public class Validator implements IValidator {
         return true;
     }
     
+    private static boolean validateCardnumber(String cardNumber) {
+        try {
+            Integer.decode(cardNumber);
+            return true;
+        } catch (NumberFormatException ex) {
+            return false;
+        }
+    }
+    
     /**
      * Returns whether the given name is valid
      * <TODO> This might be the place to check for terror suspects ;)
@@ -71,6 +80,13 @@ public class Validator implements IValidator {
                     return validateNationality(value);
                 }   
             }
+        } else if (ReservationData.class.isInstance(field)) {
+            switch((ReservationData)field) {
+                case CARDNUMBER:
+                    return validateCardnumber(value);
+                case PHONENUMBER:
+                    return validatePhonenumber(value);
+            }
         }
         // If it cannot be validated, tell the programmer
         throw new IValidator.NoValidatorException(field); 
@@ -78,8 +94,17 @@ public class Validator implements IValidator {
 
     @Override
     public String getNoValidatorTip() {
-        return "Feltet kan ikke valideres. \n"+
-                "Underret venligst systemadministratoren om dette.";
+        return "Feltet kan ikke valideres. Kontakt din systemadministrator";
+    }
+
+    public static boolean validatePhonenumber(String value) {
+        value = value.replaceAll(" ", "").replaceAll("[+]", "00");
+        try {
+            Integer.parseInt(value);
+            return true;
+        } catch (NumberFormatException ex) {
+            return false;
+        }
     }
     
 }

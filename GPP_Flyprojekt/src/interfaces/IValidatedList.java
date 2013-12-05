@@ -20,6 +20,14 @@ public interface IValidatedList {
      * @param <T>
      * @param data 
      */
+    public <T extends IValidatable> void addData(HashMap<T, String> data);
+    
+    /**
+     * Clears all fields and overwrites them with the corresponding text in 
+     * the given hashMap
+     * @param <T>
+     * @param data 
+     */
     public <T extends IValidatable> void setData(HashMap<T, String> data);
     
     /**
@@ -39,6 +47,11 @@ public interface IValidatedList {
      * @return 
      */
     public boolean areFieldsValid();
+    
+    /**
+     * Updates all the status labels
+     */
+    public void updateStatus();
     
     /**
      * Returns an array of the fields in the list that are invalid

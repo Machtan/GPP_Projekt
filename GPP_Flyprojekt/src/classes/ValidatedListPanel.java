@@ -140,13 +140,33 @@ public class ValidatedListPanel extends JPanel implements IValidatedList {
      * @param data 
      */
     @Override
-    public <T extends IValidatable> void setData(HashMap<T, String> data) {
+    public <T extends IValidatable> void addData(HashMap<T, String> data) {
         for (IValidatable key : data.keySet()) {
             if (textFields.containsKey(key)) {
                 this.textFields.get(key).setText(data.get(key));
             }
         }
+        updateStatus();
     }
+    
+    /**
+     * Clears all fields and overwrites them with the corresponding text in 
+     * the given hashMap
+     * @param <T> Any IValidatable
+     * @param data A hashmap with new values for the fields
+     */
+    @Override
+    public <T extends IValidatable> void setData(HashMap<T, String> data) {
+        for (IValidatable key : textFields.keySet()) {
+            if (data.containsKey(key)) {
+                this.textFields.get(key).setText(data.get(key));
+            } else {
+                this.textFields.get(key).setText("");
+            }
+        }
+        updateStatus();
+    }
+    
     
     /**
      * Sets the validator responsible for validating the fields of this list
@@ -194,6 +214,13 @@ public class ValidatedListPanel extends JPanel implements IValidatedList {
             }
         }
         return fields.toArray(new IValidatable[fields.size()]);
+    }
+
+    @Override
+    public void updateStatus() {
+        for (IValidatable key : labels.keySet()) {
+            labels.get(key).verifyField();
+        }
     }
     
 }

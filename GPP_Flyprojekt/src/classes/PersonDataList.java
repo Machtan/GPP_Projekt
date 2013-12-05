@@ -35,6 +35,9 @@ public class PersonDataList extends JScrollPane implements IPersonDataList {
     private final String editButtonTip;
     private final String deleteButtonTip;
     
+    final int PAD = 5; // The padding for the grid of components
+    final int SCRPAD = 16; // The padding for the scrollbar
+    
     private ArrayList<HashMap<PersonData, String>> persons;
     private JPanel panel;
     
@@ -92,19 +95,28 @@ public class PersonDataList extends JScrollPane implements IPersonDataList {
      * Updates the layout for the list
      */
     private void updateLayout() {
-        SpringUtilities.makeCompactGrid(panel, persons.size(), 5, 5, 5, 5, 5);
+        SpringUtilities.makeCompactGrid(panel, persons.size(), 5, PAD, PAD, PAD, PAD);
         this.validate();
         this.repaint();
     }
     
     @Override
     public void addPerson(final HashMap<PersonData, String> person) {
+        // Limit the list to 99 persons
+        if (persons.size() == 99) {
+            JOptionPane.showMessageDialog(new JFrame(), 
+                    "Systemet kan ikke tilføje mere end 99 passagerer", 
+                    "Advarsel", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        
         persons.add(person);
         
         ArrayList<Component> lineComps = new ArrayList<Component>();
         
-        JLabel lineLabel = new JLabel(""+persons.size());
+        JLabel lineLabel = new JLabel(String.format("%02d", persons.size()));
         JLabel nameLabel = new JLabel(person.get(PersonData.NAME));
+        nameLabel.setToolTipText(person.get(PersonData.NAME));
         
         // Prepare the status label for this person
         String iconPath;
@@ -144,6 +156,12 @@ public class PersonDataList extends JScrollPane implements IPersonDataList {
         deleteButton.setToolTipText(deleteButtonTip);
         deleteButton.setFocusable(false);
         
+        // Restrict the label
+        int nameLabelWidth = width - editButton.getPreferredSize().width -
+                deleteButton.getPreferredSize().width - 
+                lineLabel.getPreferredSize().width - 
+                statusLabel.getPreferredSize().width - PAD*6 - SCRPAD;
+        
         lineComps.add(lineLabel);
         lineComps.add(nameLabel);
         lineComps.add(statusLabel);
@@ -153,6 +171,9 @@ public class PersonDataList extends JScrollPane implements IPersonDataList {
             panel.add(comp);
         }
         comps.add(lineComps);
+        
+        nameLabel.setPreferredSize(new Dimension(nameLabelWidth, 
+                editButton.getPreferredSize().height)); //Assume the buttons are the highest
         
         updateLayout();
     }
@@ -226,6 +247,7 @@ public class PersonDataList extends JScrollPane implements IPersonDataList {
      * Adds a list of persons to the list and updates the layout
      * @param persons 
      */
+    @Override
     public void addPersons(ArrayList<HashMap<PersonData, String>> persons) {
         for (HashMap<PersonData, String> person : persons) {
             addPerson(person);
@@ -235,5 +257,10 @@ public class PersonDataList extends JScrollPane implements IPersonDataList {
     @Override
     public void setEditor(IValidatedList editor) {
         this.editor = editor;
+    }
+    
+    @Override
+    public ArrayList<HashMap<PersonData, String>> getPersons() {
+        return (ArrayList<HashMap<PersonData, String>>)persons.clone();
     }
 }

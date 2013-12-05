@@ -4,6 +4,7 @@ import classes.PersonData;
 import classes.PersonDataList;
 import classes.ReservationData;
 import classes.ReservationEditor;
+import classes.Utils;
 import java.util.ArrayList;
 import classes.Utils.*;
 import classes.ValidatedListPanel;
@@ -215,8 +216,31 @@ public class main {
     }
     
     public static void main (String[] args) throws Exception {
+        
         //testValidatableLists();
         //testPersonDataList();
         testReservationEditor();
+        // WHY THE FUCK ARENT MY ICONS WORKING ANYMORE !!!! D:
+        /*JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        
+        String[] paths = new String[] {
+            "Plane.png",
+            "images/Plane.png",
+            "/src/images/Plane.png",
+            "images/notokaystatus.png",
+            "images/warningstatus.png",
+            "/images/warningstatus.png"
+        };
+        for (String path : paths) {
+            try {
+                frame.add(new JLabel(Utils.getIcon(path)), "North");
+            } catch (Exception ex) {
+                
+            }
+        }
+        
+        frame.pack();
+        frame.setVisible(true);*/// FUCK THIS :(
     }  
 } 
