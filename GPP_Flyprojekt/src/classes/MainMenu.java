@@ -96,6 +96,7 @@ public class MainMenu extends javax.swing.JFrame {
         FlightBrowser menu = new FlightBrowser();
         menu.pack();
         menu.setVisible(true);
+        dispose();
         
     }//GEN-LAST:event_showFlightBrowserButtonActionPerformed
 

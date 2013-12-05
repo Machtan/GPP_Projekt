@@ -1,21 +1,23 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package classes;
 
 import interfaces.ISeating;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Point;
-import java.util.ArrayList;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.text.NumberFormat;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 
 /**
  *
- * @author patr0805
+ * @author Patrick Evers Bjørkman
  */
 public class FlightBrowser extends javax.swing.JFrame {
 
@@ -31,12 +33,10 @@ public class FlightBrowser extends javax.swing.JFrame {
         HashSet<String> origins = new HashSet<String>();
         HashSet<String> destinations = new HashSet<String>();
         for (Flight flight : flights) {
-            if (!origins.contains(flight.getOrigin()))
-            {
+            if (!origins.contains(flight.getOrigin())) {
                 origins.add(flight.getOrigin());
             }
-            if (!destinations.contains(flight.getDestination()))
-            {
+            if (!destinations.contains(flight.getDestination())) {
                 destinations.add(flight.getDestination());
             }
         }
@@ -47,16 +47,14 @@ public class FlightBrowser extends javax.swing.JFrame {
         Arrays.sort(destinationsArray);
         searchOriginComboBox.removeAllItems();
         searchOriginComboBox.addItem("All");
-        for (String item : originsArray)
-        {
-           searchOriginComboBox.addItem(item);
+        for (String item : originsArray) {
+            searchOriginComboBox.addItem(item);
         }
         searchDestinationComboBox.removeAllItems();
         searchDestinationComboBox.addItem("All");
-        for (String item : destinationsArray)
-             {
-                 searchDestinationComboBox.addItem(item);
-             }
+        for (String item : destinationsArray) {
+            searchDestinationComboBox.addItem(item);
+        }
         UpdateTable();
     }
 
@@ -68,7 +66,7 @@ public class FlightBrowser extends javax.swing.JFrame {
             }
         }
         for (Flight flight : flights) {
-            if ((flight.getID() != "" && !flight.getID().contains(searchFlightIDTextField.getText()))) {
+            if ((flight.getID() != "" && !flight.getID().toLowerCase().contains(searchFlightIDTextField.getText()))) {
                 continue;
             }
             if ((searchOriginComboBox.getSelectedIndex() != 0 && !flight.getOrigin().contains((String) searchOriginComboBox.getSelectedItem()))) {
@@ -90,7 +88,7 @@ public class FlightBrowser extends javax.swing.JFrame {
             int numberOfFreeSeats = 0;
             while (seats.hasNext()) {
                 Point seatPoint = seats.next();
-                if (!seating.getSeatFree(seatPoint.x,seatPoint.y)) {
+                if (!seating.getSeatFree(seatPoint.x, seatPoint.y)) {
                     numberOfFreeSeats++;
                 }
             }
@@ -105,11 +103,10 @@ public class FlightBrowser extends javax.swing.JFrame {
         }
     }
 
-    void initComponents2()
-    {
+    void initComponents() {
         setTitle("Flightbrowser");
         setName("flightFrame"); // NOI18N
-        titleLabel = new javax.swing.JLabel();
+        setMinimumSize(new Dimension(950, 600));
         searchPanel = new javax.swing.JPanel();
         searchFlightIDTextField = new javax.swing.JTextField();
         searchFlightIDLabel = new javax.swing.JLabel();
@@ -123,149 +120,14 @@ public class FlightBrowser extends javax.swing.JFrame {
         searchArrivalLabel = new javax.swing.JLabel();
         searchArrivalTextField = new javax.swing.JTextField();
         searchMinSeatsLabel = new javax.swing.JLabel();
-        searchMinSeatsTextField = new javax.swing.JTextField();
+        searchMinSeatsTextField = new javax.swing.JFormattedTextField(NumberFormat.getNumberInstance());
         clearSearchButton = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         flightTable = new javax.swing.JTable();
         showReservationButton = new javax.swing.JButton();
-        jPanel1 = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
+        actionsPanel = new javax.swing.JPanel();
+        actionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Actions"));
         returnToMainMenuButton = new javax.swing.JButton();
-        jPanel3 = new javax.swing.JPanel();
-         searchPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Search"));
-        searchPanel.setToolTipText("");
-        searchPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-        searchPanel.add(searchFlightIDTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(82, 18, 264, -1));
-
-        searchFlightIDLabel.setText("FlightID");
-        searchPanel.add(searchFlightIDLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(14, 21, -1, -1));
-
-        searchButton.setText("Search");
-        searchButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchButtonActionPerformed(evt);
-            }
-        });
-        searchPanel.add(searchButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 78, -1, -1));
-
-        searchOriginLabel.setText("Origin");
-        searchPanel.add(searchOriginLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(14, 51, -1, -1));
-
-        searchOriginComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "All" }));
-        searchOriginComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchOriginComboBoxActionPerformed(evt);
-            }
-        });
-        searchPanel.add(searchOriginComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(82, 47, 264, -1));
-
-        searchDestinationLabel.setText("Destination");
-        searchPanel.add(searchDestinationLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(14, 82, -1, -1));
-
-        searchDestinationComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "All" }));
-        searchPanel.add(searchDestinationComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(82, 78, 264, -1));
-        searchPanel.add(searchDepartureTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 18, 255, -1));
-
-        searchDepartureDLabel.setText("Departure");
-        searchPanel.add(searchDepartureDLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(358, 21, -1, -1));
-
-        searchArrivalLabel.setText("Arrival");
-        searchPanel.add(searchArrivalLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(358, 51, -1, -1));
-        searchPanel.add(searchArrivalTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 48, 255, -1));
-
-        searchMinSeatsLabel.setText("Minimum number of free seats");
-        searchPanel.add(searchMinSeatsLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(358, 82, -1, -1));
-
-        searchMinSeatsTextField.setText("0");
-        searchPanel.add(searchMinSeatsTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(542, 79, 132, -1));
-
-        clearSearchButton.setText("Clear");
-        clearSearchButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                clearSearchButtonActionPerformed(evt);
-            }
-        });
-        searchPanel.add(clearSearchButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 45, -1, -1));
-
-        flightTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "FlightID", "Origin", "Destination", "Departure", "Arrival", "Free seats"
-            }
-        ));
-        flightTable.setRequestFocusEnabled(false);
-        jScrollPane2.setViewportView(flightTable);
-
-        showReservationButton.setText("Show reservations for selection");
-        showReservationButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                showReservationButtonActionPerformed(evt);
-            }
-        });
-
-        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
-        returnToMainMenuButton.setText("Return to mainmenu");
-        returnToMainMenuButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                returnToMainMenuButtonActionPerformed(evt);
-            }
-        });
-        jPanel2.add(returnToMainMenuButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 93, -1, -1));
-
-        jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-        jPanel2.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, -30, -1, -1));
-        
-    
-    }
-    
-    
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
-    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
-    private void initComponents() {
-
-        titleLabel = new javax.swing.JLabel();
-        searchPanel = new javax.swing.JPanel();
-        searchFlightIDTextField = new javax.swing.JTextField();
-        searchFlightIDLabel = new javax.swing.JLabel();
-        searchButton = new javax.swing.JButton();
-        searchOriginLabel = new javax.swing.JLabel();
-        searchOriginComboBox = new javax.swing.JComboBox();
-        searchDestinationLabel = new javax.swing.JLabel();
-        searchDestinationComboBox = new javax.swing.JComboBox();
-        searchDepartureTextField = new javax.swing.JTextField();
-        searchDepartureDLabel = new javax.swing.JLabel();
-        searchArrivalLabel = new javax.swing.JLabel();
-        searchArrivalTextField = new javax.swing.JTextField();
-        searchMinSeatsLabel = new javax.swing.JLabel();
-        searchMinSeatsTextField = new javax.swing.JTextField();
-        clearSearchButton = new javax.swing.JButton();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        flightTable = new javax.swing.JTable();
-        showReservationButton = new javax.swing.JButton();
-        jPanel1 = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
-        returnToMainMenuButton = new javax.swing.JButton();
-        jPanel3 = new javax.swing.JPanel();
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Flightbrowser");
-        setName("flightFrame"); // NOI18N
-        setPreferredSize(new java.awt.Dimension(900, 499));
-
-        titleLabel.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
-        titleLabel.setText("Flights");
-        titleLabel.setName("titleLabel"); // NOI18N
-
         searchPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Search"));
         searchPanel.setToolTipText("");
         searchPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -285,7 +147,7 @@ public class FlightBrowser extends javax.swing.JFrame {
         searchOriginLabel.setText("Origin");
         searchPanel.add(searchOriginLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(14, 51, -1, -1));
 
-        searchOriginComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "All" }));
+        searchOriginComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"All"}));
         searchOriginComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 searchOriginComboBoxActionPerformed(evt);
@@ -296,7 +158,7 @@ public class FlightBrowser extends javax.swing.JFrame {
         searchDestinationLabel.setText("Destination");
         searchPanel.add(searchDestinationLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(14, 82, -1, -1));
 
-        searchDestinationComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "All" }));
+        searchDestinationComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"All"}));
         searchPanel.add(searchDestinationComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(82, 78, 264, -1));
         searchPanel.add(searchDepartureTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 18, 255, -1));
 
@@ -310,7 +172,8 @@ public class FlightBrowser extends javax.swing.JFrame {
         searchMinSeatsLabel.setText("Minimum number of free seats");
         searchPanel.add(searchMinSeatsLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(358, 82, -1, -1));
 
-        searchMinSeatsTextField.setText("0");
+        searchMinSeatsTextField.setValue(new Double(0));
+        searchMinSeatsTextField.setColumns(10);
         searchPanel.add(searchMinSeatsTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(542, 79, 132, -1));
 
         clearSearchButton.setText("Clear");
@@ -320,18 +183,36 @@ public class FlightBrowser extends javax.swing.JFrame {
             }
         });
         searchPanel.add(clearSearchButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 45, -1, -1));
+        searchPanel.setMinimumSize(new Dimension(775, 120));
 
-        flightTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "FlightID", "Origin", "Destination", "Departure", "Arrival", "Free seats"
+        actionsPanel.setPreferredSize(new Dimension(165, 120));
+        DefaultTableModel tableModel = new DefaultTableModel(new Object[][]{},
+                new String[]{
+            "FlightID", "Origin", "Destination", "Departure", "Arrival", "Free seats"
+        }) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                //all cells false
+                return false;
             }
-        ));
+        };
+        flightTable.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent me) {
+                // your valueChanged overridden method
+                if (me.getClickCount() == 2) {
+                    if (flightTable.getSelectedRow() > -1) {
+                        ReservationBrowser reservationBrowser = new ReservationBrowser(flights[flightTable.getSelectedRow()]);
+                        reservationBrowser.pack();
+                        reservationBrowser.setVisible(true);
+                        dispose();
+                    }
+                }
+
+            }
+        });
+        flightTable.setModel(tableModel);
         flightTable.setRequestFocusEnabled(false);
         jScrollPane2.setViewportView(flightTable);
-
         showReservationButton.setText("Show reservations for selection");
         showReservationButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -339,9 +220,8 @@ public class FlightBrowser extends javax.swing.JFrame {
             }
         });
 
-        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        actionsPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         returnToMainMenuButton.setText("Return to mainmenu");
         returnToMainMenuButton.addActionListener(new java.awt.event.ActionListener() {
@@ -349,61 +229,38 @@ public class FlightBrowser extends javax.swing.JFrame {
                 returnToMainMenuButtonActionPerformed(evt);
             }
         });
-        jPanel2.add(returnToMainMenuButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 93, -1, -1));
+        actionsPanel.add(returnToMainMenuButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 78, -1, -1));
 
-        jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-        jPanel2.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, -30, -1, -1));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 777, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 949, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(showReservationButton)
-                    .addComponent(titleLabel))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(titleLabel)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(showReservationButton)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(searchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
 
+        JPanel buttonPane = new JPanel();
+
+
+
+        buttonPane.setLayout(new BorderLayout());
+        buttonPane.add(searchPanel, BorderLayout.CENTER);
+        buttonPane.add(actionsPanel, BorderLayout.EAST);
+
+        add(jScrollPane2, BorderLayout.CENTER);
+        add(buttonPane, BorderLayout.SOUTH);
         pack();
-    }// </editor-fold>//GEN-END:initComponents
+    }
 
-    private void returnToMainMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_returnToMainMenuButtonActionPerformed
+    private void returnToMainMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
+        MainMenu menu = new MainMenu();
+        menu.pack();
+        menu.setVisible(true);
         dispose();
-    }//GEN-LAST:event_returnToMainMenuButtonActionPerformed
+    }
 
-    private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
+    private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
 
         UpdateTable();
-    }//GEN-LAST:event_searchButtonActionPerformed
+    }
 
-    private void clearSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearSearchButtonActionPerformed
+    private void clearSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
         searchFlightIDTextField.setText("");
         searchOriginComboBox.setSelectedIndex(-1);
@@ -411,25 +268,22 @@ public class FlightBrowser extends javax.swing.JFrame {
         searchDepartureTextField.setText("");
         searchArrivalTextField.setText("");
         searchMinSeatsTextField.setText("0");
-    }//GEN-LAST:event_clearSearchButtonActionPerformed
+    }
 
-    private void searchOriginComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchOriginComboBoxActionPerformed
+    private void searchOriginComboBoxActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-    }//GEN-LAST:event_searchOriginComboBoxActionPerformed
+    }
 
-    private void showReservationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showReservationButtonActionPerformed
+    private void showReservationButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        ReservationBrowser reservationBrowser = new ReservationBrowser(flights[flightTable.getSelectedRow()]);        
+        ReservationBrowser reservationBrowser = new ReservationBrowser(flights[flightTable.getSelectedRow()]);
         reservationBrowser.pack();
         reservationBrowser.setVisible(true);
-    }//GEN-LAST:event_showReservationButtonActionPerformed
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+    }
+    // Variables declaration - do not modify                     
     private javax.swing.JButton clearSearchButton;
     private javax.swing.JTable flightTable;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel actionsPanel;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JButton returnToMainMenuButton;
     private javax.swing.JLabel searchArrivalLabel;
@@ -442,11 +296,10 @@ public class FlightBrowser extends javax.swing.JFrame {
     private javax.swing.JLabel searchFlightIDLabel;
     private javax.swing.JTextField searchFlightIDTextField;
     private javax.swing.JLabel searchMinSeatsLabel;
-    private javax.swing.JTextField searchMinSeatsTextField;
+    private javax.swing.JFormattedTextField searchMinSeatsTextField;
     private javax.swing.JComboBox searchOriginComboBox;
     private javax.swing.JLabel searchOriginLabel;
     private javax.swing.JPanel searchPanel;
     private javax.swing.JButton showReservationButton;
-    private javax.swing.JLabel titleLabel;
-    // End of variables declaration//GEN-END:variables
+    // End of variables declaration           
 }

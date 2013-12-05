@@ -50,12 +50,10 @@ public class DatabaseHandler implements IDatabaseHandler {
       
         try {
             Class.forName(driver).newInstance();
-            conn = DriverManager.getConnection(url + dbName, userName, password);
-
+            conn = DriverManager.getConnection(url + dbName+"?autoReconnect=true", userName, password);
         } catch (Exception e) {
             e.printStackTrace();
         }      
-        
       
     }
     /**
@@ -64,6 +62,7 @@ public class DatabaseHandler implements IDatabaseHandler {
     @Override
     public void disconnect() {
         try {
+        
             if (conn != null && !conn.isClosed()) {
                 conn.close();
             }
@@ -77,6 +76,13 @@ public class DatabaseHandler implements IDatabaseHandler {
      */
     @Override
     public Reservation[] getReservations(IFlight flight) {
+        try {
+            validateConnect();
+        } catch (Exception ex) {
+            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+            
         Person[] people = getPeople();
         //For performance reasons, convert to hashmap with personID as KEY.
         HashMap<String, Person> peopleMapped = new HashMap<String, Person>();
@@ -120,6 +126,12 @@ public class DatabaseHandler implements IDatabaseHandler {
      */
     @Override
     public void addReservation(Reservation res) {
+          try {
+            validateConnect();
+        } catch (Exception ex) {
+            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+            return;
+        }
         if (res != null) {
             Statement stmt;
             try {
@@ -164,6 +176,11 @@ public class DatabaseHandler implements IDatabaseHandler {
  */
     @Override
     public void deleteReservation(Reservation res) {
+          try {
+            validateConnect();
+        } catch (Exception ex) {
+            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
         if (res != null) {
             Statement stmt;
             try {
@@ -181,6 +198,11 @@ public class DatabaseHandler implements IDatabaseHandler {
      */
     @Override
     public void updateReservation(Reservation res) {
+          try {
+            validateConnect();
+        } catch (Exception ex) {
+            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
         if (res != null) {
             Statement stmt;
             try {
@@ -209,6 +231,12 @@ public class DatabaseHandler implements IDatabaseHandler {
      */
     @Override
     public Flight[] getFlights() {
+          try {
+            validateConnect();
+        } catch (Exception ex) {
+            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
         Airplane[] airPlanes = getAirplanes();
         //For performance reasons, convert to hashmap with airplaneID as KEY.
         HashMap<String, Airplane> airPlanesMapped = new HashMap<String, Airplane>();
@@ -247,6 +275,12 @@ public class DatabaseHandler implements IDatabaseHandler {
      */
     @Override
     public IAirport getAirport() {
+          try {
+            validateConnect();
+        } catch (Exception ex) {
+            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
         Airport airport = null;
         Statement stmt;
         try {
@@ -271,7 +305,12 @@ public class DatabaseHandler implements IDatabaseHandler {
      * get all passengers.
      */
     Person[] getPeople() {
-
+     try {
+            validateConnect();
+        } catch (Exception ex) {
+            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
         ArrayList<Person> result = new ArrayList<Person>();
         Statement stmt;
         try {
@@ -294,6 +333,12 @@ public class DatabaseHandler implements IDatabaseHandler {
      * get all airplanes.
      */
     Airplane[] getAirplanes() {
+             try {
+            validateConnect();
+        } catch (Exception ex) {
+            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
         AirplaneLayout[] airPlaneLayouts = getAirplaneLayOuts();
         //For performance reasons, convert to hashmap with airPlaneLayOutID as KEY.
         HashMap<String, AirplaneLayout> airPlaneLayoutsMapped = new HashMap<String, AirplaneLayout>();
@@ -323,6 +368,12 @@ public class DatabaseHandler implements IDatabaseHandler {
  * get airplane layouts
  */
     AirplaneLayout[] getAirplaneLayOuts() {
+             try {
+            validateConnect();
+        } catch (Exception ex) {
+            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
         ArrayList<AirplaneSeat> airPlaneSeats = getAirplaneSeats();
 
         ArrayList<AirplaneLayout> result = new ArrayList<AirplaneLayout>();
@@ -352,6 +403,12 @@ public class DatabaseHandler implements IDatabaseHandler {
  * get airplaneseat setup.
  */
     ArrayList<AirplaneSeat> getAirplaneSeats() {
+             try {
+            validateConnect();
+        } catch (Exception ex) {
+            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
         ArrayList<AirplaneSeat> result = new ArrayList<AirplaneSeat>();
         Statement stmt;
         try {
@@ -374,5 +431,23 @@ public class DatabaseHandler implements IDatabaseHandler {
             Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
         return result;
+    }
+    
+    void validateConnect() throws Exception
+    {
+           try {
+            if (!conn.isValid(60000))
+             {
+             if (!conn.isClosed())
+             {
+             disconnect();
+             }
+             connect();
+             }
+           return;
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      throw new Exception("Connection to the MYSQL server could not be established!");
     }
 }
