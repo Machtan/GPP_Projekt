@@ -37,7 +37,7 @@ public class DatabaseHandler implements IDatabaseHandler {
     this.handler = this;
     }
     
-    public static DatabaseHandler getHandle()
+    public static DatabaseHandler getHandler()
     {
         return handler;
     }
@@ -102,6 +102,7 @@ public class DatabaseHandler implements IDatabaseHandler {
                 String seats = rs.getString(5);
                 String tlf = rs.getString(6);
                 String cardNumber = rs.getString(7);
+                String bookingNumber = rs.getString(8);
                 ArrayList<Person> additionalPassengers_array = new ArrayList<Person>();
                 ArrayList<Point> seatpoints_array = new ArrayList<Point>();
                 for (String pasengerid : additionalPassengers.split(";")) {
@@ -113,7 +114,7 @@ public class DatabaseHandler implements IDatabaseHandler {
                         seatpoints_array.add(new Point(Integer.parseInt(cordinates[0]), Integer.parseInt(cordinates[1])));
                     }
                 }
-                reservations.add(new Reservation(id, peopleMapped.get(passengerid), additionalPassengers_array, seatpoints_array, flight, tlf, cardNumber));
+                reservations.add(new Reservation(id, peopleMapped.get(passengerid), additionalPassengers_array, seatpoints_array, flight, tlf, cardNumber,bookingNumber));
             }
         } catch (SQLException ex) {
             Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);

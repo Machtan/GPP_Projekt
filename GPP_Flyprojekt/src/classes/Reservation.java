@@ -3,7 +3,7 @@ package classes;
 import interfaces.IFlight;
 import java.awt.Point;
 import java.util.ArrayList;
-
+import java.util.Date;
 /**
  * The Reservation class <More docs goes here>
  * @author Jakob Lautrup Nysom (jaln@itu.dk)
@@ -18,6 +18,7 @@ public class Reservation {
     public IFlight flight;
     public String tlf;
     public String cardnumber;
+    public String bookingNumber;
     
     /**
      * Creates a new reservation from the given parameters
@@ -30,7 +31,7 @@ public class Reservation {
      */
     public Reservation(String reservationID, Person passenger, 
             ArrayList<Person> additionalPassengers, ArrayList<Point> seats, 
-            IFlight flight,String tlf,String cardnumber) {
+            IFlight flight,String tlf,String cardnumber,String bookingNumber) {
         this.reservationID = reservationID;
         this.passenger = passenger;
         this.additionalPassengers = additionalPassengers;
@@ -38,15 +39,16 @@ public class Reservation {
         this.flight = flight;
         this.tlf = tlf;
         this.cardnumber = cardnumber;
+        this.bookingNumber = bookingNumber;
     }
     
     /**
      * Overloaded constructor for creating empty reservations
      */
     public Reservation () {
-        this("", null, new ArrayList<Person>(), new ArrayList<Point>(), null,"","");
+        this("", null, new ArrayList<Person>(), new ArrayList<Point>(), null,"","","");
     }
-    
+   
     /**
      * Returns the passengers 
      * @return An array of the passengers on this reservation
