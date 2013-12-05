@@ -28,7 +28,7 @@ public class FlightBrowser extends javax.swing.JFrame {
      */
     public FlightBrowser() {
         initComponents();
-        flights = DatabaseHandler.getHandle().getFlights();
+        flights = DatabaseHandler.getHandler().getFlights();
         //Update Orgin and destination
         HashSet<String> origins = new HashSet<String>();
         HashSet<String> destinations = new HashSet<String>();
@@ -88,7 +88,7 @@ public class FlightBrowser extends javax.swing.JFrame {
             int numberOfFreeSeats = 0;
             while (seats.hasNext()) {
                 Point seatPoint = seats.next();
-                if (!seating.getSeatFree(seatPoint.x, seatPoint.y)) {
+                if (!seating.getSeatFree(seatPoint)) {
                     numberOfFreeSeats++;
                 }
             }

@@ -149,7 +149,8 @@ public class DatabaseHandler implements IDatabaseHandler {
                             result, 
                             result2, 
                             res.tlf, 
-                            res.cardnumber)
+                            res.cardnumber,
+                            res.bookingNumber)
                         ), "',  '") 
                     + "'\n";
                 
@@ -161,7 +162,8 @@ public class DatabaseHandler implements IDatabaseHandler {
                         + "`Seats` ,\n"
                         + "`Tlf` ,\n"
                         + "`Cardnumber`\n"
-                        + ")\n"
+                        + "`BookingNumber`\n"+
+                        ")\n"
                         + "VALUES (\n"
                         + values
                         + ");";
