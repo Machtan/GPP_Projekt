@@ -259,6 +259,10 @@ public class PersonDataList extends JScrollPane implements IPersonDataList {
         this.editor = editor;
     }
     
+    /**
+     * Returns a clone of the list of persons
+     * @return 
+     */
     @Override
     public ArrayList<HashMap<PersonData, String>> getPersons() {
         return (ArrayList<HashMap<PersonData, String>>)persons.clone();

@@ -39,17 +39,17 @@ public class MainMenu extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setText("Add reservation");
+        jButton1.setText("Tilføj ny Reservation");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                createNewReservationAction(evt);
             }
         });
 
         jLabel1.setFont(new java.awt.Font("Lucida Grande", 0, 24)); // NOI18N
         jLabel1.setText("Hovedmenu");
 
-        showFlightBrowserButton.setText("Show flightbrowser");
+        showFlightBrowserButton.setText("Gennemse Afgange");
         showFlightBrowserButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 showFlightBrowserButtonActionPerformed(evt);
@@ -70,7 +70,7 @@ public class MainMenu extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(showFlightBrowserButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap(110, Short.MAX_VALUE))
+                .addContainerGap(102, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -87,12 +87,15 @@ public class MainMenu extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-   
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void createNewReservationAction(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createNewReservationAction
+        ReservationEditor editor = new ReservationEditor();
+        editor.setTitle("Tilføj ny Reservation");
+        editor.pack();
+        editor.setVisible(true);
+        dispose();
+    }//GEN-LAST:event_createNewReservationAction
 
     private void showFlightBrowserButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showFlightBrowserButtonActionPerformed
-        // TODO add your handling code here:
         FlightBrowser menu = new FlightBrowser();
         menu.pack();
         menu.setVisible(true);

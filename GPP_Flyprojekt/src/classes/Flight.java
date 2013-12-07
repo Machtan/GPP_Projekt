@@ -65,7 +65,7 @@ public class Flight implements IFlight {
     @Override
     public Reservation[] getReservations()
     {
-       return DatabaseHandler.getHandle().getReservations(this);
+       return DatabaseHandler.getHandler().getReservations(this);
     }
 
     

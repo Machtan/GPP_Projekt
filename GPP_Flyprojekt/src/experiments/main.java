@@ -1,7 +1,9 @@
 package experiments;
 
+import classes.DatabaseHandler;
 import classes.PersonData;
 import classes.PersonDataList;
+import classes.Reservation;
 import classes.ReservationData;
 import classes.ReservationEditor;
 import classes.Utils;
@@ -212,7 +214,10 @@ public class main {
     }
     
     public static void testReservationEditor() {
-        new ReservationEditor();
+        DatabaseHandler db = new DatabaseHandler();
+        db.connect();
+        Reservation res = db.getReservations(db.getFlights()[0])[0];
+        new ReservationEditor(res);
     }
     
     public static void main (String[] args) throws Exception {

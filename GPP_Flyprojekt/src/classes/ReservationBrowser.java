@@ -18,7 +18,7 @@ public class ReservationBrowser extends javax.swing.JFrame {
     final Reservation[] reservations;
 
     /**
-     * Creates new form FlightBrowser
+     * Creates new form FlightWindow
      */
     public ReservationBrowser(IFlight flight) {
         initComponents();
@@ -185,7 +185,7 @@ public class ReservationBrowser extends javax.swing.JFrame {
 
     private void returnToFlightBrowserButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        FlightBrowser menu = new FlightBrowser();
+        FlightWindow menu = new FlightWindow();
         menu.pack();
         menu.setVisible(true);
         dispose();
