@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 import java.lang.Thread.*;
 
 /**
- * The FlightChooser class <More docs goes here>
+ * The FlightChooser class prompts the user to choose a flight
  * @author Jakob Lautrup Nysom (jaln@itu.dk)
  * @version 07-Dec-2013
  */
@@ -32,6 +32,7 @@ public class FlightChooser extends FlightBrowser {
     
     public static IFlight get() {
         FlightChooser chooser = new FlightChooser();
+        chooser.setTitle("Vælg en afgang");
         chooser.pack();
         chooser.setVisible(true);
         while (chooser.chosen == null) {

@@ -230,8 +230,9 @@ public class FlightWindow extends javax.swing.JFrame {
                 // your valueChanged overridden method
                 if ((me.getClickCount() == 2) && (getChosen() != null)) {
                     for (ActionListener a : listeners) {
-                        a.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null) {
-                    });
+                        a.actionPerformed(new ActionEvent(this, 
+                            ActionEvent.ACTION_PERFORMED, null) {}
+                        );
                     }
                 }
 

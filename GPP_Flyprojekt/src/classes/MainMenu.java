@@ -1,5 +1,7 @@
 package classes;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -36,10 +38,12 @@ public class MainMenu extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         showFlightBrowserButton = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setText("Tilføj ny Reservation");
+        jButton1.setText("Tilføj ny reservation");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 createNewReservationAction(evt);
@@ -49,10 +53,24 @@ public class MainMenu extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Lucida Grande", 0, 24)); // NOI18N
         jLabel1.setText("Hovedmenu");
 
-        showFlightBrowserButton.setText("Gennemse Afgange");
+        showFlightBrowserButton.setText("Gennemse afgange");
         showFlightBrowserButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 showFlightBrowserButtonActionPerformed(evt);
+            }
+        });
+
+        jButton2.setText("Redigér reservationer");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editReservationAction(evt);
+            }
+        });
+
+        jButton3.setText("Fjern reservationer");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeReservationAction(evt);
             }
         });
 
@@ -69,8 +87,10 @@ public class MainMenu extends javax.swing.JFrame {
                         .addGap(110, 110, 110)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(showFlightBrowserButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap(102, Short.MAX_VALUE))
+                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap(98, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -80,8 +100,12 @@ public class MainMenu extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jButton1)
                 .addGap(18, 18, 18)
+                .addComponent(jButton2)
+                .addGap(18, 18, 18)
+                .addComponent(jButton3)
+                .addGap(18, 18, 18)
                 .addComponent(showFlightBrowserButton)
-                .addContainerGap(171, Short.MAX_VALUE))
+                .addContainerGap(77, Short.MAX_VALUE))
         );
 
         pack();
@@ -103,10 +127,42 @@ public class MainMenu extends javax.swing.JFrame {
         
     }//GEN-LAST:event_showFlightBrowserButtonActionPerformed
 
+    private void editReservationAction(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editReservationAction
+        final FlightWindow win = new FlightWindow(); //Unbound version :)
+        win.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ReservationBrowser res = new EditReservationBrowser(win.getChosen());
+                res.pack();
+                res.setVisible(true);
+            }
+        });
+        win.pack();
+        win.setVisible(true);
+    }//GEN-LAST:event_editReservationAction
+
+    private void removeReservationAction(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeReservationAction
+        final FlightWindow win = new FlightWindow(); //Unbound version :)
+        win.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ReservationBrowser res = new RemoveReservationBrowser(win.getChosen());
+                res.pack();
+                res.setVisible(true);
+            }
+        });
+        win.pack();
+        win.setVisible(true);
+    }//GEN-LAST:event_removeReservationAction
+
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JButton showFlightBrowserButton;
     // End of variables declaration//GEN-END:variables

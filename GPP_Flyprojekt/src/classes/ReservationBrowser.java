@@ -3,9 +3,12 @@ package classes;
 import interfaces.IFlight;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
 
@@ -16,14 +19,39 @@ import javax.swing.table.DefaultTableModel;
 public class ReservationBrowser extends javax.swing.JFrame {
 
     final Reservation[] reservations;
+    private final ArrayList<ActionListener> listeners;
 
     /**
      * Creates new form FlightWindow
      */
     public ReservationBrowser(IFlight flight) {
+        listeners = new ArrayList<ActionListener>();
         initComponents();
         reservations = flight.getReservations();
         UpdateTable();
+    }
+    
+    /**
+     * Adds an action listener to this object to be notified when a reservation
+     * is chosen.
+     * @param a The action listener to be added
+     */
+    public void addActionListener(ActionListener a) {
+        if (!listeners.contains(a)) {
+            listeners.add(a);
+        }
+    }
+    
+    /**
+     * Returns the chosen reservation, or null if none is chosen
+     * @return The selected reservation
+     */
+    public Reservation getChosen() {
+        if (reservationTable.getSelectedRow() > -1) {
+            return reservations[reservationTable.getSelectedRow()];
+        } else {
+            return null;
+        }
     }
 
     private void initComponents() {
@@ -110,12 +138,15 @@ public class ReservationBrowser extends javax.swing.JFrame {
             public void mousePressed(MouseEvent me) {
                 // your valueChanged overridden method
                 if (me.getClickCount() == 2) {
-                    if (reservationTable.getSelectedRow() > -1) {
-                        //show reservation data
+                    if (getChosen() != null) {
+                        for (ActionListener a : listeners) {
+                            a.actionPerformed(new ActionEvent(this, 
+                                ActionEvent.ACTION_PERFORMED, null) {}
+                            );
+                        }
                         dispose();
                     }
                 }
-
             }
         });
         reservationTable.setModel(tableModel);
