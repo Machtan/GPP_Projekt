@@ -132,7 +132,7 @@ public class FlightWindow extends javax.swing.JFrame {
     }
 
     void initComponents() {
-        setTitle("Flightbrowser");
+        setTitle("Vælg en afgang");
         setName("flightFrame"); // NOI18N
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMinimumSize(new Dimension(950, 600));

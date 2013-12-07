@@ -14,15 +14,19 @@ import classes.Validator;
 import interfaces.IValidatable;
 import java.awt.Point;
 import java.awt.Dimension;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
@@ -220,32 +224,62 @@ public class main {
         new ReservationEditor(res);
     }
     
+    public static void testWindowDisposal() {
+        JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        
+        JButton openButton = new JButton("Open test window");
+        openButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Create a frame with some special closing mumbo jumbo
+                final JFrame closeFrame = new JFrame(); 
+                closeFrame.setTitle("Test Window!");
+                closeFrame.getContentPane().setLayout(new GridBagLayout()); //To center the button
+                final JButton closeButton = new JButton("Close");
+                closeButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        closeFrame.dispose();
+                    }
+                });
+                closeFrame.add(closeButton);
+
+                closeFrame.addWindowListener( new WindowAdapter() {
+                    public void windowClosing(WindowEvent e)
+                    {
+                        JFrame frame = (JFrame)e.getSource();
+
+                        int result = JOptionPane.showConfirmDialog(
+                            frame,
+                            "Are you sure you want to exit the application?",
+                            "Exit Application",
+                            JOptionPane.YES_NO_OPTION);
+
+                        if (result == JOptionPane.YES_OPTION)
+                            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                        }
+                    }
+                );
+                
+                closeFrame.pack();
+                closeFrame.setVisible(true);
+            }
+        });
+        
+        
+        frame.getContentPane().setLayout(new GridBagLayout());
+        frame.add(openButton);
+        
+        frame.pack();
+        frame.setVisible(true);
+    }
+    
     public static void main (String[] args) throws Exception {
         
         //testValidatableLists();
         //testPersonDataList();
-        testReservationEditor();
-        // WHY THE FUCK ARENT MY ICONS WORKING ANYMORE !!!! D:
-        /*JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        
-        String[] paths = new String[] {
-            "Plane.png",
-            "images/Plane.png",
-            "/src/images/Plane.png",
-            "images/notokaystatus.png",
-            "images/warningstatus.png",
-            "/images/warningstatus.png"
-        };
-        for (String path : paths) {
-            try {
-                frame.add(new JLabel(Utils.getIcon(path)), "North");
-            } catch (Exception ex) {
-                
-            }
-        }
-        
-        frame.pack();
-        frame.setVisible(true);*/// FUCK THIS :(
+        //testReservationEditor();
+        testWindowDisposal();
     }  
 } 

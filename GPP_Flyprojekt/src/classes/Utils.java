@@ -1,5 +1,8 @@
 package classes;
 
+import java.awt.Component;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
@@ -7,6 +10,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 /**
@@ -159,6 +164,25 @@ public class Utils {
             System.out.println("Exception while fetching image @ "+path);
         }
         return null;
+    }
+    
+    /**
+     * Automatically transitions from component a to b, so that a closes and b
+     * opens, and so that a is reopened when b is closed again
+     * @param a The origin window
+     * @param b The new window
+     */
+    public static void transition(final JFrame a, final JFrame b) {
+        b.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        b.addWindowListener( new WindowAdapter() {
+            public void windowClosing(WindowEvent e)
+            {
+                a.setVisible(true);
+            }
+        });
+        a.dispose();
+        b.pack();
+        b.setVisible(true);
     }
     
     /**

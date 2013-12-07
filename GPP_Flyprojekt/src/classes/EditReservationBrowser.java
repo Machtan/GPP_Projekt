@@ -17,13 +17,14 @@ public class EditReservationBrowser extends ReservationBrowser{
      */
     public EditReservationBrowser (IFlight flight) {
         super(flight);
+        final EditReservationBrowser browser = this;
         this.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 ReservationEditor editor = new ReservationEditor(getChosen());
-                editor.pack();
-                editor.setVisible(true);
+                editor.setTitle("Redigér reservation");
+                Utils.transition(browser, editor);
             }
         });
     }

@@ -25,6 +25,7 @@ public class ReservationBrowser extends javax.swing.JFrame {
      * Creates new form FlightWindow
      */
     public ReservationBrowser(IFlight flight) {
+        super();
         listeners = new ArrayList<ActionListener>();
         initComponents();
         reservations = flight.getReservations();
@@ -55,7 +56,7 @@ public class ReservationBrowser extends javax.swing.JFrame {
     }
 
     private void initComponents() {
-
+        setTitle("Vælg en reservation");
         setMinimumSize(new Dimension(875, 600));
         titleLabel = new javax.swing.JLabel();
         searchPanel = new javax.swing.JPanel();
@@ -76,8 +77,7 @@ public class ReservationBrowser extends javax.swing.JFrame {
         actionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Actions"));
         returnToFlightBrowserButton = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Reservation browser");
+        setTitle("Vælg en reservation");
         setName("flightFrame"); // NOI18N
 
         titleLabel.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
