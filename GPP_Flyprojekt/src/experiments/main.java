@@ -2,15 +2,17 @@ package experiments;
 
 import classes.DatabaseHandler;
 import classes.PersonData;
-import classes.PersonDataList;
+import classes.PassengerList;
 import classes.Reservation;
 import classes.ReservationData;
 import classes.ReservationEditor;
+import classes.FlightPanel;
 import classes.Utils;
 import java.util.ArrayList;
 import classes.Utils.*;
 import classes.ValidatedListPanel;
 import classes.Validator;
+import interfaces.IFlight;
 import interfaces.IValidatable;
 import java.awt.Point;
 import java.awt.Dimension;
@@ -21,6 +23,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import javax.swing.JButton;
@@ -83,7 +86,7 @@ public class main {
         //frame.add(pane2, "South");
         
         //------------------
-        final PersonDataList pdl = new PersonDataList(new Validator(), 350,500,"Redigér Passager", 
+        final PassengerList pdl = new PassengerList(new Validator(), 350,500,"Redigér Passager", 
                 "Slet Passager");
         pdl.addPerson(patrick);
         pdl.addPerson(stinus);
@@ -218,10 +221,12 @@ public class main {
     }
     
     public static void testReservationEditor() {
-        DatabaseHandler db = new DatabaseHandler();
+        DatabaseHandler db = DatabaseHandler.getHandler();
         db.connect();
         Reservation res = db.getReservations(db.getFlights()[0])[0];
-        new ReservationEditor(res);
+        ReservationEditor editor = new ReservationEditor();
+        editor.pack();
+        editor.setVisible(true);
     }
     
     public static void testWindowDisposal() {
@@ -275,11 +280,24 @@ public class main {
         frame.setVisible(true);
     }
     
-    public static void main (String[] args) throws Exception {
+    public static void testFlightPanel() {
+        JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         
-        //testValidatableLists();
-        //testPersonDataList();
-        //testReservationEditor();
-        testWindowDisposal();
+        DatabaseHandler db = DatabaseHandler.getHandler();
+        IFlight flight = db.getFlights()[0]; // Mistah test
+        
+        FlightPanel panel = new FlightPanel();
+        panel.loadFlight(flight);
+        frame.add(panel);
+        
+        frame.pack();
+        frame.setVisible(true);
+    }
+    
+    public static void main (String[] args) throws Exception {
+        //testFlightPanel();
+        testReservationEditor();
+        //System.out.println("Date: "+new Date());
     }  
 } 

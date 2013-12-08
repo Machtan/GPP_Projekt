@@ -13,6 +13,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+import java.util.Date;
 
 /**
  * The Utils class <More docs goes here>
@@ -194,4 +195,34 @@ public class Utils {
     public static void fp(String formatString, Object... args) {
         System.out.println(String.format(formatString, args));
     }
+    
+    /*public class JDate extends Date {
+        
+        final private int secs
+        
+        public JDate(Date date) {
+            super(date.getTime()); //Copy Shit
+            
+        }
+        
+        /**
+         * Is this year a leap year
+         * @param year
+         * @return 
+         *//*
+        private boolean isLeapYear(int year) {
+            return ((year % 400) == 0) || (((year % 4) == 0) && ((year % 100) != 0));
+        }
+        
+        private int daysInYear(int year) { return (isLeapYear(year))? 366: 365;}
+        
+        
+        public String getSimpleTime() {
+            
+        }
+        
+        public String getSimpleDate() {
+            
+        }
+    }*/
 }

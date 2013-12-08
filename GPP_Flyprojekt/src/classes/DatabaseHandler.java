@@ -28,17 +28,19 @@ public class DatabaseHandler implements IDatabaseHandler {
     final String userName = "patr0805";
     final String password = "testuser";
     Connection conn = null;
-    static DatabaseHandler handler = new DatabaseHandler();
+    static DatabaseHandler handler = null;
     /**
      * Constructor for DatabaseHandler, provide AirportID to filter out entries
      * relevant to the specific airport.
      */
-    public DatabaseHandler() {
-    this.handler = this;
-    }
+    private DatabaseHandler() {}
     
     public static DatabaseHandler getHandler()
     {
+        if (handler == null) {
+            handler = new DatabaseHandler();
+            handler.connect();
+        }
         return handler;
     }
     
@@ -438,19 +440,17 @@ public class DatabaseHandler implements IDatabaseHandler {
     
     void validateConnect() throws Exception
     {
-           try {
-            if (!conn.isValid(60000))
-             {
-             if (!conn.isClosed())
-             {
-             disconnect();
-             }
-             connect();
-             }
-           return;
+        try {
+            if (!conn.isValid(60000)) {
+                if (!conn.isClosed()) {
+                    disconnect();
+                }
+                connect();
+            }
+            return;
         } catch (SQLException ex) {
             Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
-      throw new Exception("Connection to the MYSQL server could not be established!");
+        throw new Exception("Connection to the MYSQL server could not be established!");
     }
 }

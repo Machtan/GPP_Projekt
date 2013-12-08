@@ -22,11 +22,11 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 /**
- * The PersonDataList class <More docs goes here>
+ * The PassengerList class <More docs goes here>
  * @author Jakob Lautrup Nysom (jaln@itu.dk)
  * @version 27-Nov-2013
  */
-public class PersonDataList extends JScrollPane implements IPersonDataList {
+public class PassengerList extends JScrollPane implements IPersonDataList {
     private final IValidator validator;
     
     private final int width;
@@ -53,7 +53,7 @@ public class PersonDataList extends JScrollPane implements IPersonDataList {
      * @param editButtonTip
      * @param deleteButtonTip
      */
-    public PersonDataList (IValidator validator, int width, int height, 
+    public PassengerList (IValidator validator, int width, int height, 
             String editButtonTip, String deleteButtonTip) {
         super(VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_NEVER);
         panel = new JPanel();

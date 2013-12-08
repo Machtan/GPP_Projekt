@@ -22,7 +22,7 @@ public class mainTestSS
 {
     public static void main(String[] args)
     {
-        DatabaseHandler database = new DatabaseHandler();
+        DatabaseHandler database = DatabaseHandler.getHandler();
         database.connect();
         Flight fligt;
         fligt = database.getFlights()[0];
