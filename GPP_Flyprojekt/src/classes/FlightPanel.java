@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Calendar;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -33,6 +34,11 @@ public class FlightPanel extends JPanel {
     private JTextField flightArrivalTime;
     private final ArrayList<ActionListener> listeners;
     private IFlight flight;
+    
+    private String[] monthName = new String[] {
+        "januar", "februar", "marts",     "april",   "maj",      "juni",
+        "juli",   "august",  "september", "oktober", "november", "december"
+    };
     
     private final int minWidth = 100;
     private final Dimension minFieldSize = new Dimension(minWidth, 0);
@@ -72,24 +78,32 @@ public class FlightPanel extends JPanel {
             a.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, null) {
                 });
         }
-
-        Date departure = new Date();//flight.getDepartureTime();
-        Date arrival = new Date();//flight.getArrivalTime();
         
-        System.out.println("departure: "+departure);
-        System.out.println("arrival:   "+arrival);
+        Date departure = flight.getDepartureTime();
+        Date arrival = flight.getArrivalTime();
+        System.out.println("Equals: "+departure.equals(arrival));
+        System.out.println("dep: "+departure);
+        System.out.println("arr: "+arrival);
         
-        String[] parts = departure.toString().split(" ");
-        System.out.println("Parts:");
-        for(String part: parts) {
-            System.out.println("p: "+part);
-        }
-        //Sun Dec 08 16:15:47 CET 2013
-        String departTime = parts[3].substring(0, 5);
-        String date = parts[2]+" "+parts[1].toLowerCase()+". "+parts[5];
+        Calendar dcal = Calendar.getInstance();
+        dcal.setTime(departure);
+        System.out.println("departure: "+dcal);
         
-        String[] parts2 = arrival.toString().split(" ");
-        String arriveTime = parts2[3].substring(0, 5);
+        String departTime = String.format("%02d:%02d", 
+                dcal.get(Calendar.HOUR_OF_DAY), 
+                dcal.get(Calendar.MINUTE));
+        
+        String date = String.format("%02d. %s %04d", 
+                dcal.get(Calendar.DAY_OF_MONTH),
+                monthName[dcal.get(Calendar.MONTH)],
+                dcal.get(Calendar.YEAR));
+        
+        Calendar acal = Calendar.getInstance();
+        acal.setTime(arrival);
+        System.out.println("arrival:   "+acal);
+        String arriveTime = String.format("%02d:%02d", 
+                acal.get(Calendar.HOUR_OF_DAY), 
+                acal.get(Calendar.MINUTE));
         
         flightIDValue.setText(flight.getID());
         planeNameValue.setText(flight.getPlane().name);

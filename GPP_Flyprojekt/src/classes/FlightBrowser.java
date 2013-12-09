@@ -4,7 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * The FlightBrowser class <More docs goes here>
+ * The FlightBrowser class lets the user browse flights and inspect reservations
+ * on these, without being able to edit them.
  * @author Jakob Lautrup Nysom (jaln@itu.dk)
  * @version 07-Dec-2013
  */
@@ -15,16 +16,22 @@ public class FlightBrowser extends FlightWindow {
      */
     public FlightBrowser () {
         super();
+        final FlightBrowser browser = this;
         addActionListener(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (flightTable.getSelectedRow() > -1) {
-                        ReservationBrowser reservationBrowser = new ReservationBrowser(getChosen());
-                        reservationBrowser.pack();
-                        reservationBrowser.setVisible(true);
-                        dispose();
-                    }
+                if (browser.getChosen() != null) {
+                    final ReservationBrowser reservationBrowser = new ReservationBrowser(getChosen());
+                    reservationBrowser.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            ReservationEditor editor = new ReservationEditor(reservationBrowser.getChosen());
+                            editor.setReadOnly(true);
+                            Utils.transition(reservationBrowser, editor);
+                        }
+                    });
+                    Utils.transition(browser, reservationBrowser);
+                }
             }
         });
     }

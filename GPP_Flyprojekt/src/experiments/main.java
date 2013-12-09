@@ -8,6 +8,7 @@ import classes.ReservationData;
 import classes.ReservationEditor;
 import classes.FlightPanel;
 import classes.Utils;
+import classes.Person;
 import java.util.ArrayList;
 import classes.Utils.*;
 import classes.ValidatedListPanel;
@@ -299,5 +300,10 @@ public class main {
         //testFlightPanel();
         testReservationEditor();
         //System.out.println("Date: "+new Date());
+        /*Person patrick = new Person("ID",  "Patrick", "Danish", "1337");
+        ArrayList<Person> l = new ArrayList<Person>();
+        l.add(patrick);
+        String formatted = Utils.formatAndJoinVars(l, "%s,%s,%s,%s", ",", "id","name","nationality","cpr");
+        System.out.println("f: "+formatted);*/
     }  
 } 
