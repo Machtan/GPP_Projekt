@@ -92,6 +92,35 @@ public class Utils {
         return arr;
     }
     
+       /**
+     * THIS. IS. PYTHONNNNNNN!
+     * Returns an array of the values for the given field name on the given
+     * objects
+     * @param <T> The type contained by the given ArrayList
+     * @param fieldnames The names of the fields to access
+     * @param objs The objects from which to get it
+     * @return A list of values for the fields of the objects
+     */
+    public static <T> ArrayList<Object[]> forVarsOnObjInList(T obj, String... fieldnames) {
+        ArrayList<Object[]> arr = new ArrayList<Object[]>();
+        int nargs = fieldnames.length;
+        try {
+                Object[] vars = new Object[nargs];
+                for (int i = 0; i < nargs; i++) {
+                    try {
+                        vars[i] = obj.getClass().getField(fieldnames[i]).get(obj);
+                    } catch (NoSuchFieldException ex) {
+                        vars[i] = "ERROR"; // Default value when missing is this string
+                    }
+                }
+                arr.add(vars);
+            
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return arr;
+    }
+    
     /**
      * Simplifies the getting of a single variable on the list of objects
      * @param <T> The class of the objects contained by the given ArrayList
@@ -127,6 +156,26 @@ public class Utils {
         return result;
     }
     
+     
+    /**
+     * Quickly formats the variables on the given object based on the given
+     * template
+     * @param <T>
+     * @param obj
+     * @param formatString
+     * @param fields
+     * @return A list of formatted strings
+     */
+    public static <T> ArrayList<String> quickFormatList(T obj, 
+            String formatString, String... fields) {
+        ArrayList<Object[]> res = forVarsOnObjInList(obj, fields);
+        ArrayList<String> result = new ArrayList<String>();
+        for (Object[] vars : res) {
+            result.add(String.format(formatString, vars));
+        }
+        return result;
+    }
+    
     /**
      * Returns a String of the joint variables of each obj in the given list,
      * formatted according to the passed string.
@@ -140,6 +189,22 @@ public class Utils {
     public static <T> String formatAndJoinVars(ArrayList<T> objs, 
             String formatString, String separator, String... fields) {
         ArrayList<String> formatted = quickFormatList(objs, formatString, fields);
+        return joinList(formatted, separator);
+    }
+    
+        /**
+     * Returns a String of the joint variables of the given obj,
+     * formatted according to the passed string.
+     * @param <T>
+     * @param obj
+     * @param formatString
+     * @param separator
+     * @param fields
+     * @return 
+     */
+        public static <T> String formatAndJoinVars(T obj, 
+            String formatString, String separator, String... fields) {
+        ArrayList<String> formatted = quickFormatList(obj, formatString, fields);
         return joinList(formatted, separator);
     }
     

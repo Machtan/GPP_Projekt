@@ -5,7 +5,7 @@ package classes;
  * @author Jakob Lautrup Nysom (jaln@itu.dk)
  * @version 21-Nov-2013
  */
-class Person {
+public class Person {
     
     public String id;
     public String name;
@@ -24,7 +24,11 @@ class Person {
         this.nationality = nationality;
         this.cpr = cpr;
     }
-    
+      public Person(String name, String nationality, String cpr) {
+        this.name = name;
+        this.nationality = nationality;
+        this.cpr = cpr;
+    }
     /**
      * Default constructor for the Person class
      */

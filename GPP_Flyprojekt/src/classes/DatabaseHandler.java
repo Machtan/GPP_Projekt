@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import classes.Utils.*;
+import java.io.UnsupportedEncodingException;
 
 /**
  *
@@ -21,6 +22,7 @@ import classes.Utils.*;
  */
 public class DatabaseHandler implements IDatabaseHandler {
     //MYSQL database connection information.
+
     final String AirportID = "1";
     final String url = "jdbc:mysql://mysql.itu.dk/";
     final String dbName = "Airport";
@@ -29,42 +31,44 @@ public class DatabaseHandler implements IDatabaseHandler {
     final String password = "testuser";
     Connection conn = null;
     static DatabaseHandler handler = null;
+
     /**
      * Constructor for DatabaseHandler, provide AirportID to filter out entries
      * relevant to the specific airport.
      */
-    private DatabaseHandler() {}
-    
-    public static DatabaseHandler getHandler()
-    {
+    private DatabaseHandler() {
+    }
+
+    public static DatabaseHandler getHandler() {
         if (handler == null) {
             handler = new DatabaseHandler();
             handler.connect();
         }
         return handler;
     }
-    
+
     /**
      * Connect to the database.
      */
     @Override
     public void connect() {
-      
+
         try {
             Class.forName(driver).newInstance();
-            conn = DriverManager.getConnection(url + dbName+"?autoReconnect=true", userName, password);
+            conn = DriverManager.getConnection(url + dbName + "?autoReconnect=true", userName, password);
         } catch (Exception e) {
             e.printStackTrace();
-        }      
-      
+        }
+
     }
+
     /**
      * Disconnect from the database.
      */
     @Override
     public void disconnect() {
         try {
-        
+
             if (conn != null && !conn.isClosed()) {
                 conn.close();
             }
@@ -72,7 +76,7 @@ public class DatabaseHandler implements IDatabaseHandler {
             Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     /**
      * Get reservations from a flight.
      */
@@ -84,7 +88,7 @@ public class DatabaseHandler implements IDatabaseHandler {
             Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
-            
+
         Person[] people = getPeople();
         //For performance reasons, convert to hashmap with personID as KEY.
         HashMap<String, Person> peopleMapped = new HashMap<String, Person>();
@@ -116,46 +120,75 @@ public class DatabaseHandler implements IDatabaseHandler {
                         seatpoints_array.add(new Point(Integer.parseInt(cordinates[0]), Integer.parseInt(cordinates[1])));
                     }
                 }
-                reservations.add(new Reservation(id, peopleMapped.get(passengerid), additionalPassengers_array, seatpoints_array, flight, tlf, cardNumber,bookingNumber));
+                reservations.add(new Reservation(id, peopleMapped.get(passengerid), additionalPassengers_array, seatpoints_array, flight, tlf, cardNumber, bookingNumber));
             }
         } catch (SQLException ex) {
             Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
         return (Reservation[]) reservations.toArray(new Reservation[0]);
+
     }
-    
+
     /**
      * Add a new reservation to the database.
      */
     @Override
     public void addReservation(Reservation res) {
-          try {
+        try {
             validateConnect();
         } catch (Exception ex) {
             Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
             return;
         }
         if (res != null) {
-            Statement stmt;
             try {
-                stmt = conn.createStatement();
+                if (res.passenger != null) {
+                    String query = "INSERT INTO  `Airport`.`Passenger` (\n"
+                            + "`ID` ,\n"
+                            + "`Name` ,\n"
+                            + "`Nationallity` ,\n"
+                            + "`CPR` \n"
+                            + ")\n"
+                            + "VALUES ( ?,?,?,?);";
 
+                    // create the mysql insert preparedstatement
+                    PreparedStatement preparedStmt = conn.prepareStatement(query);
+                    preparedStmt.setNull(1, java.sql.Types.INTEGER);
+                    preparedStmt.setString(2, res.passenger.name);
+                    preparedStmt.setString(3, res.passenger.nationality);
+                    preparedStmt.setString(4, res.passenger.cpr);
+
+                    // execute the preparedstatement
+                    preparedStmt.executeUpdate();
+                    res.passenger.id = GetAutoIncremented_Value("`Airport`.`Passenger`");
+
+
+                }
+                for (Person person : res.additionalPassengers) {
+                    String query = "INSERT INTO  `Airport`.`Passenger` (\n"
+                            + "`ID` ,\n"
+                            + "`Name` ,\n"
+                            + "`Nationallity` ,\n"
+                            + "`CPR` \n"
+                            + ")\n"
+                            + "VALUES ( ?,?,?,?);";
+
+                    // create the mysql insert preparedstatement
+                    PreparedStatement preparedStmt = conn.prepareStatement(query);
+                    preparedStmt.setNull(1, java.sql.Types.INTEGER);
+                    preparedStmt.setString(2, person.name);
+                    preparedStmt.setString(3, person.nationality);
+                    preparedStmt.setString(4, person.cpr);
+
+                    // execute the preparedstatement
+                    preparedStmt.executeUpdate();
+
+                    person.id = GetAutoIncremented_Value("`Airport`.`Passenger`");
+
+                }
                 String result = Utils.formatAndJoinVars(res.additionalPassengers, "%s", ",", "id");
                 String result2 = Utils.formatAndJoinVars(res.seats, "%s,%s;", "", "x", "y");
-               
-                String values = "NULL ,  '" + 
-                    Utils.joinList(new ArrayList<String> (
-                        Arrays.asList(
-                            res.flight.getID(),
-                            res.passenger.id, 
-                            result, 
-                            result2, 
-                            res.tlf, 
-                            res.cardnumber,
-                            res.bookingNumber)
-                        ), "',  '") 
-                    + "'\n";
-                
+
                 String query = "INSERT INTO  `Airport`.`Reservation` (\n"
                         + "`ID` ,\n"
                         + "`FlightID` ,\n"
@@ -163,25 +196,60 @@ public class DatabaseHandler implements IDatabaseHandler {
                         + "`additionalPassengers` ,\n"
                         + "`Seats` ,\n"
                         + "`Tlf` ,\n"
-                        + "`Cardnumber`\n"
-                        + "`BookingNumber`\n"+
-                        ")\n"
-                        + "VALUES (\n"
-                        + values
-                        + ");";
-                stmt.executeUpdate(query);
+                        + "`Cardnumber` ,\n"
+                        + "`BookingNumber`\n"
+                        + ")\n"
+                        + "VALUES (?,?,?,?,?,?,?,?);";
+
+                PreparedStatement preparedStmt = conn.prepareStatement(query);
+                if (res.reservationID != "") {
+                    preparedStmt.setInt(1, Integer.parseInt(res.reservationID));
+                } else {
+                    preparedStmt.setNull(1, java.sql.Types.INTEGER);
+                }
+                preparedStmt.setString(2, res.flight.getID());
+                if (res.passenger.id != "") {
+                    preparedStmt.setInt(3, Integer.parseInt(res.passenger.id));
+                } else {
+                    preparedStmt.setNull(3, java.sql.Types.INTEGER);
+                }
+                preparedStmt.setString(4, result);
+                preparedStmt.setString(5, result2);
+                preparedStmt.setString(6, res.tlf);
+                preparedStmt.setString(7, res.cardnumber);
+                preparedStmt.setString(8, res.bookingNumber);
+                // execute the preparedstatement
+                preparedStmt.executeUpdate();
+                res.reservationID = GetAutoIncremented_Value("`Airport`.`Reservation`");
 
             } catch (SQLException ex) {
                 Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
-/*
- * delete a reservation from the database.
- */
+    /*
+     * delete a reservation from the database.
+     */
+
+    private String GetAutoIncremented_Value(String path) {
+        Statement stmt;
+        try {
+            stmt = conn.createStatement();
+            String query = "select max(ID) from " + path;
+            ResultSet rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                return rs.getString(1);
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "";
+    }
+
     @Override
     public void deleteReservation(Reservation res) {
-          try {
+        try {
             validateConnect();
         } catch (Exception ex) {
             Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
@@ -192,51 +260,51 @@ public class DatabaseHandler implements IDatabaseHandler {
                 stmt = conn.createStatement();
                 String query = "DELETE FROM  `Reservation` WHERE ID = " + res.reservationID;
                 stmt.executeUpdate(query);
-
+                if (res.passenger != null) {
+                    query = "DELETE FROM  `Passenger` WHERE ID = " + res.passenger.id;
+                    stmt.executeUpdate(query);
+                }
+                for (Person person : res.additionalPassengers) {
+                    if (person != null) {
+                        query = "DELETE FROM  `Passenger` WHERE ID = " + person.id;
+                        stmt.executeUpdate(query);
+                    }
+                }
             } catch (SQLException ex) {
                 Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
+
     /**
      * update a reservation.
      */
     @Override
     public void updateReservation(Reservation res) {
-          try {
+        try {
             validateConnect();
         } catch (Exception ex) {
             Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if (res != null) {
-            Statement stmt;
-            try {
-                stmt = conn.createStatement();
-                String result = Utils.formatAndJoinVars(res.additionalPassengers, "%s", ",", "id");
-                String result2 = Utils.formatAndJoinVars(res.seats, "%s,%s;", "", "x", "y");
-                
-                String query = "UPDATE `Airport`.`Reservation` SET \n"
-                        + "`FlightID` = "+ res.flight.getID() + " ,\n"
-                        + "`Passenger`= "+ res.passenger.id +  " ,\n"
-                        + "`additionalPassengers` = '"+ result + "',\n"
-                        + "`Seats` = '"+ result2 + "',\n"
-                        + "`Tlf` = '"+ res.tlf + "',\n"
-                        + "`Cardnumber` = '"+ res.cardnumber + "' \n"
-                        + " WHERE ID = '" + res.reservationID +"';"
-                       ;
-                stmt.executeUpdate(query);
 
-            } catch (SQLException ex) {
-                Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+        if (res != null) {
+            Reservation[] reservations = getReservations(res.flight);
+            for (Reservation reservation : reservations) {
+                if (reservation.reservationID == null ? res.reservationID == null : reservation.reservationID.equals(res.reservationID)) {
+                    deleteReservation(reservation);
+                    break;
+                }
             }
+            addReservation(res);
         }
     }
+
     /**
      * get flights.
      */
     @Override
     public Flight[] getFlights() {
-          try {
+        try {
             validateConnect();
         } catch (Exception ex) {
             Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
@@ -261,8 +329,8 @@ public class DatabaseHandler implements IDatabaseHandler {
                 String destination = rs.getString(3);
                 String airportID = rs.getString(4);
                 String airplaneID = rs.getString(5);
-                Date departureTime = rs.getDate(6);
-                Date arrivalTime = rs.getDate(7);
+                Date departureTime = rs.getTimestamp(6);
+                Date arrivalTime = rs.getTimestamp(7);
                 if (airportID.equals(this.AirportID) && airPlanesMapped.containsKey(airplaneID)) {
                     Airplane airPlane = airPlanesMapped.get(airplaneID);
                     Flight newflight = new Flight(id, origin, destination, airportID, airPlane, departureTime, arrivalTime);
@@ -280,7 +348,7 @@ public class DatabaseHandler implements IDatabaseHandler {
      */
     @Override
     public IAirport getAirport() {
-          try {
+        try {
             validateConnect();
         } catch (Exception ex) {
             Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
@@ -306,11 +374,12 @@ public class DatabaseHandler implements IDatabaseHandler {
         }
         return airport;
     }
+
     /**
      * get all passengers.
      */
     Person[] getPeople() {
-     try {
+        try {
             validateConnect();
         } catch (Exception ex) {
             Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
@@ -334,11 +403,12 @@ public class DatabaseHandler implements IDatabaseHandler {
         }
         return (Person[]) result.toArray(new Person[0]);
     }
+
     /**
      * get all airplanes.
      */
     Airplane[] getAirplanes() {
-             try {
+        try {
             validateConnect();
         } catch (Exception ex) {
             Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
@@ -369,11 +439,12 @@ public class DatabaseHandler implements IDatabaseHandler {
         }
         return (Airplane[]) result.toArray(new Airplane[0]);
     }
-/*
- * get airplane layouts
- */
+    /*
+     * get airplane layouts
+     */
+
     AirplaneLayout[] getAirplaneLayOuts() {
-             try {
+        try {
             validateConnect();
         } catch (Exception ex) {
             Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
@@ -404,11 +475,12 @@ public class DatabaseHandler implements IDatabaseHandler {
         }
         return (AirplaneLayout[]) result.toArray(new AirplaneLayout[0]);
     }
-/*
- * get airplaneseat setup.
- */
+    /*
+     * get airplaneseat setup.
+     */
+
     ArrayList<AirplaneSeat> getAirplaneSeats() {
-             try {
+        try {
             validateConnect();
         } catch (Exception ex) {
             Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
@@ -437,9 +509,8 @@ public class DatabaseHandler implements IDatabaseHandler {
         }
         return result;
     }
-    
-    void validateConnect() throws Exception
-    {
+
+    void validateConnect() throws Exception {
         try {
             if (!conn.isValid(60000)) {
                 if (!conn.isClosed()) {
