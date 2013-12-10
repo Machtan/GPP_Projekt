@@ -254,5 +254,8 @@ public class SeatChooser extends JPanel implements ISeatChooser
     public void setRequestedSeats(int number)
     {
         numberOfSeats = number;
+        if(numberOfSeats < seating.getChosenSeats().size())
+            for(Point seat : seating.getChosenSeats())
+                choseSeat(seat);
     }
 }
