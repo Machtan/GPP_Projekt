@@ -9,6 +9,7 @@ import classes.DatabaseHandler;
 import classes.Flight;
 import classes.Reservation;
 import classes.SeatChooser;
+import classes.TMPSeatingCreator;
 import classes.TMPSeatingCreator2;
 import interfaces.ISeatChooser;
 import javax.swing.JFrame;
@@ -25,7 +26,10 @@ public class mainTestSS
     {
         DatabaseHandler database = DatabaseHandler.getHandler();
         database.connect();
-      
+        TMPSeatingCreator tmp = new TMPSeatingCreator();
+        TMPSeatingCreator2 tmp2 = new TMPSeatingCreator2();
+        tmp.makeSeats();
+        tmp2.makeSeats();
         Flight fligt;
         fligt = database.getFlights()[0];
         SeatChooser vis = new SeatChooser();
