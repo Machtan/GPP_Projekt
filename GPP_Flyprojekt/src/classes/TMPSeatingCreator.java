@@ -20,36 +20,35 @@ public class TMPSeatingCreator
     {
         int startXOfset = 31;
         int startYOfset = 135; 
-        int seatSize = 12; 
+        int seatSize = 13; 
         
         for(int col = 0;col < 6; col++)
         {
             if(col == 3)
             {
-                startXOfset += 24;
-                startYOfset -= 6;
+                startXOfset += 19;
+                startYOfset -= 5;
             }
             for(int row = 0;row < 13; row++)
             {
-                  DatabaseHandler.getHandler().addAirplaneSeat(new AirplaneSeat("","1",startXOfset + col * seatSize,startYOfset + row * seatSize,row,col));
+                DatabaseHandler.getHandler().addAirplaneSeat(new AirplaneSeat("","1",startXOfset + col * seatSize,startYOfset + row * seatSize,row,col));
             }
         }
         
         startXOfset = 31;
-        startYOfset = 312; 
-        seatSize = 12;
-        int lastRow = 26;
+        startYOfset = 325; 
+        int lastRow = 31;
         
         for(int col = 0;col < 6; col++)
         {
             if(col == 3)
             {
-                startXOfset += 24;
+                startXOfset += 1;
                 lastRow++;
             }
-            for(int row = 13;row < lastRow; row++)
+            for(int row = 0;row + 13 < lastRow; row++)
             {
-                  DatabaseHandler.getHandler().addAirplaneSeat(new AirplaneSeat("","1",startXOfset + col * seatSize,startYOfset + row * seatSize,row,col));
+                 DatabaseHandler.getHandler().addAirplaneSeat(new AirplaneSeat("","1",startXOfset + col * seatSize,startYOfset + row * seatSize,row + 13,col));
             }
         }
     }
