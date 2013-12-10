@@ -273,6 +273,49 @@ public class DatabaseHandler implements IDatabaseHandler {
             }
         }
     }
+ /**
+     * Add a new seat to the database.
+     */
+    public void addAirplaneSeat(AirplaneSeat res) {
+        try {
+            validateConnect();
+        } catch (Exception ex) {
+            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+            return;
+        }
+        if (res != null) {
+            try {
+               
+                    String query = "INSERT INTO  `Airport`.`AirplaneSeats` (\n"
+                            + "`ID` ,\n"
+                            + "`AirplaneLayoutID` ,\n"
+                            + "`PositionX` ,\n"
+                            + "`PositionY` ,\n"
+                            + "`RowIndex` ,\n"
+                            + "`ColumnIndex` \n"
+                            + ")\n"
+                            + "VALUES ( ?,?,?,?,?,?);";
+
+                    // create the mysql insert preparedstatement
+                    PreparedStatement preparedStmt = conn.prepareStatement(query);
+                    preparedStmt.setNull(1, java.sql.Types.INTEGER);
+                    preparedStmt.setInt(2, Integer.parseInt(res.airplaneLayoutID));
+                    preparedStmt.setInt(3, res.positionX);
+                    preparedStmt.setInt(4,  res.positionY);
+                    preparedStmt.setInt(5,  res.rowIndex);
+                    preparedStmt.setInt(6,  res.columnIndex);
+
+                    // execute the preparedstatement
+                    preparedStmt.executeUpdate();
+                  
+
+                }
+             catch (SQLException ex) {
+                Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
 
     /**
      * update a reservation.
