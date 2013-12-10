@@ -36,7 +36,7 @@ public class TMPSeatingCreator2
                     row++;
                 if(col == 0 && row == 9)
                     row++;
-                if(col == 0 && row == 23)
+                if(col == 0 && row == 22)
                     break;
                 //col 2
                 if(col == 1 && row == 0)
@@ -45,15 +45,15 @@ public class TMPSeatingCreator2
                 if(col == 2 && row == 0)
                     row++;
                 //col 4
-                if(col == 3 && row == 23)
+                if(col == 3 && row == 22)
                     break;
                 //col 5
-                if(col == 4 && row == 23)
+                if(col == 4 && row == 22)
                     break;
                 //col 6
                 if(col == 5 && row == 9)
                     row++;
-                if(col == 5 && row == 23)
+                if(col == 5 && row == 22)
                     break;
                 
                 DatabaseHandler.getHandler().addAirplaneSeat(new AirplaneSeat("","1",startXOfset + col * seatSize,startYOfset + row * (seatSize + 1),row,col));
