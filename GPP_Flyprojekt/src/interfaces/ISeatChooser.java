@@ -1,6 +1,5 @@
 package interfaces;
 
-import classes.SeatChooser;
 import java.awt.Point;
 import java.util.ArrayList;
 
@@ -21,5 +20,11 @@ public interface ISeatChooser {
     
     public void setRequestedSeats(int number);
     
-    public ArrayList<Point> getSeats(int numberOfSeats); // Returns the 
+    public ArrayList<Point> getSeats(int numberOfSeats) throws NotEnoughSeatsException; // Returns the 
+    
+    public class NotEnoughSeatsException extends Exception {
+        public NotEnoughSeatsException(int chosen, int needed) {
+            super("Only "+chosen+" out of "+needed+" seats have been chosen.");
+        }
+    }
 }

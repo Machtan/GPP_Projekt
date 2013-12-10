@@ -35,9 +35,11 @@ public class SeatChooser extends JPanel implements ISeatChooser
     private IFlight flight;
     private ISeating seating;
     int numberOfSeats = 1;
-    int seatSize = 12;
+    int seatSize = 9;
     private HashMap<Point, Point> positionToSeat;
     URL url;
+    int ImageWidth = 150;
+    int ImageHeight = 700;
     
     
     public SeatChooser()
@@ -61,7 +63,7 @@ public class SeatChooser extends JPanel implements ISeatChooser
         });
         
         this.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
-        this.setPreferredSize(new Dimension(200,400));
+        this.setPreferredSize(new Dimension(ImageWidth,ImageHeight));
     }
     
     public SeatChooser(IFlight flight)
@@ -86,7 +88,7 @@ public class SeatChooser extends JPanel implements ISeatChooser
         
         // - TODO integra dette i databasen / med databasen
         try {
-            url = SeatChooser.class.getClassLoader().getResource("images/Plane.png");
+            url = SeatChooser.class.getClassLoader().getResource("images/flyP.jpg");
         } catch (Exception ex) {
             System.out.println("DU ØDELAGDE MIT PROGRAM DIN LORTE-EXCEPTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
@@ -108,19 +110,10 @@ public class SeatChooser extends JPanel implements ISeatChooser
     //test if the click is inside the SeatChocser
     private boolean indenfor(Point clickPosition) 
     { 
-        try
-        {
-            //denne her skal tjekke om man har tryket paa en at knaperne/plaserne
-            return 0 <= clickPosition.x && 
-                    clickPosition.x < ImageIO.read(url).getWidth() && 
-                    0 <= clickPosition.y && 
-                    clickPosition.y < ImageIO.read(url).getHeight();
-        }
-        catch (IOException ex)
-        {
-            Logger.getLogger(SeatChooser.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return false;
+        return 0 <= clickPosition.x && 
+            clickPosition.x < ImageWidth && 
+            0 <= clickPosition.y && 
+            clickPosition.y < ImageHeight;
     }
     
     //get the position of the seat closet to the click position
@@ -194,10 +187,10 @@ public class SeatChooser extends JPanel implements ISeatChooser
         super.paintComponent(g); //To change body of generated methods, choose Tools | Templates.
         
         if(flight == null) // - TODO der skal vare en text som forteler at der ikke er noglen flight
+        {
+            g.drawString("dette virker ikke", 10, 12);
             return;
-        
-        //paint text for how many free seats ther is
-        g.drawString("" + seating.getFreeSeats().size() + " of " + (seating.getFreeSeats().size() + seating.getTakenSeats().size()) + " are free", 0, 0);
+        }
         
         //paint a pikture of the airplane
         try
@@ -208,6 +201,9 @@ public class SeatChooser extends JPanel implements ISeatChooser
         {
             Logger.getLogger(SeatChooser.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        //paint text for how many free seats ther is
+        g.drawString("" + seating.getFreeSeats().size() + " of " + (seating.getFreeSeats().size() + seating.getTakenSeats().size()) + " are free", 10, 12);
         
         //Paint all the seats in difrint colors: red = taken, green = free, blue = chosen.
         Iterator<Point> iter = seating.getSeatIterator();
@@ -221,9 +217,9 @@ public class SeatChooser extends JPanel implements ISeatChooser
             if(seating.getSeatChosen(iterPoint))
                 g.setColor(Color.blue);
             
-            g.fillRect(seating.getSeatPosition(iterPoint).x*seatSize+1 - seatSize/2, seating.getSeatPosition(iterPoint).y*seatSize+1 - seatSize/2, seatSize-1, seatSize-1);
+            g.fillRect(seating.getSeatPosition(iterPoint).x+1 - seatSize/2, seating.getSeatPosition(iterPoint).y+1 - seatSize/2, seatSize-1, seatSize-1);
             g.setColor(Color.black);
-            g.drawRect(seating.getSeatPosition(iterPoint).x*seatSize+1 - seatSize/2, seating.getSeatPosition(iterPoint).y*seatSize+1 - seatSize/2, seatSize-1, seatSize-1);
+            g.drawRect(seating.getSeatPosition(iterPoint).x+1 - seatSize/2, seating.getSeatPosition(iterPoint).y+1 - seatSize/2, seatSize-1, seatSize-1);
         }
     }
 
@@ -241,14 +237,12 @@ public class SeatChooser extends JPanel implements ISeatChooser
     }
 
     @Override
-    public ArrayList<Point> getSeats(int numberOfSeats)
+    public ArrayList<Point> getSeats(int numberOfSeats) throws NotEnoughSeatsException
     {
         if(seating.getChosenSeats().size() == numberOfSeats)
             return seating.getChosenSeats();
         else
-            throw new UnsupportedOperationException("Fail not supported yet.");
-            //throw new NotEnoughSeatsException();
-        //return null;
+            throw new NotEnoughSeatsException(seating.getChosenSeats().size(), numberOfSeats);
     }
 
     @Override
