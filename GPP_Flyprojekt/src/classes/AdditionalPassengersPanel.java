@@ -21,9 +21,11 @@ public class AdditionalPassengersPanel extends JPanel {
 
     final private PassengerList dataList;
     final private ValidatedListPanel editPanel;
+    final private ArrayList<ActionListener> listeners;
 
     public AdditionalPassengersPanel(int width, int height) {
         super(new BorderLayout());
+        listeners = new ArrayList<ActionListener>();
         JPanel pasListPanel = new JPanel(new BorderLayout());
         JPanel pasEditPanel = new JPanel(new BorderLayout());
         int pasEditWidth = (width > 500)? 200: width/3;
@@ -69,6 +71,16 @@ public class AdditionalPassengersPanel extends JPanel {
         this.add(infoLabelPanel, BorderLayout.NORTH);
         this.add(pasListPanel, BorderLayout.WEST);
         this.add(pasEditPanel, BorderLayout.EAST);
+        
+        // Register the delegating of action events ;)
+        dataList.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                for (ActionListener a : listeners) {
+                    a.actionPerformed(e);
+                }
+            }
+        });
     }
     
     /**
@@ -93,5 +105,16 @@ public class AdditionalPassengersPanel extends JPanel {
      */
     public void addPerson(HashMap<PersonData, String> person) {
         dataList.addPerson(person);
+    }
+    
+    /**
+     * Adds an ActionListener to this object to listen for events when persons
+     * are added to or removed from the list (commands "add" and "remove")
+     * @param a The listener
+     */
+    public void addActionListener(ActionListener a) {
+        if (!listeners.contains(a)) {
+            listeners.add(a);
+        }
     }
 }

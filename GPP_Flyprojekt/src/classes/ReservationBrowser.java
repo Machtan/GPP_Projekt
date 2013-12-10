@@ -20,14 +20,16 @@ import javax.swing.table.DefaultTableModel;
  */
 public class ReservationBrowser extends javax.swing.JFrame {
 
-    final Reservation[] reservations;
+    private Reservation[] reservations;
     private final ArrayList<ActionListener> listeners;
-
+    private final IFlight flight;
+    
     /**
      * Creates new form FlightWindow
      */
     public ReservationBrowser(IFlight flight) {
         super();
+        this.flight = flight;
         listeners = new ArrayList<ActionListener>();
         initComponents();
         reservations = flight.getReservations();
@@ -38,15 +40,7 @@ public class ReservationBrowser extends javax.swing.JFrame {
                 /* code run when component hidden*/
             }
             public void componentShown(ComponentEvent e) {
-                updateTable(); // update the layout ;)
-            }
-        });
-        
-        final ReservationBrowser browser = this;
-        this.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                browser.updateTable();
+                updateLayout(); // update the layout ;)
             }
         });
     }
@@ -72,6 +66,15 @@ public class ReservationBrowser extends javax.swing.JFrame {
         } else {
             return null;
         }
+    }
+    
+    /**
+     * Updates the browser's layout to reflect changes 
+     */
+    public void updateLayout() {
+        reservations = DatabaseHandler.getHandler().getReservations(flight);
+        updateTable(); //Redraw - ish
+        repaint();
     }
 
     private void initComponents() {
@@ -160,7 +163,7 @@ public class ReservationBrowser extends javax.swing.JFrame {
                     if (getChosen() != null) {
                         for (ActionListener a : listeners) {
                             a.actionPerformed(new ActionEvent(this, 
-                                ActionEvent.ACTION_PERFORMED, null) {}
+                                ActionEvent.ACTION_PERFORMED, null) {}     
                             );
                         }
                     }

@@ -20,7 +20,7 @@ public class RemoveReservationBrowser extends ReservationBrowser {
     public RemoveReservationBrowser (IFlight flight) {
         super(flight);
         
-        final JFrame browser = this;
+        final ReservationBrowser browser = this;
         
         this.addActionListener(new ActionListener() {
 
@@ -36,6 +36,7 @@ public class RemoveReservationBrowser extends ReservationBrowser {
                 switch(n) {
                     case 0: //Yes => delete the reservation
                         DatabaseHandler.getHandler().deleteReservation(getChosen());
+                        browser.updateLayout();
                         break; 
                     case 1: //No => just exit :)
                         break;

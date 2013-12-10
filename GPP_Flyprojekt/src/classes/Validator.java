@@ -24,14 +24,21 @@ public class Validator implements IValidator {
      */
     private static boolean validateCPR(String cpr) {
         if (cpr.length() != 10) {return false;}
-        int day = Integer.decode(cpr.substring(0, 2));
-        int month = Integer.decode(cpr.substring(2, 4));
-        int year = Integer.decode(cpr.substring(4, 6));
-        if ((month < 1) || (month > 12)) {return false;}
-        Calendar cal = new GregorianCalendar(1900+year, month-1, 1);
-        if (day > cal.getMaximum(Calendar.DAY_OF_MONTH)) {return false;}
-        // If nothing fails, assume that all is good
-        return true;
+        try {
+            int day = Integer.parseInt(cpr.substring(0, 2));
+            int month = Integer.parseInt(cpr.substring(2, 4));
+            int year = Integer.parseInt(cpr.substring(4, 6));
+            System.out.println(String.format("CPR-date: %s/%s/%s", day, month, year));
+            if ((month < 1) || (month > 12)) {return false;}
+            Calendar cal = new GregorianCalendar(1900+year, month-1, 1);
+            if (day > cal.getMaximum(Calendar.DAY_OF_MONTH)) {return false;}
+            Integer.parseInt(cpr.substring(7));
+            // If nothing fails, assume that all is good
+            return true;
+        } catch (NumberFormatException ex) {
+            ex.printStackTrace();
+            return false;
+        }
     }
     
     private static boolean validateCardnumber(String cardNumber) {

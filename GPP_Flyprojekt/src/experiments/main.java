@@ -297,8 +297,11 @@ public class main {
     }
     
     public static void main (String[] args) throws Exception {
+        String str = "090909".substring(2,4);
+        System.out.println("str:"+str);
+        System.out.println("Parse09: "+Integer.parseInt(str));
         //testFlightPanel();
-        testReservationEditor();
+        //testReservationEditor();
         //System.out.println("Date: "+new Date());
         /*Person patrick = new Person("ID",  "Patrick", "Danish", "1337");
         ArrayList<Person> l = new ArrayList<Person>();

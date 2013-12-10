@@ -41,6 +41,7 @@ public class PassengerList extends JScrollPane implements IPersonDataList {
     private JPanel panel;
     
     private ArrayList<ArrayList<Component>> comps;
+    private ArrayList<ActionListener> listeners;
     
     private IValidatedList editor;
     private SpringLayout layout;
@@ -63,6 +64,8 @@ public class PassengerList extends JScrollPane implements IPersonDataList {
         this.height = height;
         this.editButtonTip = editButtonTip;
         this.deleteButtonTip = deleteButtonTip;
+        
+        listeners = new ArrayList<ActionListener>();
         
         this.setViewportView(panel);
         this.setPreferredSize(new Dimension(width, height));
@@ -99,6 +102,17 @@ public class PassengerList extends JScrollPane implements IPersonDataList {
         this.repaint();
     }
     
+    /**
+     * Adds an ActionListener to this object to listen for events when persons
+     * are added to or removed from the list (commands "add" and "remove")
+     * @param a The listener
+     */
+    public void addActionListener(ActionListener a) {
+        if (!listeners.contains(a)) {
+            listeners.add(a);
+        }
+    }
+    
     @Override
     public void addPerson(final HashMap<PersonData, String> person) {
         // Limit the list to 99 persons
@@ -108,7 +122,6 @@ public class PassengerList extends JScrollPane implements IPersonDataList {
                     "Advarsel", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        
         persons.add(person);
         
         ArrayList<Component> lineComps = new ArrayList<Component>();
@@ -175,6 +188,12 @@ public class PassengerList extends JScrollPane implements IPersonDataList {
                 editButton.getPreferredSize().height)); //Assume the buttons are the highest
         
         updateLayout();
+        
+        // Notify the listening objects of an addition
+        for (ActionListener a : listeners) {
+            a.actionPerformed(new ActionEvent(this, 
+                    ActionEvent.ACTION_PERFORMED, "add"));
+        }
     }
     
     /**
@@ -192,10 +211,16 @@ public class PassengerList extends JScrollPane implements IPersonDataList {
         
         // Update the line number labels
         for (int i = 0; i < comps.size(); i++) {
-            ((JLabel)comps.get(i).get(0)).setText(""+(i+1));
+            ((JLabel)comps.get(i).get(0)).setText(String.format("%02d", i+1));
         }
         
         updateLayout();
+        
+        // Notify the listening objects of an addition
+        for (ActionListener a : listeners) {
+            a.actionPerformed(new ActionEvent(this, 
+                    ActionEvent.ACTION_PERFORMED, "remove"));
+        }
     }
     
     /**

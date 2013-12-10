@@ -112,8 +112,8 @@ public class DatabaseHandler implements IDatabaseHandler {
                 ArrayList<Person> additionalPassengers_array = new ArrayList<Person>();
                 ArrayList<Point> seatpoints_array = new ArrayList<Point>();
                 if (!additionalPassengers.equals("")) {
-                    for (String pasengerid : additionalPassengers.split(";")) {
-                        additionalPassengers_array.add(peopleMapped.get(pasengerid));
+                    for (String passengerID : additionalPassengers.split(",")) {
+                        additionalPassengers_array.add(peopleMapped.get(passengerID));
                     }
                 }
                 for (String seat : seats.split(";")) {

@@ -86,6 +86,15 @@ public class ReservationEditor extends JFrame {
             }
         });
         
+        // Update how many seats can be chosen
+        pasPanel.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Setting passenger request to "+editor.numberOfPassengers());
+                chooser.setRequestedSeats(editor.numberOfPassengers());
+            }
+        });
+        
         // Pack the editor window
         this.add(infoPanel, BorderLayout.WEST);
         this.add(chooser, BorderLayout.EAST);
@@ -97,14 +106,14 @@ public class ReservationEditor extends JFrame {
     private void onSaveButtonClicked() {
         // If the stuff isn't valid, tell the user so :u!
         StringBuilder errorString = new StringBuilder();
-        boolean passengerError;
-        boolean seatError;
-        boolean infoError;
-        boolean flightError;
+        boolean passengerError = false;
+        boolean seatError = false;
+        boolean infoError = false;
+        boolean flightError = false;
 
         ArrayList<Point> seats;
         
-        flightError = (flightPanel.getFlight() != null);
+        flightError = (flightPanel.getFlight() == null);
         if (!flightError) {
             try {
                 seats = chooser.getSeats(numberOfPassengers());
@@ -113,20 +122,20 @@ public class ReservationEditor extends JFrame {
                 errorString.append("- "+ex.getMessage()+" (KRITISK!)\n");
             }
         } else {
-            errorString.append("- Ingen afgang valgt (KRITISK!)");
+            errorString.append("- Ingen afgang valgt (KRITISK!)\n");
         }
          
         if (!resPanel.isDataValid()) {
             errorString.append("- Fejl i reservationsdata\n");
-            error = true;
+            infoError = true;
         }
         if (!pasPanel.isDataValid()) {
             errorString.append("- Fejl i passager-info\n");
-            error = true;
+            passengerError = true;
         } 
 
-        if (error) {
-            Object[] options = {"Ja", "Nej"};
+        if (passengerError || seatError || infoError || flightError) {
+            /*Object[] options = {"Ja", "Nej"}; //The database cannot handle this
             switch (JOptionPane.showOptionDialog(new JFrame(), 
                     "Advarsel, der er følgende fejl i de indtastede informationer:\n" + 
                     errorString.toString() +"\n"+
@@ -136,15 +145,24 @@ public class ReservationEditor extends JFrame {
                     JOptionPane.WARNING_MESSAGE,
                     null, options, options[1])) {
                 case 0: // YES
-                    if () {
-
+                    if (flightError || seatError) {
+                        JOptionPane.showMessageDialog(new JFrame(), 
+                                "Der er kritiske fejl.\nReservationen kan ikke gemmes", 
+                                "Fejl!", 
+                                JOptionPane.ERROR_MESSAGE);
                     } else {
                         saveReservation(); // Save with uncritical errors
                     }
 
                 case 1: // NO
                     return;
-            }
+            }*/
+            JOptionPane.showMessageDialog(new JFrame(), 
+                "der er følgende fejl i de indtastede informationer:\n" +
+                errorString.toString()+"\n"+
+                "Reservationen kan ikke gemmes.", 
+                "Fejl!", 
+                JOptionPane.ERROR_MESSAGE);
         } else {
             saveReservation();
         }
@@ -232,7 +250,7 @@ public class ReservationEditor extends JFrame {
         JOptionPane.showMessageDialog(new JFrame(), 
                 "Reservationen er gemt!", 
                 "Succes", 
-                JOptionPane.OK_OPTION);
+                JOptionPane.INFORMATION_MESSAGE);
     }
     
     /**
