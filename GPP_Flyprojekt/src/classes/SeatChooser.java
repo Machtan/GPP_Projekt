@@ -257,6 +257,14 @@ public class SeatChooser extends JPanel implements ISeatChooser
         if (flight != null)
             if(numberOfSeats < seating.getChosenSeats().size())
                 for(Point seat : seating.getChosenSeats())
+                {
                     choseSeat(seat);
+                    if(numberOfSeats == seating.getChosenSeats().size())
+                    {
+                        repaint();
+                        return;
+                    }
+                }
+        repaint();
     }
 }
