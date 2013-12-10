@@ -25,7 +25,7 @@ public class ReservationBrowser extends javax.swing.JFrame {
     private final IFlight flight;
     
     /**
-     * Creates new form FlightWindow
+     * Creates new form FlightBrowser
      */
     public ReservationBrowser(IFlight flight) {
         super();
@@ -103,10 +103,10 @@ public class ReservationBrowser extends javax.swing.JFrame {
         setName("flightFrame"); // NOI18N
 
         titleLabel.setFont(new java.awt.Font("Tahoma", 1, 13)); // NOI18N
-        titleLabel.setText("Reservations");
+        titleLabel.setText("Reservationer");
         titleLabel.setName("titleLabel"); // NOI18N
 
-        searchPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Search"));
+        searchPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Søg"));
         searchPanel.setToolTipText("");
         searchPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
         searchPanel.add(searchReservationIDTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 20, 240, -1));
@@ -114,7 +114,7 @@ public class ReservationBrowser extends javax.swing.JFrame {
         searchFlightIDLabel.setText("ReservationID");
         searchPanel.add(searchFlightIDLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(14, 23, -1, -1));
 
-        searchButton.setText("Search");
+        searchButton.setText("Søg");
         searchButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 searchButtonActionPerformed(evt);
@@ -123,14 +123,14 @@ public class ReservationBrowser extends javax.swing.JFrame {
         searchPanel.add(searchButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 80, -1, -1));
         searchPanel.add(searchPassengerNameTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 50, 240, -1));
 
-        searchDepartureDLabel.setText("Passenger name");
+        searchDepartureDLabel.setText("Navn på passager");
         searchPanel.add(searchDepartureDLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 53, -1, -1));
 
-        searchArrivalLabel.setText("Tlf");
+        searchArrivalLabel.setText("Telefonnummer");
         searchPanel.add(searchArrivalLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 23, -1, -1));
         searchPanel.add(searchTlfTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 20, 180, -1));
 
-        searchMinSeatsLabel.setText("Total amount of passengers");
+        searchMinSeatsLabel.setText("Antal passagerer");
         searchPanel.add(searchMinSeatsLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 83, -1, -1));
 
         searchTotalPassengersTextField.setText("0");
@@ -139,7 +139,7 @@ public class ReservationBrowser extends javax.swing.JFrame {
         searchTotalPassengersTextField.setColumns(10);
         searchPanel.add(searchTotalPassengersTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(218, 80, 132, -1));
 
-        clearSearchButton.setText("Clear");
+        clearSearchButton.setText("Ryd felter");
         clearSearchButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 clearSearchButtonActionPerformed(evt);
@@ -148,7 +148,7 @@ public class ReservationBrowser extends javax.swing.JFrame {
         searchPanel.add(clearSearchButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 50, -1, -1));
         DefaultTableModel tableModel = new DefaultTableModel(new Object[][]{},
                 new String[]{
-            "ReservationID", "Passenger name", "Total passengers", "Tlf"
+            "ID", "Navn på passager", "Antal passagerer", "Telefonnummer"
         }) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -174,12 +174,12 @@ public class ReservationBrowser extends javax.swing.JFrame {
         reservationTable.setRequestFocusEnabled(false);
         jScrollPane2.setViewportView(reservationTable);
 
-        showReservationButton.setText("Edit or Show details on selected reservation");
+        showReservationButton.setText("Redigér den valgte reservation");
 
         actionsPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
 
-        returnToFlightBrowserButton.setText("Return to flightbrowser");
+        returnToFlightBrowserButton.setText("Tilbage til afgange");
         returnToFlightBrowserButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 returnToFlightBrowserButtonActionPerformed(evt);
@@ -230,14 +230,16 @@ public class ReservationBrowser extends javax.swing.JFrame {
                 }
             } catch (Exception ex) {
             }
-            model.addRow(new Object[]{reservation.reservationID, reservation.passenger.name, reservation.seats.size(), reservation.tlf});
-
+            model.addRow(new Object[]{reservation.reservationID, 
+                reservation.passenger.name, 
+                reservation.seats.size(), 
+                reservation.tlf});
         }
     }
 
     private void returnToFlightBrowserButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        FlightWindow menu = new FlightWindow();
+        FlightBrowser menu = new FlightBrowser();
         menu.pack();
         menu.setVisible(true);
         dispose();

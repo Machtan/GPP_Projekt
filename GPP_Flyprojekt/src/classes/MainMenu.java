@@ -111,13 +111,13 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_createNewReservationAction
 
     private void showFlightBrowserButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showFlightBrowserButtonActionPerformed
-        FlightBrowser menu = new FlightBrowser();
+        FlightInspector menu = new FlightInspector();
         Utils.transition(this, menu);
         
     }//GEN-LAST:event_showFlightBrowserButtonActionPerformed
 
     private void editReservationAction(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editReservationAction
-        final FlightWindow win = new FlightWindow(); //Unbound version :)
+        final FlightBrowser win = new FlightBrowser(); //Unbound version :)
         win.addActionListener(new ActionListener() {
 
             @Override
@@ -130,7 +130,7 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_editReservationAction
 
     private void removeReservationAction(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeReservationAction
-        final FlightWindow win = new FlightWindow(); //Unbound version :)
+        final FlightBrowser win = new FlightBrowser(); //Unbound version :)
         win.addActionListener(new ActionListener() {
 
             @Override

@@ -10,7 +10,7 @@ import java.lang.Thread.*;
  * @author Jakob Lautrup Nysom (jaln@itu.dk)
  * @version 07-Dec-2013
  */
-public class FlightChooser extends FlightBrowser {
+public class FlightChooser extends FlightInspector {
     
     /**
      * Constructor for the FlightChooser class
