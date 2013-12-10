@@ -7,6 +7,7 @@ package classes;
 
 import interfaces.*;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
@@ -19,7 +20,9 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
+import javax.swing.border.BevelBorder;
 
 /**
  *
@@ -37,14 +40,9 @@ public class SeatChooser extends JPanel implements ISeatChooser
     URL url;
     
     
-    public SeatChooser(IFlight flight)
+    public SeatChooser()
     {
         super();
-        try {
-            url = SeatChooser.class.getClassLoader().getResource("images/Plane.png");
-        } catch (Exception ex) {
-            System.out.println("DU ØDELAGDE MIT PROGRAM DIN LORTE-EXCEPTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        }
         this.addMouseListener(new MouseListener() 
         {
             @Override
@@ -61,6 +59,14 @@ public class SeatChooser extends JPanel implements ISeatChooser
             @Override
             public void mouseExited(MouseEvent e){}
         });
+        
+        this.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+        this.setPreferredSize(new Dimension(200,400));
+    }
+    
+    public SeatChooser(IFlight flight)
+    {
+        this();
         setFlight(flight);
     }
     
@@ -77,10 +83,21 @@ public class SeatChooser extends JPanel implements ISeatChooser
             Point iterPoint = iter.next();
             positionToSeat.put(seating.getSeatPosition(iterPoint), iterPoint);
         }
+        
+        // - TODO integra dette i databasen / med databasen
+        try {
+            url = SeatChooser.class.getClassLoader().getResource("images/Plane.png");
+        } catch (Exception ex) {
+            System.out.println("DU ØDELAGDE MIT PROGRAM DIN LORTE-EXCEPTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        }
+        
+        repaint();
     }
     
     private void onMouseClicked(MouseEvent e) 
     {
+        if(flight == null)
+            return;
         Point clickPosition = new Point(e.getX(),e.getY());
 	if (indenfor(clickPosition))
             choseSeat(positionToSeat.get(clickToSeatPosition(clickPosition)));
@@ -175,6 +192,9 @@ public class SeatChooser extends JPanel implements ISeatChooser
     protected void paintComponent(Graphics g)
     {
         super.paintComponent(g); //To change body of generated methods, choose Tools | Templates.
+        
+        if(flight == null) // - TODO der skal vare en text som forteler at der ikke er noglen flight
+            return;
         
         //paint text for how many free seats ther is
         g.drawString("" + seating.getFreeSeats().size() + " of " + (seating.getFreeSeats().size() + seating.getTakenSeats().size()) + " are free", 0, 0);
