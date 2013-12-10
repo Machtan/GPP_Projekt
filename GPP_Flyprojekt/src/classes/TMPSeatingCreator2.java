@@ -28,7 +28,7 @@ public class TMPSeatingCreator2
             if(col == 3)
             {
                 startXOfset += 19;
-                startYOfset -= 7;
+                startYOfset -= 5;
             }
             for(int row = 0;row < 13; row++)
             {
