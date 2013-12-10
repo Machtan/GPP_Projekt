@@ -110,6 +110,7 @@ public class Seating implements ISeating {
             if(getSeatFree(seat))
                 throw new UnsupportedOperationException("Fail not supported yet.");
             
+            isSeatFree.put(seat,true);
             isSeatChosen.put(seat,true);
         }
     }
