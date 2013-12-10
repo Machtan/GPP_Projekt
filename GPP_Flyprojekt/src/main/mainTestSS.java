@@ -26,13 +26,14 @@ public class mainTestSS
         database.connect();
         Flight fligt;
         fligt = database.getFlights()[0];
-        SeatChooser vis = new SeatChooser(fligt);
+        SeatChooser vis = new SeatChooser();
         
-        vis.setRequestedSeats(2);
+        vis.setRequestedSeats(8);
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         frame.add(vis);
         frame.pack();
         frame.setVisible(true);
+        vis.setFlight(fligt);
     }
 }

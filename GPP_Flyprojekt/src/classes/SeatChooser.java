@@ -35,7 +35,7 @@ public class SeatChooser extends JPanel implements ISeatChooser
     private IFlight flight;
     private ISeating seating;
     int numberOfSeats = 1;
-    int seatSize = 12;
+    int seatSize = 11;
     private HashMap<Point, Point> positionToSeat;
     URL url;
     int ImageWidth = 150;
@@ -161,7 +161,7 @@ public class SeatChooser extends JPanel implements ISeatChooser
             int TMPnumberOfSeats = seating.getChosenSeats().size();
             while(numberOfSeats > seating.getChosenSeats().size())
             {
-                TMPseat.x--;
+                TMPseat.y--;
                 if(seating.getSeatExists(TMPseat))
                     seating.setChosen(TMPseat);
                 if(TMPnumberOfSeats == seating.getChosenSeats().size())
@@ -171,7 +171,7 @@ public class SeatChooser extends JPanel implements ISeatChooser
             TMPseat = (Point) seat.clone();
             while(numberOfSeats > seating.getChosenSeats().size())
             {
-                TMPseat.x++;
+                TMPseat.y++;
                 if(seating.getSeatExists(TMPseat))
                     seating.setChosen(TMPseat);
                 if(TMPnumberOfSeats == seating.getChosenSeats().size())
