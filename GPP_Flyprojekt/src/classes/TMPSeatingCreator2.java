@@ -56,7 +56,7 @@ public class TMPSeatingCreator2
                 if(col == 5 && row == 23)
                     break;
                 
-                DatabaseHandler.getHandler().addAirplaneSeat(new AirplaneSeat("","1",startXOfset + col * seatSize,startYOfset + row * seatSize,row,col));
+                DatabaseHandler.getHandler().addAirplaneSeat(new AirplaneSeat("","1",startXOfset + col * seatSize,startYOfset + row * (seatSize + 1),row,col));
             }
         }
     }
