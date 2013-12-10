@@ -1,9 +1,11 @@
 package classes;
 
 import interfaces.IFlight;
+import interfaces.ISeatChooser;
 import interfaces.IValidatable;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,6 +14,7 @@ import java.util.HashMap;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
@@ -26,7 +29,7 @@ public class ReservationEditor extends JFrame {
     Reservation reservation;
     AdditionalPassengersPanel pasPanel;
     ReservationInfoPanel resPanel;
-    SeatChooser chooser;
+    final SeatChooser chooser;
     FlightPanel flightPanel;
     JButton addReservationButton;
     
@@ -50,24 +53,101 @@ public class ReservationEditor extends JFrame {
         JPanel flightInfoPanel = new JPanel(new BorderLayout());
         flightPanel = new FlightPanel();
         addReservationButton = new JButton("Gem reservation");
+        
+        final ReservationEditor editor = this;
         addReservationButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                saveReservation();
+                editor.onSaveButtonClicked();
             }
         });
         
         flightInfoPanel.add(flightPanel, BorderLayout.NORTH);
         flightInfoPanel.add(addReservationButton, BorderLayout.SOUTH);
         
-        //chooser = new SeatChooser(); // Make a version for no-flight-chosen?
-        //chooser.setPreferredSize(new Dimension(300,500));
-        //flightInfoPanel.add(chooser, BorderLayout.SOUTH);
-        //flightInfoPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+        
+        // Pack all the info together
+        JPanel infoPanel = new JPanel(new BorderLayout());
+        infoPanel.add(reservationInfoPanel, BorderLayout.WEST);
+        infoPanel.add(flightInfoPanel, BorderLayout.EAST);
+        
+        // Make the seat chooser panel
+        chooser = new SeatChooser(); // Make a version for no-flight-chosen?
+        chooser.setPreferredSize(new Dimension(300,700));
+        flightPanel.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                chooser.setFlight(flightPanel.getFlight());
+                // If a reservation is loaded, mark the chosen seats as such
+                if (reservation != null) {
+                    chooser.setChosen(reservation.seats);
+                }
+            }
+        });
         
         // Pack the editor window
-        this.add(reservationInfoPanel, BorderLayout.WEST);
-        this.add(flightInfoPanel, BorderLayout.EAST);
+        this.add(infoPanel, BorderLayout.WEST);
+        this.add(chooser, BorderLayout.EAST);
+    }
+    
+    /**
+     * Handles what happens when the save button is clicked
+     */
+    private void onSaveButtonClicked() {
+        // If the stuff isn't valid, tell the user so :u!
+        StringBuilder errorString = new StringBuilder();
+        boolean passengerError;
+        boolean seatError;
+        boolean infoError;
+        boolean flightError;
+
+        ArrayList<Point> seats;
+        
+        flightError = (flightPanel.getFlight() != null);
+        if (!flightError) {
+            try {
+                seats = chooser.getSeats(numberOfPassengers());
+            } catch (ISeatChooser.NotEnoughSeatsException ex) {
+                seatError = true;
+                errorString.append("- "+ex.getMessage()+" (KRITISK!)\n");
+            }
+        } else {
+            errorString.append("- Ingen afgang valgt (KRITISK!)");
+        }
+         
+        if (!resPanel.isDataValid()) {
+            errorString.append("- Fejl i reservationsdata\n");
+            error = true;
+        }
+        if (!pasPanel.isDataValid()) {
+            errorString.append("- Fejl i passager-info\n");
+            error = true;
+        } 
+
+        if (error) {
+            Object[] options = {"Ja", "Nej"};
+            switch (JOptionPane.showOptionDialog(new JFrame(), 
+                    "Advarsel, der er følgende fejl i de indtastede informationer:\n" + 
+                    errorString.toString() +"\n"+
+                    "Er du sikker på at du vil fortsætte", 
+                    "Advarsel!", 
+                    JOptionPane.YES_NO_OPTION, 
+                    JOptionPane.WARNING_MESSAGE,
+                    null, options, options[1])) {
+                case 0: // YES
+                    if () {
+
+                    } else {
+                        saveReservation(); // Save with uncritical errors
+                    }
+
+                case 1: // NO
+                    return;
+            }
+        } else {
+            saveReservation();
+        }
     }
     
     /**
@@ -80,39 +160,79 @@ public class ReservationEditor extends JFrame {
     }
     
     /**
+     * Returns the number of passengers on this reservation. Used often enough.
+     * @return 
+     */
+    private int numberOfPassengers() {
+        return pasPanel.getPersons().size()+1;
+    }
+    
+    /**
      * Returns the reservation assembled from the data currently in the editor
      * @return 
      */
-    /*private Reservation getReservation() {
+    private Reservation getReservation() {
         HashMap<IValidatable, String> resData = resPanel.getReservationInfo();
         Person passenger = new Person(
-            "DURP, PATRICK!", 
             resData.get(PersonData.NAME), 
             resData.get(PersonData.NATIONALITY), 
             resData.get(PersonData.CPR));
         
-        Reservation res = new Reservation(
-            "DURP, PATRICK!", 
-            passenger, 
-            pasPanel.getPersons(), 
-            seatChooser.getSeats(1+pasPanel.getPersons.size())), 
-            flightPanel.getFlight(), 
-            resData.get(ReservationData.PHONENUMBER),
-            resData.get(ReservationData.CARDNUMBER),
-            resPanel.getBookingReference());
-    }*/
+        ArrayList<Person> persons = new ArrayList<Person>();
+        for (HashMap<PersonData, String> per : pasPanel.getPersons()) {
+            Person newPer = new Person(
+                per.get(PersonData.NAME), 
+                per.get(PersonData.NATIONALITY), 
+                per.get(PersonData.CPR));
+            persons.add(newPer);
+        }
+        
+        try {
+            Reservation res;
+            if (reservation != null) { //Old reservation data is present
+                res = new Reservation(
+                    reservation.reservationID,
+                    passenger, 
+                    persons, 
+                    chooser.getSeats(numberOfPassengers()), 
+                    flightPanel.getFlight(), 
+                    resData.get(ReservationData.PHONENUMBER),
+                    resData.get(ReservationData.CARDNUMBER),
+                    resPanel.getBookingReference());
+            
+            } else { // If no data => no id to overwrite
+                res = new Reservation(
+                    passenger, 
+                    persons, 
+                    chooser.getSeats(numberOfPassengers()), 
+                    flightPanel.getFlight(), 
+                    resData.get(ReservationData.PHONENUMBER),
+                    resData.get(ReservationData.CARDNUMBER),
+                    resPanel.getBookingReference());
+            }
+            return res;
+            
+        } catch (ISeatChooser.NotEnoughSeatsException ex) {
+            System.out.println("Something has gone horribly wrong....");
+            return null;
+        }
+    }
     
     /**
      * Saves the reservation currently being edited. Prompts the user if 
      * fields are left invalid or un-validated
      */
     private void saveReservation() {
-        /*DatabaseHandler handler = DatabaseHandler.getHandler();
+        DatabaseHandler handler = DatabaseHandler.getHandler();
         if (reservation != null) {
             handler.updateReservation(getReservation());
         } else {
             handler.addReservation(getReservation());
-        }*/
+        }
+        JOptionPane.showMessageDialog(new JFrame(), 
+                "Reservationen er gemt!", 
+                "Succes", 
+                JOptionPane.OK_OPTION);
     }
     
     /**
@@ -145,5 +265,8 @@ public class ReservationEditor extends JFrame {
             person.put(PersonData.NATIONALITY, per.nationality);
             pasPanel.addPerson(person);
         }
+        
+        // Add the flight :p
+        flightPanel.loadFlight(res.flight);
     }
 }

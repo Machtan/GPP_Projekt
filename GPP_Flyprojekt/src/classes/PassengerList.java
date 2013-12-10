@@ -266,4 +266,21 @@ public class PassengerList extends JScrollPane implements IPersonDataList {
     public ArrayList<HashMap<PersonData, String>> getPersons() {
         return (ArrayList<HashMap<PersonData, String>>)persons.clone();
     }
+    
+    /**
+     * Returns whether all passengers in the list are validated
+     * @return 
+     */
+    public boolean isDataValid() {
+        for (HashMap<PersonData, String> person : persons) {
+            try {
+                if (!verifyPerson(person)) {
+                    return false;
+                }
+            } catch (IValidator.NoValidatorException ex) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

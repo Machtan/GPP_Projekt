@@ -5,6 +5,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.NumberFormat;
@@ -29,7 +31,24 @@ public class ReservationBrowser extends javax.swing.JFrame {
         listeners = new ArrayList<ActionListener>();
         initComponents();
         reservations = flight.getReservations();
-        UpdateTable();
+        updateTable();
+        this.addComponentListener(new ComponentAdapter() {
+            public void componentHidden(ComponentEvent e) 
+            {
+                /* code run when component hidden*/
+            }
+            public void componentShown(ComponentEvent e) {
+                updateTable(); // update the layout ;)
+            }
+        });
+        
+        final ReservationBrowser browser = this;
+        this.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                browser.updateTable();
+            }
+        });
     }
     
     /**
@@ -144,7 +163,6 @@ public class ReservationBrowser extends javax.swing.JFrame {
                                 ActionEvent.ACTION_PERFORMED, null) {}
                             );
                         }
-                        dispose();
                     }
                 }
             }
@@ -185,7 +203,7 @@ public class ReservationBrowser extends javax.swing.JFrame {
         pack();
     }
 
-    void UpdateTable() {
+    void updateTable() {
         DefaultTableModel model = (DefaultTableModel) reservationTable.getModel();
         if (model.getRowCount() > 0) {
             for (int i = model.getRowCount() - 1; i > -1; i--) {
@@ -225,7 +243,7 @@ public class ReservationBrowser extends javax.swing.JFrame {
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
 
-        UpdateTable();
+        updateTable();
     }
 
     private void clearSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {

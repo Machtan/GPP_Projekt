@@ -24,7 +24,7 @@ public interface ISeatChooser {
     
     public class NotEnoughSeatsException extends Exception {
         public NotEnoughSeatsException(int chosen, int needed) {
-            super("Only "+chosen+" out of "+needed+" seats have been chosen.");
+            super("Der er kun valgt "+chosen+" ud af "+needed+" sæder.");
         }
     }
 }

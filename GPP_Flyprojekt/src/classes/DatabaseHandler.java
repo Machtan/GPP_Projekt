@@ -111,8 +111,10 @@ public class DatabaseHandler implements IDatabaseHandler {
                 String bookingNumber = rs.getString(8);
                 ArrayList<Person> additionalPassengers_array = new ArrayList<Person>();
                 ArrayList<Point> seatpoints_array = new ArrayList<Point>();
-                for (String pasengerid : additionalPassengers.split(";")) {
-                    additionalPassengers_array.add(peopleMapped.get(pasengerid));
+                if (!additionalPassengers.equals("")) {
+                    for (String pasengerid : additionalPassengers.split(";")) {
+                        additionalPassengers_array.add(peopleMapped.get(pasengerid));
+                    }
                 }
                 for (String seat : seats.split(";")) {
                     String[] cordinates = seat.split(",");
@@ -202,13 +204,13 @@ public class DatabaseHandler implements IDatabaseHandler {
                         + "VALUES (?,?,?,?,?,?,?,?);";
 
                 PreparedStatement preparedStmt = conn.prepareStatement(query);
-                if (res.reservationID != "") {
+                if ((res.reservationID != "") && (res.reservationID != null)) {
                     preparedStmt.setInt(1, Integer.parseInt(res.reservationID));
                 } else {
                     preparedStmt.setNull(1, java.sql.Types.INTEGER);
                 }
                 preparedStmt.setString(2, res.flight.getID());
-                if (res.passenger.id != "") {
+                if ((res.passenger.id != "")&&(res.passenger.id != null)) {
                     preparedStmt.setInt(3, Integer.parseInt(res.passenger.id));
                 } else {
                     preparedStmt.setNull(3, java.sql.Types.INTEGER);

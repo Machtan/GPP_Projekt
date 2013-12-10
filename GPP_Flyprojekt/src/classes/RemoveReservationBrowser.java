@@ -20,6 +20,8 @@ public class RemoveReservationBrowser extends ReservationBrowser {
     public RemoveReservationBrowser (IFlight flight) {
         super(flight);
         
+        final JFrame browser = this;
+        
         this.addActionListener(new ActionListener() {
 
             @Override
@@ -36,7 +38,7 @@ public class RemoveReservationBrowser extends ReservationBrowser {
                         DatabaseHandler.getHandler().deleteReservation(getChosen());
                         break; 
                     case 1: //No => just exit :)
-                        return; 
+                        break;
                 }
             }
         });

@@ -88,7 +88,7 @@ public class SeatChooser extends JPanel implements ISeatChooser
         
         // - TODO integra dette i databasen / med databasen
         try {
-            url = SeatChooser.class.getClassLoader().getResource("images/flyP.jpg");
+            url = SeatChooser.class.getClassLoader().getResource(flight.getPlane().airplaneLayout.placementImagePath);
         } catch (Exception ex) {
             System.out.println("DU ØDELAGDE MIT PROGRAM DIN LORTE-EXCEPTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
@@ -195,7 +195,12 @@ public class SeatChooser extends JPanel implements ISeatChooser
         //paint a pikture of the airplane
         try
         {
-            g.drawImage(ImageIO.read(url), 0, 0, this);
+            if (url != null) {
+                g.drawImage(ImageIO.read(url), 0, 0, this);
+            } else {
+                System.out.println("No working url :(");
+            }
+            
         }
         catch (IOException ex)
         {

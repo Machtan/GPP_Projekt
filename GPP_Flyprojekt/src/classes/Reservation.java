@@ -27,12 +27,14 @@ public class Reservation {
      * @param additionalPassengers Any additional passengers
      * @param seats The 2d coordinates of the occupied seats for this 
      * reservation
+     * @param tlf The phone number for this reservation
+     * @param cardnumber The card number for this reservation
+     * @param bookingNumber The booking reference for this reservation
      * @param flight The flight this reservation is on
      */
-    public Reservation(String reservationID, Person passenger, 
+    public Reservation(Person passenger, 
             ArrayList<Person> additionalPassengers, ArrayList<Point> seats, 
             IFlight flight,String tlf,String cardnumber,String bookingNumber) {
-        this.reservationID = reservationID;
         this.passenger = passenger;
         this.additionalPassengers = additionalPassengers;
         this.seats = seats;
@@ -40,6 +42,14 @@ public class Reservation {
         this.tlf = tlf;
         this.cardnumber = cardnumber;
         this.bookingNumber = bookingNumber;
+    }
+    
+    public Reservation(String reservationID, Person passenger, 
+            ArrayList<Person> additionalPassengers, ArrayList<Point> seats, 
+            IFlight flight,String tlf,String cardnumber,String bookingNumber) {
+            this(passenger, additionalPassengers, seats, flight, tlf, 
+                cardnumber, bookingNumber);
+            this.reservationID = reservationID;
     }
     
     /**

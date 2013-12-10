@@ -80,6 +80,14 @@ public class AdditionalPassengersPanel extends JPanel {
     }
     
     /**
+     * Returns whether all data in the panel is valid
+     * @return 
+     */
+    public boolean isDataValid() {
+        return dataList.isDataValid();
+    }
+    
+    /**
      * Adds an additional passenger to the panel
      * @param person The passenger to add
      */
