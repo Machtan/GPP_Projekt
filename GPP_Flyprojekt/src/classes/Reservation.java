@@ -3,7 +3,6 @@ package classes;
 import interfaces.IFlight;
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Date;
 /**
  * The Reservation class <More docs goes here>
  * @author Jakob Lautrup Nysom (jaln@itu.dk)

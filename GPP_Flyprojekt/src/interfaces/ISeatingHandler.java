@@ -1,6 +1,5 @@
 package interfaces;
 
-import classes.SeatingHandler;
 import java.awt.Point;
 import java.util.ArrayList;
 

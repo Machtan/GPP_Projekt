@@ -1,10 +1,8 @@
 package classes;
 
-import interfaces.IFlight;
 import interfaces.ISeatChooser;
 import interfaces.IValidatable;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -17,7 +15,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
-import javax.swing.border.EtchedBorder;
 
 /**
  * The ReservationEditor class <More docs goes here>

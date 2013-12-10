@@ -6,15 +6,11 @@ import interfaces.IFlight;
 import java.awt.Point;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import classes.Utils.*;
-import java.io.UnsupportedEncodingException;
 
 /**
  *
