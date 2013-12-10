@@ -35,7 +35,7 @@ public class SeatChooser extends JPanel implements ISeatChooser
     private IFlight flight;
     private ISeating seating;
     int numberOfSeats = 1;
-    int seatSize = 9;
+    int seatSize = 12;
     private HashMap<Point, Point> positionToSeat;
     URL url;
     int ImageWidth = 150;
