@@ -15,9 +15,8 @@ import java.util.HashSet;
  */
 public class TMPSeatingCreator2 
 {
-    HashSet<AirplaneSeat> seats = new HashSet<AirplaneSeat>();
     
-    void makeSeats()
+    public void makeSeats()
     {
         int startXOfset = 31;
         int startYOfset = 135; 
@@ -32,7 +31,7 @@ public class TMPSeatingCreator2
             }
             for(int row = 0;row < 13; row++)
             {
-                DatabaseHandler.getHandler().setAirplaneSeats(new AirplaneSeat("???","???",startXOfset + col * seatSize,startYOfset + row * seatSize,row,col));
+                DatabaseHandler.getHandler().addAirplaneSeat(new AirplaneSeat("","1",startXOfset + col * seatSize,startYOfset + row * seatSize,row,col));
             }
         }
         
@@ -49,7 +48,7 @@ public class TMPSeatingCreator2
             }
             for(int row = 0;row + 13 < lastRow; row++)
             {
-                DatabaseHandler.getHandler().setAirplaneSeats(new AirplaneSeat("???","???",startXOfset + col * seatSize,startYOfset + row * seatSize,row + 13,col));
+                 DatabaseHandler.getHandler().addAirplaneSeat(new AirplaneSeat("","1",startXOfset + col * seatSize,startYOfset + row * seatSize,row + 13,col));
             }
         }
     }
