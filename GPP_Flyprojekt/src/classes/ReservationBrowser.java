@@ -10,7 +10,6 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
 
@@ -18,10 +17,9 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author Patrick Evers Bjørkman
  */
-public class ReservationBrowser extends javax.swing.JFrame {
+public class ReservationBrowser extends Browser {
 
     private Reservation[] reservations;
-    private final ArrayList<ActionListener> listeners;
     private final IFlight flight;
     
     /**
@@ -30,7 +28,6 @@ public class ReservationBrowser extends javax.swing.JFrame {
     public ReservationBrowser(IFlight flight) {
         super();
         this.flight = flight;
-        listeners = new ArrayList<ActionListener>();
         initComponents();
         reservations = flight.getReservations();
         updateTable();
@@ -45,21 +42,12 @@ public class ReservationBrowser extends javax.swing.JFrame {
         });
     }
     
-    /**
-     * Adds an action listener to this object to be notified when a reservation
-     * is chosen.
-     * @param a The action listener to be added
-     */
-    public void addActionListener(ActionListener a) {
-        if (!listeners.contains(a)) {
-            listeners.add(a);
-        }
-    }
     
     /**
      * Returns the chosen reservation, or null if none is chosen
      * @return The selected reservation
      */
+    @Override
     public Reservation getChosen() {
         if (reservationTable.getSelectedRow() > -1) {
             return reservations[reservationTable.getSelectedRow()];
@@ -71,6 +59,7 @@ public class ReservationBrowser extends javax.swing.JFrame {
     /**
      * Updates the browser's layout to reflect changes 
      */
+    @Override
     public void updateLayout() {
         reservations = DatabaseHandler.getHandler().getReservations(flight);
         updateTable(); //Redraw - ish
@@ -161,11 +150,7 @@ public class ReservationBrowser extends javax.swing.JFrame {
                 // your valueChanged overridden method
                 if (me.getClickCount() == 2) {
                     if (getChosen() != null) {
-                        for (ActionListener a : listeners) {
-                            a.actionPerformed(new ActionEvent(this, 
-                                ActionEvent.ACTION_PERFORMED, null) {}     
-                            );
-                        }
+                        onActionPerformed();
                     }
                 }
             }
@@ -175,14 +160,20 @@ public class ReservationBrowser extends javax.swing.JFrame {
         jScrollPane2.setViewportView(reservationTable);
 
         showReservationButton.setText("Redigér den valgte reservation");
-
+        showReservationButton.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onActionPerformed();
+            }
+        });
+        
         actionsPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
 
         returnToFlightBrowserButton.setText("Tilbage til afgange");
         returnToFlightBrowserButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                returnToFlightBrowserButtonActionPerformed(evt);
+                returnActionPerformed(evt);
             }
         });
         actionsPanel.add(returnToFlightBrowserButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, -1, -1));
@@ -235,14 +226,6 @@ public class ReservationBrowser extends javax.swing.JFrame {
                 reservation.seats.size(), 
                 reservation.tlf});
         }
-    }
-
-    private void returnToFlightBrowserButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-        FlightBrowser menu = new FlightBrowser();
-        menu.pack();
-        menu.setVisible(true);
-        dispose();
     }
 
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {

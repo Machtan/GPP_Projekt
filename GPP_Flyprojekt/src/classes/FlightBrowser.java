@@ -4,12 +4,9 @@ import interfaces.ISeating;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -22,16 +19,14 @@ import javax.swing.table.DefaultTableModel;
  * specific flight.
  * @author Patrick Evers Bjørkman
  */
-public class FlightBrowser extends javax.swing.JFrame {
+public class FlightBrowser extends Browser {
 
     final Flight[] flights;
-    final ArrayList<ActionListener> listeners;
 
     /**
      * Creates new form FlightBrowser
      */
     public FlightBrowser() {
-        listeners = new ArrayList<ActionListener>();
         initComponents();
         flights = DatabaseHandler.getHandler().getFlights();
         //Update Orgin and destination
@@ -61,17 +56,6 @@ public class FlightBrowser extends javax.swing.JFrame {
             searchDestinationComboBox.addItem(item);
         }
         UpdateTable();
-    }
-    
-    /**
-     * Adds an ActionListener to this object, to be notified when a flight is
-     * chosen.
-     * @param a The action listener 
-     */
-    public void addActionListener(ActionListener a) {
-        if (!listeners.contains(a)) {
-            listeners.add(a);
-        }
     }
     
     /**
@@ -222,13 +206,8 @@ public class FlightBrowser extends javax.swing.JFrame {
             public void mousePressed(MouseEvent me) {
                 // your valueChanged overridden method
                 if ((me.getClickCount() == 2) && (getChosen() != null)) {
-                    for (ActionListener a : listeners) {
-                        a.actionPerformed(new ActionEvent(this, 
-                            ActionEvent.ACTION_PERFORMED, null) {}
-                        );
-                    }
+                    onActionPerformed();
                 }
-
             }
         });
         flightTable.setModel(tableModel);
@@ -237,17 +216,16 @@ public class FlightBrowser extends javax.swing.JFrame {
         showReservationButton.setText("Vis reservationer for den valgte afgang");
         showReservationButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                showReservationButtonActionPerformed(evt);
+                activateActionPerformed(evt);
             }
         });
-
 
         actionsPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
         
         returnToMainMenuButton.setText("Tilbage til hovedmenuen");
         returnToMainMenuButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                returnToMainMenuButtonActionPerformed(evt);
+                returnActionPerformed(evt);
             }
         });
         actionsPanel.add(returnToMainMenuButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 78, -1, -1));
@@ -267,23 +245,14 @@ public class FlightBrowser extends javax.swing.JFrame {
         pack();
     }
 
-    private void returnToMainMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-        MainMenu menu = new MainMenu();
-        menu.pack();
-        menu.setVisible(true);
-        dispose();
-    }
-
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-
         UpdateTable();
     }
 
     private void clearSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        searchFlightIDTextField.setText("");
+        searchFlightIDTextField.setText("All");
         searchOriginComboBox.setSelectedIndex(-1);
         searchDestinationComboBox.setSelectedIndex(-1);
         searchDepartureTextField.setText("");
@@ -295,12 +264,6 @@ public class FlightBrowser extends javax.swing.JFrame {
         // TODO add your handling code here:
     }
 
-    private void showReservationButtonActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-        ReservationBrowser reservationBrowser = new ReservationBrowser(flights[flightTable.getSelectedRow()]);
-        reservationBrowser.pack();
-        reservationBrowser.setVisible(true);
-    }
     // Variables declaration - do not modify                     
     private javax.swing.JButton clearSearchButton;
     protected javax.swing.JTable flightTable; //Hahahahahahahaha
@@ -323,4 +286,9 @@ public class FlightBrowser extends javax.swing.JFrame {
     private javax.swing.JPanel searchPanel;
     private javax.swing.JButton showReservationButton;
     // End of variables declaration           
+
+    @Override
+    public void updateLayout() {
+        UpdateTable();
+    }
 }

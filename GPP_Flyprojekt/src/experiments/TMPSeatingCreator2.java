@@ -3,7 +3,10 @@
  * and open the template in the editor.
  */
 
-package classes;
+package experiments;
+
+import classes.AirplaneSeat;
+import classes.DatabaseHandler;
 
 import java.util.HashSet;
 

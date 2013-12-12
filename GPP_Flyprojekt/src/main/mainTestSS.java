@@ -7,11 +7,10 @@ package main;
 
 import classes.DatabaseHandler;
 import classes.Flight;
-import classes.Reservation;
 import classes.SeatChooser;
-import classes.TMPSeatingCreator;
-import classes.TMPSeatingCreator2;
-import interfaces.ISeatChooser;
+import experiments.TMPSeatingCreator;
+import experiments.TMPSeatingCreator2;
+
 import javax.swing.JFrame;
 
 /**

@@ -44,5 +44,4 @@ public class RemoveReservationBrowser extends ReservationBrowser {
             }
         });
     }
-    
 }

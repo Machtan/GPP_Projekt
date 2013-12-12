@@ -28,5 +28,4 @@ public class EditReservationBrowser extends ReservationBrowser{
             }
         });
     }
-    
 }

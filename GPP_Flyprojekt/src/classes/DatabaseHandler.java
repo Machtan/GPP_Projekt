@@ -131,12 +131,11 @@ public class DatabaseHandler implements IDatabaseHandler {
      * Add a new reservation to the database.
      */
     @Override
-    public void addReservation(Reservation res) {
+    public Reservation addReservation(Reservation res) {
         try {
             validateConnect();
         } catch (Exception ex) {
             Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
-            return;
         }
         if (res != null) {
             try {
@@ -219,11 +218,14 @@ public class DatabaseHandler implements IDatabaseHandler {
                 // execute the preparedstatement
                 preparedStmt.executeUpdate();
                 res.reservationID = GetAutoIncremented_Value("`Airport`.`Reservation`");
+                return res;
 
             } catch (SQLException ex) {
                 Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+                return null;
             }
         }
+        return null;
     }
     /*
      * delete a reservation from the database.
@@ -329,11 +331,13 @@ public class DatabaseHandler implements IDatabaseHandler {
         }
 
         if (res != null) {
-            Reservation[] reservations = getReservations(res.flight);
-            for (Reservation reservation : reservations) {
-                if (reservation.reservationID == null ? res.reservationID == null : reservation.reservationID.equals(res.reservationID)) {
-                    deleteReservation(reservation);
-                    break;
+            for (IFlight flight : getFlights()) {
+                Reservation[] reservations = getReservations(flight);
+                for (Reservation reservation : reservations) {
+                    if (reservation.reservationID.equals(res.reservationID) && (res.reservationID != null)) {
+                        deleteReservation(reservation);
+                        break;
+                    }
                 }
             }
             addReservation(res);

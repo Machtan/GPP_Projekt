@@ -1,5 +1,7 @@
 package classes;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URL;
@@ -248,6 +250,24 @@ public class Utils {
     }
     
     /**
+     * Automatically transitions from component a to b, so that a closes and b
+     * opens, and so that a is reopened when b is closed again
+     * @param a The origin window
+     * @param b The new window
+     */
+    public static void transition(final JFrame a, final Browser b) {
+        b.bindReturnButton(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                a.setVisible(true);
+                b.dispose();
+            }
+        });
+        transition(a, (JFrame)b);
+    }
+    
+    /**
      * Prints a formatted string more easily
      * fp is short for FormattedPrint
      * @param formatString the format specification
@@ -256,34 +276,4 @@ public class Utils {
     public static void fp(String formatString, Object... args) {
         System.out.println(String.format(formatString, args));
     }
-    
-    /*public class JDate extends Date {
-        
-        final private int secs
-        
-        public JDate(Date date) {
-            super(date.getTime()); //Copy Shit
-            
-        }
-        
-        /**
-         * Is this year a leap year
-         * @param year
-         * @return 
-         *//*
-        private boolean isLeapYear(int year) {
-            return ((year % 400) == 0) || (((year % 4) == 0) && ((year % 100) != 0));
-        }
-        
-        private int daysInYear(int year) { return (isLeapYear(year))? 366: 365;}
-        
-        
-        public String getSimpleTime() {
-            
-        }
-        
-        public String getSimpleDate() {
-            
-        }
-    }*/
 }

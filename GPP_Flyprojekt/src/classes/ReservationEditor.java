@@ -76,10 +76,6 @@ public class ReservationEditor extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 chooser.setFlight(flightPanel.getFlight());
-                // If a reservation is loaded, mark the chosen seats as such
-                if (reservation != null) {
-                    chooser.setChosen(reservation.seats);
-                }
             }
         });
         
@@ -240,9 +236,14 @@ public class ReservationEditor extends JFrame {
     private void saveReservation() {
         DatabaseHandler handler = DatabaseHandler.getHandler();
         if (reservation != null) {
+            System.out.println("Updating...");
             handler.updateReservation(getReservation());
         } else {
-            handler.addReservation(getReservation());
+            System.out.println("Adding...");
+            Reservation res = handler.addReservation(getReservation());
+            if (res != null) {
+                reservation = res;
+            }
         }
         JOptionPane.showMessageDialog(new JFrame(), 
                 "Reservationen er gemt!", 
@@ -283,5 +284,6 @@ public class ReservationEditor extends JFrame {
         
         // Add the flight :p
         flightPanel.loadFlight(res.flight);
+        chooser.setChosen(res.seats);
     }
 }
