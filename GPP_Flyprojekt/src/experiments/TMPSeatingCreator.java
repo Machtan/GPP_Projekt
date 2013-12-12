@@ -39,14 +39,14 @@ public class TMPSeatingCreator
         }
         
         startXOfset = 31;
-        startYOfset = 325; 
+        startYOfset = 316; 
         int lastRow = 31;
         
         for(int col = 0;col < 6; col++)
         {
             if(col == 3)
             {
-                startXOfset += 1;
+                startXOfset += 19;
                 lastRow++;
             }
             for(int row = 0;row + 13 < lastRow; row++)
