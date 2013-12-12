@@ -8,8 +8,11 @@ package classes;
 import interfaces.*;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
@@ -21,6 +24,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 
@@ -188,7 +192,12 @@ public class SeatChooser extends JPanel implements ISeatChooser
         
         if(flight == null) // - TODO der skal vare en text som forteler at der ikke er noglen flight
         {
-            g.drawString("dette virker ikke", 10, 12);
+            Graphics2D g2d = (Graphics2D)g;
+            g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+            Font font = new Font("Calibri", Font.PLAIN, 24);
+            g2d.setFont(font);
+            g2d.drawString("Ingen afgang valgt", 60, 40);
             return;
         }
         
@@ -206,9 +215,7 @@ public class SeatChooser extends JPanel implements ISeatChooser
         {
             Logger.getLogger(SeatChooser.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        //paint text for how many free seats ther is
-        g.drawString("" + seating.getFreeSeats().size() + " of " + (seating.getFreeSeats().size() + seating.getTakenSeats().size()) + " are free", 10, 12);
+
         
         //Paint all the seats in difrint colors: red = taken, green = free, blue = chosen.
         Iterator<Point> iter = seating.getSeatIterator();

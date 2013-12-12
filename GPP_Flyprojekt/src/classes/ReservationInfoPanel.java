@@ -33,7 +33,6 @@ public class ReservationInfoPanel extends JPanel {
     private String generateBookingReference() {
         java.util.Date date = new java.util.Date();
         String id = date.hashCode()+"";
-        System.out.println("id: "+id);
         StringBuilder sb = new StringBuilder();
         int halfLength = (int)Math.floor(id.length()/2d);
 

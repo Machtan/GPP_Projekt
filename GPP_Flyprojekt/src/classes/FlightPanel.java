@@ -81,13 +81,9 @@ public class FlightPanel extends JPanel {
         
         Date departure = flight.getDepartureTime();
         Date arrival = flight.getArrivalTime();
-        System.out.println("Equals: "+departure.equals(arrival));
-        System.out.println("dep: "+departure);
-        System.out.println("arr: "+arrival);
         
         Calendar dcal = Calendar.getInstance();
         dcal.setTime(departure);
-        System.out.println("departure: "+dcal);
         
         String departTime = String.format("%02d:%02d", 
                 dcal.get(Calendar.HOUR_OF_DAY), 
@@ -100,7 +96,6 @@ public class FlightPanel extends JPanel {
         
         Calendar acal = Calendar.getInstance();
         acal.setTime(arrival);
-        System.out.println("arrival:   "+acal);
         String arriveTime = String.format("%02d:%02d", 
                 acal.get(Calendar.HOUR_OF_DAY), 
                 acal.get(Calendar.MINUTE));
