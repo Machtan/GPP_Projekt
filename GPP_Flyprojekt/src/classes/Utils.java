@@ -1,5 +1,7 @@
 package classes;
 
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -231,6 +233,21 @@ public class Utils {
     }
     
     /**
+     * Sets the image icon of the frame to the icon at the given resource path
+     * @param frame The frame whose icon is to be set
+     * @param iconPath The resource path to the icon (eg: images/icon.png)
+     */
+    public static void setFrameIcon(JFrame frame, String iconPath) {
+        try {
+            URL url = MainMenu.class.getClassLoader().getResource("images/Plane.png");
+            Image img = Toolkit.getDefaultToolkit().createImage(url);
+            frame.setIconImage(img);
+        } catch (Exception ex) {
+            System.out.println("Failed to load the image: "+iconPath+"\n=>\n"+ex);
+        }
+    }
+    
+    /**
      * Automatically transitions from component a to b, so that a closes and b
      * opens, and so that a is reopened when b is closed again
      * @param a The origin window
@@ -245,6 +262,9 @@ public class Utils {
             }
         });
         a.dispose();
+        
+        setFrameIcon(b, "images/Plane.png"); // Remember the application icon <3
+        
         b.pack();
         b.setVisible(true);
     }
