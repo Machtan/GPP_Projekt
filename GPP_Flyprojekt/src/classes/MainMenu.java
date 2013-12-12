@@ -46,7 +46,7 @@ public class MainMenu extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Lucida Grande", 0, 24)); // NOI18N
         jLabel1.setText("Hovedmenu");
 
-        showFlightBrowserButton.setText("Gennemse afgange");
+        showFlightBrowserButton.setText("Se sæder for afgang");
         showFlightBrowserButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 showFlightBrowserButtonActionPerformed(evt);
