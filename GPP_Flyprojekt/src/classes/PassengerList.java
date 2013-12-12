@@ -20,6 +20,7 @@ import interfaces.IValidator;
 import java.awt.Component;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 /**
  * The PassengerList class <More docs goes here>
@@ -118,8 +119,8 @@ public class PassengerList extends JScrollPane implements IPersonDataList {
         // Limit the list to 99 persons
         if (persons.size() == 99) {
             JOptionPane.showMessageDialog(new JFrame(), 
-                    "Systemet kan ikke tilføje mere end 99 passagerer", 
-                    "Advarsel", JOptionPane.INFORMATION_MESSAGE);
+                    "Systemet kan ikke tilføje mere end 100 passagerer ad gangen", 
+                    "Advarsel", JOptionPane.WARNING_MESSAGE);
             return;
         }
         persons.add(person);
@@ -148,7 +149,7 @@ public class PassengerList extends JScrollPane implements IPersonDataList {
         JLabel statusLabel = new JLabel(Utils.getIcon(iconPath));
         statusLabel.setToolTipText(tooltip);
 
-        JButton editButton = new JButton(Utils.getIcon("images/editicon.png"));
+        JButton editButton = new JButton(Utils.getIcon("images/pendocIcon.png"));
         editButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -158,11 +159,11 @@ public class PassengerList extends JScrollPane implements IPersonDataList {
         editButton.setToolTipText(editButtonTip);
         editButton.setFocusable(false);
 
-        JButton deleteButton = new JButton(Utils.getIcon("images/deleteicon.png"));
+        JButton deleteButton = new JButton(Utils.getIcon("images/trashcanIcon2.png"));
         deleteButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                deletePerson(person);
+                promptDeletePerson(person);
             }
         });
         deleteButton.setToolTipText(deleteButtonTip);
@@ -197,12 +198,32 @@ public class PassengerList extends JScrollPane implements IPersonDataList {
     }
     
     /**
+     * Prompts the user about whether they want to delete the person whose 
+     * delete button was clicked or not
+     * @param person The person in question
+     */
+    public void promptDeletePerson(HashMap<PersonData, String> person) {
+        //Component parentComponent, Object message, String title, int optionType, int messageType, Icon icon, Object[] options, Object initialValue
+        Object[] options = {"Nej", "Ja"};
+        int answer = JOptionPane.showOptionDialog(new JFrame(), 
+                "Vil du virkelig slette "+person.get(PersonData.NAME)+"?", 
+                "Bekræft sletning", JOptionPane.OK_OPTION, 
+                JOptionPane.QUESTION_MESSAGE, 
+                UIManager.getIcon("OptionPane.warningIcon"), options, options[1]);
+        switch (answer) {
+            case 0: // No
+                break;
+            case 1: // Yes
+                deletePerson(person);
+                break;
+        }
+    }
+    
+    /**
      * Deletes the entry for the person and updates the layout
      * @param person 
      */
-    public void deletePerson(HashMap<PersonData, String> person) {
-        System.out.println("Removing "+person.get(PersonData.NAME));
-        
+    public void deletePerson(HashMap<PersonData, String> person) {        
         ArrayList<Component> lineComps = comps.remove(persons.indexOf(person));
         persons.remove(person);
         for (Component comp : lineComps) {
@@ -234,23 +255,23 @@ public class PassengerList extends JScrollPane implements IPersonDataList {
             System.err.println("NO EDITOR SET FOR THE PERSONDATALIST!");
         } else {
             if (! editor.isEmpty()) {
-                Object[] options = {"Ja", "Nej"};
+                Object[] options = {"Nej", "Ja"};
                 int n = JOptionPane.showOptionDialog(new JFrame(),
                     "Der er allerede data under rettelse.\nOverskriv og fortsæt?",
                     "Advarsel",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.WARNING_MESSAGE,
-                    null, options, options[1]);
+                    null, options, options[0]);
                 switch(n) {
-                    case 0:
-                        break; //Yes => delete and send to the editor
-                    case 1:
-                        return; //No => just exit :)
+                    case 0: // No => just exit :)
+                        break; 
+                    case 1: // Yes => delete and send to the editor
+                        this.deletePerson(person); 
+                        this.editor.setData(person);
+                        break;
                 }
             }
-            // Move the person from the list to the editor for editing
-            this.deletePerson(person); 
-            this.editor.setData(person);
+            
             
         }
     }

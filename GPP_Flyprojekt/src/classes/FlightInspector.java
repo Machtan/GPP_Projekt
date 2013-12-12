@@ -1,8 +1,11 @@
 package classes;
 
+import java.awt.Dimension;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 /**
  * The FlightInspector class lets the user browse flights and inspect reservations
@@ -22,9 +25,13 @@ public class FlightInspector extends FlightBrowser {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFrame frame = new JFrame();
+                JPanel panel = new JPanel(new GridBagLayout());
+                panel.setPreferredSize(new Dimension(450, 750));
+                frame.setTitle("Sæder for flight #"+browser.getChosen().id);
                 SeatChooser chooser = new SeatChooser();
                 chooser.setFlight(getChosen());
-                frame.add(chooser);
+                panel.add(chooser);
+                frame.add(panel);
                 Utils.transition(browser, frame);
             }
         });

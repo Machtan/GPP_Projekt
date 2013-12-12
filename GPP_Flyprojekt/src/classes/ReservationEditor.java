@@ -3,6 +3,7 @@ package classes;
 import interfaces.ISeatChooser;
 import interfaces.IValidatable;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -15,6 +16,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
+import javax.swing.border.EtchedBorder;
 
 /**
  * The ReservationEditor class <More docs goes here>
@@ -35,6 +37,7 @@ public class ReservationEditor extends JFrame {
      */
     public ReservationEditor () {
         super();
+        setResizable(false);
         reservation = null;
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         
@@ -44,7 +47,7 @@ public class ReservationEditor extends JFrame {
         reservationInfoPanel.add(resPanel, "North");
         pasPanel = new AdditionalPassengersPanel(400, 300);
         reservationInfoPanel.add(pasPanel, "South");
-        reservationInfoPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+        reservationInfoPanel.setBorder(BorderFactory.createLoweredBevelBorder());
         
         // Make the panel for the flight and seating info
         JPanel flightInfoPanel = new JPanel(new BorderLayout());
