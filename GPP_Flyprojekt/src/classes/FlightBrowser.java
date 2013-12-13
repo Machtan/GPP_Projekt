@@ -283,7 +283,7 @@ public class FlightBrowser extends Browser {
         flightTable.setModel(tableModel);
         flightTable.setRequestFocusEnabled(false);
         jScrollPane2.setViewportView(flightTable);
-        showReservationButton.setText("Vis reservationer for den valgte afgang");
+        showReservationButton.setText("Vis reservationer på afgangen");
         showReservationButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 if (flightTable.getSelectedRow()>-1)
@@ -373,5 +373,10 @@ public class FlightBrowser extends Browser {
     @Override
     public void updateLayout() {
         UpdateTable();
+    }
+
+    @Override
+    public void setActionButtonText(String text) {
+        showReservationButton.setText(text);
     }
 }

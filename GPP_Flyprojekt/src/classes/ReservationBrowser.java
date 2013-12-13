@@ -264,4 +264,9 @@ public class ReservationBrowser extends Browser {
     private javax.swing.JButton showReservationButton;
     private javax.swing.JLabel titleLabel;
     // End of variables declaration                  
+
+    @Override
+    public void setActionButtonText(String text) {
+        showReservationButton.setText(text);
+    }
 }

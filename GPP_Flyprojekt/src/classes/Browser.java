@@ -49,23 +49,48 @@ public abstract class Browser extends JFrame implements IBrowser{
         }
     }
 
+    /**
+     * Returns the item currently chosen in the browser
+     * @param <T> Any type that the browser uses
+     * @return The chosen item
+     */
     @Override
-    public <T> T getChosen() {
-        throw new UnsupportedOperationException("classes.Browser.getChosen is not supported yet.");
-    }
-
+    public abstract <T> T getChosen();
+    
+    /**
+     * Binds the 'return to previous window' button to notify this action 
+     * listener, so as to make the listener handle it.
+     * @param a An ActionListener which handles the browser asking to return
+     */
     @Override
     public void bindReturnButton(ActionListener a) {
         returnListener = a;
     }
 
+    /**
+     * Updates the layout of the browser to show recent changes (edits, deletes)
+     */
     @Override
     public abstract void updateLayout();
     
+    /**
+     * Called when an item is double-clicked or the action button is pressed
+     * with a chosen item selected. Notifies all action listeners of this.
+     * @param evt An event
+     */
     protected void activateActionPerformed(java.awt.event.ActionEvent evt) {
         onActionPerformed();
     }
     
+    /**
+     * Sets the text for the 'action' button of the browser
+     */
+    public abstract void setActionButtonText(String text);
+    
+    /**
+     * When the 'return to previous window' (or something) button is pressed
+     * @param evt An event of no notability
+     */
     protected void returnActionPerformed(java.awt.event.ActionEvent evt) {
         if (returnListener != null) {
             returnListener.actionPerformed(evt);

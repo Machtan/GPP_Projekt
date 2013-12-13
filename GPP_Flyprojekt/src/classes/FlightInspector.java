@@ -35,5 +35,6 @@ public class FlightInspector extends FlightBrowser {
                 Utils.transition(browser, frame);
             }
         });
+        this.setActionButtonText("Se ledige sæder");
     }
 }

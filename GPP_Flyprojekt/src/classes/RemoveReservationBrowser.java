@@ -26,22 +26,24 @@ public class RemoveReservationBrowser extends ReservationBrowser {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                Object[] options = {"Ja", "Nej"};
+                Object[] options = {"Nej", "Ja"};
                 int n = JOptionPane.showOptionDialog(new JFrame(),
                     "Vil du slette den valgte reservation?",
                     "Slet Reservation",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE,
-                    null, options, options[0]);
+                    null, options, options[1]);
                 switch(n) {
-                    case 0: //Yes => delete the reservation
+                    case 1: //Yes => delete the reservation
                         DatabaseHandler.getHandler().deleteReservation(getChosen());
                         browser.updateLayout();
                         break; 
-                    case 1: //No => just exit :)
+                    case 0: //No => just exit :)
                         break;
                 }
             }
         });
+        
+        this.setActionButtonText("Slet reservation");
     }
 }
