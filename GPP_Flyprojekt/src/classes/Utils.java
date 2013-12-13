@@ -17,55 +17,60 @@ import javax.swing.UIManager;
 
 /**
  * The Utils class <More docs goes here>
+ *
  * @author Jakob Lautrup Nysom (jaln@itu.dk)
  * @version 26-Nov-2013
  */
 public class Utils {
+
     /**
-     * Joins a Collection of objects by a given separator.
-     * The objects are represented by their toString() method
+     * Joins a Collection of objects by a given separator. The objects are
+     * represented by their toString() method
+     *
      * @param <T> Anything with a toString method
      * @param arr The Collection to join
      * @param separator The separator string
      * @return A string with the joined elements
      */
-    public static <T> String joinList (Collection<T> arr, String separator) {
-        StringBuilder sb=new StringBuilder();
+    public static <T> String joinList(Collection<T> arr, String separator) {
+        StringBuilder sb = new StringBuilder();
         Iterator iter = arr.iterator();
-        
+
         int lastIndex = arr.size() - 1;
         int i = 0;
         while (iter.hasNext()) {
             String s = iter.next().toString();
-            s = (i == lastIndex)? s: s+separator;
+            s = (i == lastIndex) ? s : s + separator;
             sb.append(s);
             i++;
         }
         return sb.toString();
     }
-    
+
     /**
      * Same as above, just with arrays instead of array lists
+     *
      * @param <T>
      * @param arr
      * @param separator
-     * @return 
+     * @return
      */
     public static <T> String joinList(T[] arr, String separator) {
-        StringBuilder sb=new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         int lastIndex = arr.length - 1;
-        for(int i = 0; i < arr.length; i++) {
+        for (int i = 0; i < arr.length; i++) {
             String s = arr[i].toString();
-            s = (i == lastIndex)? s: s+separator;
+            s = (i == lastIndex) ? s : s + separator;
             sb.append(s);
         }
         return sb.toString();
     }
-    
+
+
     /**
-     * THIS. IS. PYTHONNNNNNN!
-     * Returns an array of the values for the given field name on the list of
-     * objects
+     * Returns an array of the values for the given
+     * field name on the list of objects
+     *
      * @param <T> The type contained by the given ArrayList
      * @param fieldnames The names of the fields to access
      * @param objs The objects from which to get it
@@ -91,11 +96,11 @@ public class Utils {
         }
         return arr;
     }
-    
-       /**
-     * THIS. IS. PYTHONNNNNNN!
-     * Returns an array of the values for the given field name on the given
-     * objects
+
+    /**
+     * Returns an array of the values for the given
+     * field name on the given objects
+     *
      * @param <T> The type contained by the given ArrayList
      * @param fieldnames The names of the fields to access
      * @param objs The objects from which to get it
@@ -105,24 +110,25 @@ public class Utils {
         ArrayList<Object[]> arr = new ArrayList<Object[]>();
         int nargs = fieldnames.length;
         try {
-                Object[] vars = new Object[nargs];
-                for (int i = 0; i < nargs; i++) {
-                    try {
-                        vars[i] = obj.getClass().getField(fieldnames[i]).get(obj);
-                    } catch (NoSuchFieldException ex) {
-                        vars[i] = "ERROR"; // Default value when missing is this string
-                    }
+            Object[] vars = new Object[nargs];
+            for (int i = 0; i < nargs; i++) {
+                try {
+                    vars[i] = obj.getClass().getField(fieldnames[i]).get(obj);
+                } catch (NoSuchFieldException ex) {
+                    vars[i] = "ERROR"; // Default value when missing is this string
                 }
-                arr.add(vars);
-            
+            }
+            arr.add(vars);
+
         } catch (Exception ex) {
             ex.printStackTrace();
         }
         return arr;
     }
-    
+
     /**
      * Simplifies the getting of a single variable on the list of objects
+     *
      * @param <T> The class of the objects contained by the given ArrayList
      * @param objs The objects to iterate over
      * @param fieldname The name of the field variable to get
@@ -136,17 +142,18 @@ public class Utils {
         }
         return result;
     }
-    
+
     /**
      * Quickly formats the variables on every objects for a based on the given
      * template
+     *
      * @param <T>
      * @param objs
      * @param formatString
      * @param fields
      * @return A list of formatted strings
      */
-    public static <T> ArrayList<String> quickFormatList(ArrayList<T> objs, 
+    public static <T> ArrayList<String> quickFormatList(ArrayList<T> objs,
             String formatString, String... fields) {
         ArrayList<Object[]> res = forVarsOnObjInList(objs, fields);
         ArrayList<String> result = new ArrayList<String>();
@@ -155,18 +162,18 @@ public class Utils {
         }
         return result;
     }
-    
-     
+
     /**
      * Quickly formats the variables on the given object based on the given
      * template
+     *
      * @param <T>
      * @param obj
      * @param formatString
      * @param fields
      * @return A list of formatted strings
      */
-    public static <T> ArrayList<String> quickFormatList(T obj, 
+    public static <T> ArrayList<String> quickFormatList(T obj,
             String formatString, String... fields) {
         ArrayList<Object[]> res = forVarsOnObjInList(obj, fields);
         ArrayList<String> result = new ArrayList<String>();
@@ -175,65 +182,69 @@ public class Utils {
         }
         return result;
     }
-    
+
     /**
      * Returns a String of the joint variables of each obj in the given list,
      * formatted according to the passed string.
+     *
      * @param <T>
      * @param objs
      * @param formatString
      * @param separator
      * @param fields
-     * @return 
+     * @return
      */
-    public static <T> String formatAndJoinVars(ArrayList<T> objs, 
+    public static <T> String formatAndJoinVars(ArrayList<T> objs,
             String formatString, String separator, String... fields) {
         ArrayList<String> formatted = quickFormatList(objs, formatString, fields);
         return joinList(formatted, separator);
     }
-    
-        /**
-     * Returns a String of the joint variables of the given obj,
-     * formatted according to the passed string.
+
+    /**
+     * Returns a String of the joint variables of the given obj, formatted
+     * according to the passed string.
+     *
      * @param <T>
      * @param obj
      * @param formatString
      * @param separator
      * @param fields
-     * @return 
+     * @return
      */
-        public static <T> String formatAndJoinVars(T obj, 
+    public static <T> String formatAndJoinVars(T obj,
             String formatString, String separator, String... fields) {
         ArrayList<String> formatted = quickFormatList(obj, formatString, fields);
         return joinList(formatted, separator);
     }
-    
+
     /**
      * Returns an icon from a given path to a local image resource
+     *
      * @param path
-     * @return 
+     * @return
      */
     public static Icon getIcon(String path) {
         try {
             ClassLoader cl = Utils.class.getClassLoader();
             URL url = cl.getResource(path);
-            
+
             if (url != null) {
                 ImageIcon icon = new ImageIcon(url, "");
                 return icon;
             } else {
-                System.err.println("Bad file path: "+path);
+                System.err.println("Bad file path: " + path);
                 //return UIManager.getIcon("FileView.floppyDriveIcon");
                 return UIManager.getIcon("Tree.leafIcon");
             }
         } catch (Exception ex) {
-            System.out.println("Exception while fetching image @ "+path);
+            System.out.println("Exception while fetching image @ " + path);
         }
         return null;
     }
-    
+
     /**
      * Sets the image icon of the frame to the icon at the given resource path
+     *
      * @param frame The frame whose icon is to be set
      * @param iconPath The resource path to the icon (eg: images/icon.png)
      */
@@ -243,53 +254,53 @@ public class Utils {
             Image img = Toolkit.getDefaultToolkit().createImage(url);
             frame.setIconImage(img);
         } catch (Exception ex) {
-            System.out.println("Failed to load the image: "+iconPath+"\n=>\n"+ex);
+            System.out.println("Failed to load the image: " + iconPath + "\n=>\n" + ex);
         }
     }
-    
+
     /**
      * Automatically transitions from component a to b, so that a closes and b
      * opens, and so that a is reopened when b is closed again
+     *
      * @param a The origin window
      * @param b The new window
      */
     public static void transition(final JFrame a, final JFrame b) {
         b.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        b.addWindowListener( new WindowAdapter() {
-            public void windowClosing(WindowEvent e)
-            {
+        b.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
                 a.setVisible(true);
             }
         });
         a.dispose();
-        
+
         setFrameIcon(b, "images/Plane.png"); // Remember the application icon <3
-        
+
         b.pack();
         b.setVisible(true);
     }
-    
+
     /**
      * Automatically transitions from component a to b, so that a closes and b
      * opens, and so that a is reopened when b is closed again
+     *
      * @param a The origin window
      * @param b The new window
      */
     public static void transition(final JFrame a, final Browser b) {
         b.bindReturnButton(new ActionListener() {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 a.setVisible(true);
                 b.dispose();
             }
         });
-        transition(a, (JFrame)b);
+        transition(a, (JFrame) b);
     }
-    
+
     /**
-     * Prints a formatted string more easily
-     * fp is short for FormattedPrint
+     * Prints a formatted string more easily fp is short for FormattedPrint
+     *
      * @param formatString the format specification
      * @param args The arguments to be formatted
      */

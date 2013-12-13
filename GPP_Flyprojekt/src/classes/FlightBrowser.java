@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Locale;
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
 import org.jdesktop.swingx.JXDatePicker;
@@ -85,8 +86,8 @@ public class FlightBrowser extends Browser {
         int arrivalHour = searchArrivalTimeHourTextField.GetIntegerValue();
         int arrivalMinute = searchArrivalTimeMinuteTextField.GetIntegerValue();
         int departureHour = searchDepartureTimeHourTextField.GetIntegerValue();
-        int departureMinute = searchDepartureTimeMinuteTextField.GetIntegerValue();    
-                
+        int departureMinute = searchDepartureTimeMinuteTextField.GetIntegerValue();
+
         Calendar calendar = Calendar.getInstance();
         for (Flight flight : flights) {
             if ((flight.getID() != "" && !flight.getID().toLowerCase().contains(searchFlightIDTextField.getText()))) {
@@ -107,7 +108,7 @@ public class FlightBrowser extends Browser {
                 }
 
 
-            }else if (searchDepartureTimeHourTextField.GetIntegerValue() > 0 || searchDepartureTimeHourTextField.GetIntegerValue() > 0) {
+            } else if (searchDepartureTimeHourTextField.GetIntegerValue() > 0 || searchDepartureTimeHourTextField.GetIntegerValue() > 0) {
                 calendar.setTime(flight.getDepartureTime());
                 calendar.set(Calendar.MINUTE, departureMinute);
                 calendar.set(Calendar.HOUR_OF_DAY, departureHour);
@@ -139,14 +140,17 @@ public class FlightBrowser extends Browser {
             ISeating seating = new Seating(flight);
             Iterator<Point> seats = seating.getSeatIterator();
             int numberOfFreeSeats = seating.getNumberOfFreeSeats();
-            String departureDate = (flight.getDepartureTime().toString().substring(0, 16));
-            String arrivalDate =  (flight.getArrivalTime().toString().substring(0, 16));
-            
+            calendar.setTime(flight.getDepartureTime());
+            String departureDate = String.format("%02d-%02d-%04d %02d:%02d", calendar.get(Calendar.DAY_OF_MONTH),calendar.get(Calendar.MONTH),calendar.get(Calendar.YEAR),calendar.get(Calendar.HOUR_OF_DAY),calendar.get(Calendar.MINUTE));
+              
+            calendar.setTime(flight.getArrivalTime());
+            String arrivalDate =   String.format("%02d-%02d-%04d %02d:%02d", calendar.get(Calendar.DAY_OF_MONTH),calendar.get(Calendar.MONTH),calendar.get(Calendar.YEAR),calendar.get(Calendar.HOUR_OF_DAY),calendar.get(Calendar.MINUTE));
+     
             // Search based on free seats
             if (numberOfFreeSeats < Integer.parseInt(searchMinSeatsTextField.getText())) {
                 continue;
             }
-            
+
             model.addRow(new Object[]{flight.id, flight.getOrigin(),
                 flight.getDestination(), departureDate, arrivalDate, numberOfFreeSeats});
 
@@ -286,8 +290,9 @@ public class FlightBrowser extends Browser {
         showReservationButton.setText("Vis reservationer på afgangen");
         showReservationButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                if (flightTable.getSelectedRow()>-1)
-                activateActionPerformed(evt);
+                if (flightTable.getSelectedRow() > -1) {
+                    activateActionPerformed(evt);
+                }
             }
         });
 
