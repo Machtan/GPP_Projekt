@@ -140,11 +140,8 @@ public class FlightBrowser extends Browser {
             ISeating seating = new Seating(flight);
             Iterator<Point> seats = seating.getSeatIterator();
             int numberOfFreeSeats = seating.getNumberOfFreeSeats();
-            calendar.setTime(flight.getDepartureTime());
-           
-            String departureDate = (calendar.get(Calendar.DAY_OF_MONTH) + "-" + (calendar.get(Calendar.MONTH)+1) + "-" + calendar.get(Calendar.YEAR) + " " + calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE));
-            calendar.setTime(flight.getArrivalTime());
-            String arrivalDate = (calendar.get(Calendar.DAY_OF_MONTH) + "-" +(calendar.get(Calendar.MONTH)+1) + "-" + calendar.get(Calendar.YEAR) + " " + calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE));
+            String departureDate = (flight.getDepartureTime().toString().substring(0, 16));
+            String arrivalDate =  (flight.getArrivalTime().toString().substring(0, 16));
 
             model.addRow(new Object[]{flight.id, flight.getOrigin(),
                 flight.getDestination(), departureDate, arrivalDate, numberOfFreeSeats});
