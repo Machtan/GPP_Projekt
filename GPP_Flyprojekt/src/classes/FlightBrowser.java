@@ -82,11 +82,10 @@ public class FlightBrowser extends Browser {
             }
         }
 
-                int arrivalHour = searchArrivalTimeHourTextField.GetIntegerValue();
-                int arrivalMinute = searchArrivalTimeMinuteTextField.GetIntegerValue();
-                int departureHour = searchDepartureTimeHourTextField.GetIntegerValue();
-                int departureMinute = searchDepartureTimeMinuteTextField.GetIntegerValue();
-                
+        int arrivalHour = searchArrivalTimeHourTextField.GetIntegerValue();
+        int arrivalMinute = searchArrivalTimeMinuteTextField.GetIntegerValue();
+        int departureHour = searchDepartureTimeHourTextField.GetIntegerValue();
+        int departureMinute = searchDepartureTimeMinuteTextField.GetIntegerValue();    
                 
         Calendar calendar = Calendar.getInstance();
         for (Flight flight : flights) {
@@ -142,7 +141,12 @@ public class FlightBrowser extends Browser {
             int numberOfFreeSeats = seating.getNumberOfFreeSeats();
             String departureDate = (flight.getDepartureTime().toString().substring(0, 16));
             String arrivalDate =  (flight.getArrivalTime().toString().substring(0, 16));
-
+            
+            // Search based on free seats
+            if (numberOfFreeSeats < Integer.parseInt(searchMinSeatsTextField.getText())) {
+                continue;
+            }
+            
             model.addRow(new Object[]{flight.id, flight.getOrigin(),
                 flight.getDestination(), departureDate, arrivalDate, numberOfFreeSeats});
 
