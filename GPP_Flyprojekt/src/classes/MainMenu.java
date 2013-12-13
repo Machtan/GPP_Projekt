@@ -5,8 +5,6 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
-import com.apple.eawt.Application;
-
 
 /**
  * @author Jakob Lautrup Nysom (jaln@itu.dk)
@@ -19,14 +17,6 @@ public class MainMenu extends javax.swing.JFrame {
      */ 
     public MainMenu() {
         super();
-        try {
-            URL url = MainMenu.class.getClassLoader().getResource("images/Plane.png");
-            Image img = Toolkit.getDefaultToolkit().createImage(url);
-            Application application = Application.getApplication();
-            application.setDockIconImage(img);
-        } catch (Exception ex) {
-            System.out.println("No Mac OSX icon this time :(");
-        }
         Utils.setFrameIcon(this, "images/Plane.png");
         
         initComponents();
