@@ -103,6 +103,7 @@ public class ValidatedListPanel extends JPanel implements IValidatedList {
             labels.put(fieldName, statusLabel);
             
             valueField.addFocusListener(statusLabel);
+            valueField.addKeyListener(statusLabel);
             
             // Ready the GUI
             topPanel.validate();

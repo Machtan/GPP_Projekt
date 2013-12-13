@@ -30,8 +30,14 @@ public class Validator implements IValidator {
             int year = Integer.parseInt(cpr.substring(4, 6));
             System.out.println(String.format("CPR-date: %s/%s/%s", day, month, year));
             if ((month < 1) || (month > 12)) {return false;}
-            Calendar cal = new GregorianCalendar(1900+year, month-1, 1);
-            if (day > cal.getMaximum(Calendar.DAY_OF_MONTH)) {return false;}
+            Calendar cal1900 = new GregorianCalendar(1900+year, month-1, 1);
+            Calendar cal2000 = new GregorianCalendar(2000+year, month-1, 1);
+            // Return false if the month cannot be that long in neither 1900 nor 2000
+            if (!(
+                    (day <= cal1900.getMaximum(Calendar.DAY_OF_MONTH)) ||
+                    (day <= cal2000.getMaximum(Calendar.DAY_OF_MONTH))
+                ))
+                {return false;}
             Integer.parseInt(cpr.substring(7));
             // If nothing fails, assume that all is good
             return true;
@@ -43,7 +49,11 @@ public class Validator implements IValidator {
     
     private static boolean validateCardnumber(String cardNumber) {
         try {
-            Integer.decode(cardNumber);
+            String value = cardNumber.replaceAll(" ", "");
+            if (value.equals("")) {return false;}
+            for (int i = 0; i < value.length(); i++) {
+                Integer.parseInt(value.substring(i, i+1));
+            }
             return true;
         } catch (NumberFormatException ex) {
             return false;
@@ -105,9 +115,17 @@ public class Validator implements IValidator {
     }
 
     public static boolean validatePhonenumber(String value) {
-        value = value.replaceAll(" ", "").replaceAll("[+]", "00");
+        value = value.replaceAll(" ", "");
+        if (value.startsWith("+")) {
+            value = value.replaceFirst("[+]", "00");
+        }
+        if (value.equals("")) {
+            return false;
+        }
         try {
-            Integer.parseInt(value);
+            for (int i = 0; i < value.length(); i++) {
+                Integer.parseInt(value.substring(i, i+1));
+            }
             return true;
         } catch (NumberFormatException ex) {
             return false;

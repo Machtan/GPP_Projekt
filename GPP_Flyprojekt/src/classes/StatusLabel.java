@@ -4,6 +4,8 @@ import interfaces.IValidatable;
 import interfaces.IValidator;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
@@ -13,7 +15,7 @@ import javax.swing.UIManager;
  * @author Jakob Lautrup Nysom (jaln@itu.dk)
  * @version 02-Dec-2013
  */
-public class StatusLabel extends JLabel implements FocusListener {
+public class StatusLabel extends JLabel implements FocusListener, KeyListener {
     
     JTextField field;
     IValidatable fieldType;
@@ -64,11 +66,19 @@ public class StatusLabel extends JLabel implements FocusListener {
     }
 
     @Override
-    public void focusGained(FocusEvent e) {}
-
-    @Override
     public void focusLost(FocusEvent e) {
-        verifyField();
+        verifyField(); // #verifyvenuz
     }
     
+    @Override
+    public void keyReleased(KeyEvent e) {
+        verifyField(); // #verifyvenuz
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {}
+    @Override
+    public void focusGained(FocusEvent e) {}
+    @Override
+    public void keyPressed(KeyEvent e) {}
 }
