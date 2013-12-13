@@ -71,8 +71,8 @@ public class ReservationBrowser extends Browser {
         setMinimumSize(new Dimension(1000, 600));
         titleLabel = new javax.swing.JLabel();
         searchPanel = new javax.swing.JPanel();
-        searchReservationIDTextField = new javax.swing.JTextField();
-        searchFlightIDLabel = new javax.swing.JLabel();
+        searchBookingIDTextField = new javax.swing.JTextField();
+        searchBookingIDLabel = new javax.swing.JLabel();
         searchButton = new javax.swing.JButton();
         searchPassengerNameTextField = new javax.swing.JTextField();
         searchDepartureDLabel = new javax.swing.JLabel();
@@ -98,10 +98,10 @@ public class ReservationBrowser extends Browser {
         searchPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Søg"));
         searchPanel.setToolTipText("");
         searchPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-        searchPanel.add(searchReservationIDTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(122, 20, 195, 25));
+        searchPanel.add(searchBookingIDTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(122, 20, 195, 25));
 
-        searchFlightIDLabel.setText("ReservationID");
-        searchPanel.add(searchFlightIDLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(14, 20, -1, 25));
+        searchBookingIDLabel.setText("BookingID");
+        searchPanel.add(searchBookingIDLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(14, 20, -1, 25));
 
         searchButton.setText("Søg");
         searchButton.setPreferredSize(new Dimension(90,25));
@@ -117,7 +117,7 @@ public class ReservationBrowser extends Browser {
         searchPanel.add(searchDepartureDLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(14, 49, -1, 25));
 
         searchArrivalLabel.setText("Telefonnummer");
-        searchPanel.add(searchArrivalLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 20, -1, -25));
+        searchPanel.add(searchArrivalLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 20, -1, 25));
         searchPanel.add(searchTlfTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 20, 195, 25));
 
         searchMinSeatsLabel.setText("Antal passagerer");
@@ -139,7 +139,7 @@ public class ReservationBrowser extends Browser {
         searchPanel.add(clearSearchButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(655, 50, -1, 25));
         DefaultTableModel tableModel = new DefaultTableModel(new Object[][]{},
                 new String[]{
-            "ID", "Navn på passager", "Antal passagerer", "Telefonnummer"
+            "BookingNumber", "Navn på passager", "Antal passagerer", "Telefonnummer"
         }) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -209,7 +209,7 @@ public class ReservationBrowser extends Browser {
             }
         }
         for (Reservation reservation : reservations) {
-            if ((searchReservationIDTextField.getText() != "" && !reservation.reservationID.toLowerCase().contains(searchReservationIDTextField.getText().toLowerCase()))) {
+            if ((searchBookingIDTextField.getText() != "" && !reservation.bookingNumber.toLowerCase().contains(searchBookingIDTextField.getText().toLowerCase()))) {
                 continue;
             }
             if ((searchPassengerNameTextField.getText() != "" && !reservation.passenger.name.toLowerCase().contains(searchPassengerNameTextField.getText().toLowerCase()))) {
@@ -225,7 +225,7 @@ public class ReservationBrowser extends Browser {
                 }
             } catch (Exception ex) {
             }
-            model.addRow(new Object[]{reservation.reservationID, 
+            model.addRow(new Object[]{reservation.bookingNumber, 
                 reservation.passenger.name, 
                 reservation.seats.size(), 
                 reservation.tlf});
@@ -240,7 +240,7 @@ public class ReservationBrowser extends Browser {
 
     private void clearSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
-        searchReservationIDTextField.setText("");
+        searchBookingIDTextField.setText("");
         searchPassengerNameTextField.setText("");
         searchTlfTextField.setText("");
         searchTotalPassengersTextField.setText("0");
@@ -254,11 +254,11 @@ public class ReservationBrowser extends Browser {
     private javax.swing.JLabel searchArrivalLabel;
     private javax.swing.JButton searchButton;
     private javax.swing.JLabel searchDepartureDLabel;
-    private javax.swing.JLabel searchFlightIDLabel;
+    private javax.swing.JLabel searchBookingIDLabel;
     private javax.swing.JLabel searchMinSeatsLabel;
     private javax.swing.JPanel searchPanel;
     private javax.swing.JTextField searchPassengerNameTextField;
-    private javax.swing.JTextField searchReservationIDTextField;
+    private javax.swing.JTextField searchBookingIDTextField;
     private javax.swing.JTextField searchTlfTextField;
     private javax.swing.JFormattedTextField searchTotalPassengersTextField;
     private javax.swing.JButton showReservationButton;
