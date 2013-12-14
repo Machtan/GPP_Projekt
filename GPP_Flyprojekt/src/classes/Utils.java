@@ -278,7 +278,7 @@ public class Utils {
         b.pack();
         b.setVisible(true);
         
-        a.dispose();
+        a.setVisible(false);
     }
 
     /**
