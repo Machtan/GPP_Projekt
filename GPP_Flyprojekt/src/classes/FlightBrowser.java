@@ -358,7 +358,7 @@ public class FlightBrowser extends Browser {
     protected javax.swing.JTable flightTable; //Hahahahahahahaha
     private javax.swing.JPanel actionsPanel;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JButton returnToMainMenuButton;
+    protected javax.swing.JButton returnToMainMenuButton; // Needs to be modifiable
     private javax.swing.JLabel searchArrivalLabel;
     private JXDatePicker searchArrivalJXDatePicker;
     private JXDatePicker searchDepartureJXDatePicker;
@@ -381,7 +381,7 @@ public class FlightBrowser extends Browser {
     private javax.swing.JComboBox searchOriginComboBox;
     private javax.swing.JLabel searchOriginLabel;
     private javax.swing.JPanel searchPanel;
-    private javax.swing.JButton showReservationButton;
+    protected javax.swing.JButton showReservationButton; // This should be modifiable
     // End of variables declaration           
 
     @Override

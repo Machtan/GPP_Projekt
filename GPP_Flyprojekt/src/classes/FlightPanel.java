@@ -171,7 +171,7 @@ public class FlightPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 final JFrame editor = (JFrame) SwingUtilities.getWindowAncestor(fpanel);
-                final FlightBrowser chooser = new FlightBrowser();
+                final FlightChooser chooser = new FlightChooser();
                 chooser.addActionListener(new ActionListener() {
 
                     @Override
