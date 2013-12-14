@@ -28,7 +28,7 @@ public class Validator implements IValidator {
             int day = Integer.parseInt(cpr.substring(0, 2));
             int month = Integer.parseInt(cpr.substring(2, 4));
             int year = Integer.parseInt(cpr.substring(4, 6));
-            System.out.println(String.format("CPR-date: %s/%s/%s", day, month, year));
+            //System.out.println(String.format("CPR-date: %s/%s/%s", day, month, year));
             if ((month < 1) || (month > 12)) {return false;}
             Calendar cal1900 = new GregorianCalendar(1900+year, month-1, 1);
             Calendar cal2000 = new GregorianCalendar(2000+year, month-1, 1);

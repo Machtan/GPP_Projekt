@@ -340,7 +340,7 @@ public class main {
         instance.setVisible(true);}
     
     public static void main (String[] args) throws Exception {
-        //manualBadDataTest();
-        testReservationEditor();
+        manualBadDataTest();
+        //testReservationEditor();
     }
 } 

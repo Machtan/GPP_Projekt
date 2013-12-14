@@ -273,12 +273,12 @@ public class Utils {
                 a.setVisible(true);
             }
         });
-        a.dispose();
-
+        
         setFrameIcon(b, "images/Plane.png"); // Remember the application icon <3
-
         b.pack();
         b.setVisible(true);
+        
+        a.dispose();
     }
 
     /**

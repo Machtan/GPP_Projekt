@@ -352,6 +352,7 @@ public class DatabaseHandler implements IDatabaseHandler {
                     }
                 }
             }
+            System.out.println("Updated reservation with reference: "+res.bookingNumber);
             addReservation(res);
         }
     }
