@@ -5,7 +5,7 @@ package classes;
  * @author Jakob Lautrup Nysom (jaln@itu.dk)
  * @version 22-Nov-2013
  */
-public class Date {
+public class JDate {
     
     private int year;
     private int month;
@@ -33,7 +33,7 @@ public class Date {
      * Constructor for the Date class.
      * The index for month and day starts at 1!
      */
-    public Date(int year, int month, int day, int hour, int minutes) {
+    public JDate(int year, int month, int day, int hour, int minutes) {
         this.year = year;
         this.month = month;
         this.day = day;

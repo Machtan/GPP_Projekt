@@ -1,4 +1,5 @@
 package interfaces;
+import classes.DatabaseHandler;
 import classes.Reservation;
 import java.util.ArrayList;
 /**
@@ -7,15 +8,25 @@ import java.util.ArrayList;
  */
 
 public interface IDatabaseHandler {
-    void connect();
+    
+    public class ConnectionError extends Exception {
+        public Object value;
+        
+        public <T> ConnectionError(T dummyValue) {
+            super("A connection to the database couldn't be established");
+            value = dummyValue;
+        }
+    }
+    
+    void connect() throws Exception;
     void disconnect();
     
-    Reservation[] getReservations(IFlight flight);
-    Reservation addReservation(Reservation res); // returns the updated reservation (now with db ID)
-    void deleteReservation(Reservation res);
-    void updateReservation(Reservation res);
+    Reservation[] getReservations(IFlight flight) throws ConnectionError;
+    Reservation addReservation(Reservation res) throws ConnectionError; // returns the updated reservation (now with db ID)
+    void deleteReservation(Reservation res) throws ConnectionError;
+    void updateReservation(Reservation res) throws ConnectionError;
     
-    IFlight[] getFlights();    
-    IAirport getAirport();
+    IFlight[] getFlights() throws ConnectionError;    
+    IAirport getAirport() throws ConnectionError;
     
 }

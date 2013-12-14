@@ -13,6 +13,7 @@ import java.util.Iterator;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 /**
@@ -306,5 +307,18 @@ public class Utils {
      */
     public static void fp(String formatString, Object... args) {
         System.out.println(String.format(formatString, args));
+    }
+    
+    /**
+     * Shows a notice about the program having no connection to the database
+     * at present, along with a more specific note about what this impacts.
+     * @param additionalNotice The explanation of what the lack of connection
+     * has an impact on, e.g: "The reservations couldn't be loaded"
+     */
+    public static void showNoConnectionNotice(String additionalNotice) {
+        JOptionPane.showMessageDialog(new JFrame(), 
+                "Der er desværre ingen forbindelse til databasen.\n"+
+                additionalNotice, 
+                "Forbindelsesfejl", JOptionPane.WARNING_MESSAGE);
     }
 }

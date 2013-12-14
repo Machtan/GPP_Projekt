@@ -1,5 +1,6 @@
 package classes;
 
+import interfaces.IDatabaseHandler.ConnectionError;
 import interfaces.IFlight;
 import interfaces.ISeating;
 import java.util.ArrayList;
@@ -63,9 +64,15 @@ public class Flight implements IFlight {
     }
 
     @Override
-    public Reservation[] getReservations()
-    {
-       return DatabaseHandler.getHandler().getReservations(this);
+    public Reservation[] getReservations() {
+       try {
+            return DatabaseHandler.getHandler().getReservations(this);
+       } catch (ConnectionError ce) {
+           Utils.showNoConnectionNotice("Reservationerne for afgang "+
+                this.id+" fra "+this.origin+" til "+this.destination+
+                   " kunne ikke indlæses.");
+           return (Reservation[]) ce.value;
+       }
     }
 
     

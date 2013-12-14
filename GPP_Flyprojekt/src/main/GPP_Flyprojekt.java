@@ -17,7 +17,6 @@ public class GPP_Flyprojekt
      */
     public static void main(String[] args) {
         DatabaseHandler database = DatabaseHandler.getHandler();
-        database.connect();
         System.out.println("GPP_Flyprojekt has been run!");
         // TODO code application logic here
         MainMenu menu = new MainMenu();

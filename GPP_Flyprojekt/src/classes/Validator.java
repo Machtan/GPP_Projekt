@@ -42,7 +42,7 @@ public class Validator implements IValidator {
             // If nothing fails, assume that all is good
             return true;
         } catch (NumberFormatException ex) {
-            ex.printStackTrace();
+            //ex.printStackTrace();
             return false;
         }
     }

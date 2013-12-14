@@ -27,7 +27,7 @@ public class DatabaseHandler implements IDatabaseHandler {
     final String password = "testuser";
     Connection conn = null;
     static DatabaseHandler handler = null;
-
+    
     /**
      * Constructor for DatabaseHandler, provide AirportID to filter out entries
      * relevant to the specific airport.
@@ -38,7 +38,11 @@ public class DatabaseHandler implements IDatabaseHandler {
     public static DatabaseHandler getHandler() {
         if (handler == null) {
             handler = new DatabaseHandler();
-            handler.connect();
+            try {
+                handler.connect();
+            } catch (Exception ex) {
+                System.out.println("");
+            }
         }
         return handler;
     }
@@ -47,15 +51,9 @@ public class DatabaseHandler implements IDatabaseHandler {
      * Connect to the database.
      */
     @Override
-    public void connect() {
-
-        try {
-            Class.forName(driver).newInstance();
-            conn = DriverManager.getConnection(url + dbName + "?autoReconnect=true", userName, password);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
+    public void connect() throws Exception {
+        Class.forName(driver).newInstance();
+        conn = DriverManager.getConnection(url + dbName + "?autoReconnect=true", userName, password);
     }
 
     /**
@@ -72,17 +70,22 @@ public class DatabaseHandler implements IDatabaseHandler {
             Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
 
     /**
      * Get reservations from a flight.
+     * @param flight
+     * @return 
+     * @throws interfaces.IDatabaseHandler.ConnectionError 
      */
     @Override
-    public Reservation[] getReservations(IFlight flight) {
+    public Reservation[] getReservations(IFlight flight) throws ConnectionError {
         try {
             validateConnect();
         } catch (Exception ex) {
-            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
+            //Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("No connection could be established");
+            throw new ConnectionError(new Reservation[0]);
         }
 
         Person[] people = getPeople();
@@ -121,7 +124,10 @@ public class DatabaseHandler implements IDatabaseHandler {
                 reservations.add(new Reservation(id, peopleMapped.get(passengerid), additionalPassengers_array, seatpoints_array, flight, tlf, cardNumber, bookingNumber));
             }
         } catch (SQLException ex) {
-            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("No reservations could be loaded for flight '"+
+                flight.getID()+"' from "+flight.getOrigin()+" to "+
+                flight.getDestination()+".");
+            //Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
         return (Reservation[]) reservations.toArray(new Reservation[0]);
 
@@ -131,11 +137,11 @@ public class DatabaseHandler implements IDatabaseHandler {
      * Add a new reservation to the database.
      */
     @Override
-    public Reservation addReservation(Reservation res) {
+    public Reservation addReservation(Reservation res) throws ConnectionError {
         try {
             validateConnect();
         } catch (Exception ex) {
-            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ConnectionError(res);
         }
         if (res != null) {
             try {
@@ -218,14 +224,12 @@ public class DatabaseHandler implements IDatabaseHandler {
                 // execute the preparedstatement
                 preparedStmt.executeUpdate();
                 res.reservationID = GetAutoIncremented_Value("`Airport`.`Reservation`");
-                return res;
 
             } catch (SQLException ex) {
-                Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
-                return null;
+                System.out.println("Could not add the requested Reservation");
             }
         }
-        return null;
+        return res;
     }
     /*
      * delete a reservation from the database.
@@ -248,11 +252,11 @@ public class DatabaseHandler implements IDatabaseHandler {
     }
 
     @Override
-    public void deleteReservation(Reservation res) {
+    public void deleteReservation(Reservation res) throws ConnectionError {
         try {
             validateConnect();
         } catch (Exception ex) {
-            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ConnectionError(null);
         }
         if (res != null) {
             Statement stmt;
@@ -271,7 +275,8 @@ public class DatabaseHandler implements IDatabaseHandler {
                     }
                 }
             } catch (SQLException ex) {
-                Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("Couldn't find the reservation with the ID '"+
+                        res.reservationID+"'");
             }
         }
     }
@@ -323,16 +328,23 @@ public class DatabaseHandler implements IDatabaseHandler {
      * update a reservation.
      */
     @Override
-    public void updateReservation(Reservation res) {
+    public void updateReservation(Reservation res) throws ConnectionError {
+        IFlight[] flights;
         try {
             validateConnect();
+            flights = getFlights();
         } catch (Exception ex) {
-            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+            throw new ConnectionError(res);
         }
 
         if (res != null) {
-            for (IFlight flight : getFlights()) {
-                Reservation[] reservations = getReservations(flight);
+            for (IFlight flight : flights) {
+                Reservation[] reservations;
+                try {
+                    reservations = getReservations(flight);
+                } catch (ConnectionError ce) {
+                    throw new ConnectionError(res);
+                }
                 for (Reservation reservation : reservations) {
                     if (reservation.reservationID.equals(res.reservationID) && (res.reservationID != null)) {
                         deleteReservation(reservation);
@@ -348,14 +360,15 @@ public class DatabaseHandler implements IDatabaseHandler {
      * get flights.
      */
     @Override
-    public Flight[] getFlights() {
+    public Flight[] getFlights() throws ConnectionError {
+        Airplane[] airPlanes;
         try {
             validateConnect();
+            airPlanes = getAirplanes();
         } catch (Exception ex) {
-            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
+            throw new ConnectionError(new Flight[0]);
         }
-        Airplane[] airPlanes = getAirplanes();
+
         //For performance reasons, convert to hashmap with airplaneID as KEY.
         HashMap<String, Airplane> airPlanesMapped = new HashMap<String, Airplane>();
         for (Airplane item : airPlanes) {
@@ -392,12 +405,11 @@ public class DatabaseHandler implements IDatabaseHandler {
      * get general airport information.
      */
     @Override
-    public IAirport getAirport() {
+    public IAirport getAirport() throws ConnectionError {
         try {
             validateConnect();
         } catch (Exception ex) {
-            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
+            throw new ConnectionError(null);
         }
         Airport airport = null;
         Statement stmt;
@@ -423,12 +435,11 @@ public class DatabaseHandler implements IDatabaseHandler {
     /**
      * get all passengers.
      */
-    Person[] getPeople() {
+    Person[] getPeople() throws ConnectionError {
         try {
             validateConnect();
         } catch (Exception ex) {
-            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
+            throw new ConnectionError(new Person[0]);
         }
         ArrayList<Person> result = new ArrayList<Person>();
         Statement stmt;
@@ -452,14 +463,15 @@ public class DatabaseHandler implements IDatabaseHandler {
     /**
      * get all airplanes.
      */
-    Airplane[] getAirplanes() {
+    Airplane[] getAirplanes() throws ConnectionError {
+        AirplaneLayout[] airPlaneLayouts;
         try {
             validateConnect();
+            airPlaneLayouts = getAirplaneLayOuts();
         } catch (Exception ex) {
-            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
+            throw new ConnectionError(new Airplane[0]);
         }
-        AirplaneLayout[] airPlaneLayouts = getAirplaneLayOuts();
+        
         //For performance reasons, convert to hashmap with airPlaneLayOutID as KEY.
         HashMap<String, AirplaneLayout> airPlaneLayoutsMapped = new HashMap<String, AirplaneLayout>();
         for (AirplaneLayout item : airPlaneLayouts) {
@@ -488,14 +500,14 @@ public class DatabaseHandler implements IDatabaseHandler {
      * get airplane layouts
      */
 
-    AirplaneLayout[] getAirplaneLayOuts() {
+    AirplaneLayout[] getAirplaneLayOuts() throws ConnectionError {
+        ArrayList<AirplaneSeat> airPlaneSeats;
         try {
             validateConnect();
+            airPlaneSeats = getAirplaneSeats();
         } catch (Exception ex) {
-            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
+            throw new ConnectionError(new AirplaneLayout[0]);
         }
-        ArrayList<AirplaneSeat> airPlaneSeats = getAirplaneSeats();
 
         ArrayList<AirplaneLayout> result = new ArrayList<AirplaneLayout>();
         Statement stmt;
@@ -524,12 +536,11 @@ public class DatabaseHandler implements IDatabaseHandler {
      * get airplaneseat setup.
      */
 
-    ArrayList<AirplaneSeat> getAirplaneSeats() {
+    ArrayList<AirplaneSeat> getAirplaneSeats() throws ConnectionError {
         try {
             validateConnect();
         } catch (Exception ex) {
-            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
+            throw new ConnectionError(new ArrayList<AirplaneSeat>());
         }
         ArrayList<AirplaneSeat> result = new ArrayList<AirplaneSeat>();
         Statement stmt;
@@ -554,19 +565,39 @@ public class DatabaseHandler implements IDatabaseHandler {
         }
         return result;
     }
+    
+    /**
+     * Whether the databasehandler is currently connected
+     * @return Whether the databasehandler is currently connected
+     */
+    public boolean isConnected() {
+        if (conn == null) {
+            return false;
+        } else {
+            try {
+                return conn.isValid(60000);
+            } catch (Exception ex) {
+                return false;
+            }
+        }
+    }
 
     void validateConnect() throws Exception {
         try {
+            if (conn == null) {
+                connect();
+            }
             if (!conn.isValid(60000)) {
                 if (!conn.isClosed()) {
                     disconnect();
                 }
                 connect();
             }
-            return;
-        } catch (SQLException ex) {
-            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            System.out.println("Connection to the MYSQL server could not be validated!");
+            //Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+            throw new Exception("Connection to the MYSQL server could not be validated!");
         }
-        throw new Exception("Connection to the MYSQL server could not be established!");
+        
     }
 }

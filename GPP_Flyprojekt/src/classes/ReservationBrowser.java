@@ -1,5 +1,6 @@
 package classes;
 
+import interfaces.IDatabaseHandler.ConnectionError;
 import interfaces.IFlight;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -61,7 +62,11 @@ public class ReservationBrowser extends Browser {
      */
     @Override
     public void updateLayout() {
-        reservations = DatabaseHandler.getHandler().getReservations(flight);
+        try {
+            reservations = DatabaseHandler.getHandler().getReservations(flight);
+        } catch (ConnectionError ce) {
+            reservations = (Reservation[])ce.value;
+        }
         updateTable(); //Redraw - ish
         repaint();
     }

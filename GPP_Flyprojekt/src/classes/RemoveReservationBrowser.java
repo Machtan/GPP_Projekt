@@ -1,5 +1,6 @@
 package classes;
 
+import interfaces.IDatabaseHandler.ConnectionError;
 import interfaces.IFlight;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,8 +36,13 @@ public class RemoveReservationBrowser extends ReservationBrowser {
                     null, options, options[1]);
                 switch(n) {
                     case 1: //Yes => delete the reservation
-                        DatabaseHandler.getHandler().deleteReservation(getChosen());
-                        browser.updateLayout();
+                        try {
+                            DatabaseHandler.getHandler().deleteReservation(getChosen());
+                            browser.updateLayout();
+                        } catch (ConnectionError ce) {
+                            Utils.showNoConnectionNotice("Den valgte reservation kan ikke slettes");
+                        }
+                        
                         break; 
                     case 0: //No => just exit :)
                         break;

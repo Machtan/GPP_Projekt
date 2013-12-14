@@ -94,7 +94,8 @@ public class SeatChooser extends JPanel implements ISeatChooser
         try {
             url = SeatChooser.class.getClassLoader().getResource(flight.getPlane().airplaneLayout.placementImagePath);
         } catch (Exception ex) {
-            System.out.println("DU ØDELAGDE MIT PROGRAM DIN LORTE-EXCEPTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            System.out.println("The image for this layout couldn't be loaded.\n"+
+                    "Try reloading NetBeans, it usually helps.");
         }
         
         repaint();

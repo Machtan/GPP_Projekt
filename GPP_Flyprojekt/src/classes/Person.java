@@ -14,6 +14,7 @@ public class Person {
 
     /**
      * Creates a new person with the given parameters
+     * @param id The database ID of the Person 
      * @param name The name of the person
      * @param nationality The person's nationality
      * @param cpr The public service code or whatever for the person
@@ -24,7 +25,7 @@ public class Person {
         this.nationality = nationality;
         this.cpr = cpr;
     }
-      public Person(String name, String nationality, String cpr) {
+    public Person(String name, String nationality, String cpr) {
         this.name = name;
         this.nationality = nationality;
         this.cpr = cpr;

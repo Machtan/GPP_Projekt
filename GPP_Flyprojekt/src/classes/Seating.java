@@ -25,7 +25,10 @@ public class Seating implements ISeating {
         isSeatFree = new HashMap<Point, Boolean>();
         isSeatChosen = new HashMap<Point, Boolean>();
         ArrayList<Point> takenSeats = new ArrayList<Point>();
-        for (Reservation res : flight.getReservations()) {
+        
+        Reservation[] reservations = flight.getReservations();
+        
+        for (Reservation res : reservations) {
             takenSeats.addAll(res.seats);
         }
         seatPositions = new HashMap<Point, Point>(); 

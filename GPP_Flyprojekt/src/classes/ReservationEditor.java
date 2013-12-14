@@ -1,5 +1,6 @@
 package classes;
 
+import interfaces.IDatabaseHandler.ConnectionError;
 import interfaces.ISeatChooser;
 import interfaces.IValidatable;
 import java.awt.BorderLayout;
@@ -131,28 +132,6 @@ public class ReservationEditor extends JFrame {
         } 
 
         if (passengerError || seatError || infoError || flightError) {
-            /*Object[] options = {"Ja", "Nej"}; //The database cannot handle this
-            switch (JOptionPane.showOptionDialog(new JFrame(), 
-                    "Advarsel, der er følgende fejl i de indtastede informationer:\n" + 
-                    errorString.toString() +"\n"+
-                    "Er du sikker på at du vil fortsætte", 
-                    "Advarsel!", 
-                    JOptionPane.YES_NO_OPTION, 
-                    JOptionPane.WARNING_MESSAGE,
-                    null, options, options[1])) {
-                case 0: // YES
-                    if (flightError || seatError) {
-                        JOptionPane.showMessageDialog(new JFrame(), 
-                                "Der er kritiske fejl.\nReservationen kan ikke gemmes", 
-                                "Fejl!", 
-                                JOptionPane.ERROR_MESSAGE);
-                    } else {
-                        saveReservation(); // Save with uncritical errors
-                    }
-
-                case 1: // NO
-                    return;
-            }*/
             JOptionPane.showMessageDialog(new JFrame(), 
                 "der er følgende fejl i de indtastede informationer:\n" +
                 errorString.toString()+"\n"+
@@ -169,6 +148,7 @@ public class ReservationEditor extends JFrame {
      * @param readOnly Whether the editor shouldn't be able to make changes to
      * reservations
      */
+    @Deprecated
     public void setReadOnly(boolean readOnly) {
         addReservationButton.setVisible(!readOnly);
     }
@@ -238,20 +218,24 @@ public class ReservationEditor extends JFrame {
      */
     private void saveReservation() {
         DatabaseHandler handler = DatabaseHandler.getHandler();
-        if (reservation != null) {
-            System.out.println("Updating...");
-            handler.updateReservation(getReservation());
-        } else {
-            System.out.println("Adding...");
-            Reservation res = handler.addReservation(getReservation());
-            if (res != null) {
-                reservation = res;
+        try {
+            if (reservation != null) {
+                System.out.println("Updating...");
+                handler.updateReservation(getReservation());
+            } else {
+                System.out.println("Adding...");
+                Reservation res = handler.addReservation(getReservation());
+                if (res != null) {
+                    reservation = res;
+                }
             }
+            JOptionPane.showMessageDialog(new JFrame(), 
+                    "Reservationen er gemt!", 
+                    "Succes", 
+                    JOptionPane.INFORMATION_MESSAGE);
+        } catch (ConnectionError ce) {
+            Utils.showNoConnectionNotice("Reservationen kunne ikke gemmes");
         }
-        JOptionPane.showMessageDialog(new JFrame(), 
-                "Reservationen er gemt!", 
-                "Succes", 
-                JOptionPane.INFORMATION_MESSAGE);
     }
     
     /**

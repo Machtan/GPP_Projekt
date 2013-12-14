@@ -1,16 +1,22 @@
 package experiments;
 
+import classes.Airplane;
+import classes.AirplaneLayout;
+import classes.AirplaneSeat;
 import classes.DatabaseHandler;
+import classes.Flight;
 import classes.PersonData;
 import classes.PassengerList;
 import classes.Reservation;
 import classes.ReservationData;
 import classes.ReservationEditor;
 import classes.FlightPanel;
+import classes.Person;
+import classes.Utils;
 import java.util.ArrayList;
-import classes.Utils.*;
 import classes.ValidatedListPanel;
 import classes.Validator;
+import interfaces.IDatabaseHandler;
 import interfaces.IFlight;
 import interfaces.IValidatable;
 import java.awt.Point;
@@ -21,6 +27,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import javax.swing.JButton;
@@ -219,8 +226,16 @@ public class main {
     
     public static void testReservationEditor() {
         DatabaseHandler db = DatabaseHandler.getHandler();
-        db.connect();
-        Reservation res = db.getReservations(db.getFlights()[0])[0];
+        try {
+            db.connect();
+        } catch (Exception ex) {
+            return;
+        }
+        try {
+            Reservation res = db.getReservations(db.getFlights()[0])[0];
+        } catch (IDatabaseHandler.ConnectionError ce) {
+            Utils.showNoConnectionNotice("Reservationen kunne ikke hentes");
+        }
         ReservationEditor editor = new ReservationEditor();
         editor.pack();
         editor.setVisible(true);
@@ -282,7 +297,13 @@ public class main {
         frame.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         
         DatabaseHandler db = DatabaseHandler.getHandler();
-        IFlight flight = db.getFlights()[0]; // Mistah test
+        IFlight flight;
+        try {
+            flight = db.getFlights()[0]; // Mistah test
+        } catch (IDatabaseHandler.ConnectionError ce) {
+            Utils.showNoConnectionNotice("Afgangen kunne ikke hentes");
+            return;
+        }
         
         FlightPanel panel = new FlightPanel();
         panel.loadFlight(flight);
@@ -292,17 +313,34 @@ public class main {
         frame.setVisible(true);
     }
     
+    public static void manualBadDataTest() {
+    Person mainPer = new Person("HELLOOOOO", "Test User", "Testing personnel", "1011018888asdfasdfasdf");
+        Person per2 = new Person("saldkasjdlk", "asdasdl", "123we8ruwer8", "doisdfæfdø");
+        Person per3 = new Person("Derp", "Unicode test", "옵반 강남 스타일", "https://www.youtube.com/watch?v=z9yOQsheMEA");
+        ArrayList<Point> seats = new ArrayList<Point>(Arrays.asList(new Point(1,1), new Point(1,2), new Point(1,3)));
+        AirplaneSeat[] apSeats = new AirplaneSeat[10];
+        for (int i = 0; i < 10; i++) {
+            AirplaneSeat seat = new AirplaneSeat("I Duntknow", "ID-U", 32, i*16, i, 1);
+            apSeats[i] = seat;
+        }
+        AirplaneLayout layout = new AirplaneLayout("ID-U", "Dooooom.png", apSeats);
+        Airplane plane = new Airplane("No IDea", "Rusty old wreck", layout);
+        IFlight flight = new Flight("rfID", "Our boring everyday life", "Party", 
+            "1", //One airport to rule them all
+            plane, new java.sql.Date(2013, 12, 14) , new java.sql.Date(2013, 12, 14));
+        Reservation badReservation = new Reservation(mainPer, 
+            new ArrayList<Person>(Arrays.asList(per2, per3)), seats, 
+            flight, "BananaPhone", "$$$", "Secret Flight #7");
+        
+        // Load all the shit :i
+        ReservationEditor instance = new ReservationEditor(badReservation);
+        
+        // Manual part, 
+        instance.pack();
+        instance.setVisible(true);}
+    
     public static void main (String[] args) throws Exception {
-        String str = "090909".substring(2,4);
-        System.out.println("str:"+str);
-        System.out.println("Parse09: "+Integer.parseInt(str));
-        //testFlightPanel();
-        //testReservationEditor();
-        //System.out.println("Date: "+new Date());
-        /*Person patrick = new Person("ID",  "Patrick", "Danish", "1337");
-        ArrayList<Person> l = new ArrayList<Person>();
-        l.add(patrick);
-        String formatted = Utils.formatAndJoinVars(l, "%s,%s,%s,%s", ",", "id","name","nationality","cpr");
-        System.out.println("f: "+formatted);*/
-    }  
+        //manualBadDataTest();
+        testReservationEditor();
+    }
 } 

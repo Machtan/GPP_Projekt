@@ -24,7 +24,6 @@ public class mainTestSS
     public static void main(String[] args)
     {
         DatabaseHandler database = DatabaseHandler.getHandler();
-        database.connect();
         TMPSeatingCreator tmp = new TMPSeatingCreator();
         TMPSeatingCreator2 tmp2 = new TMPSeatingCreator2();
         tmp.makeSeats();

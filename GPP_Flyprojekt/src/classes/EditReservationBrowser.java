@@ -22,9 +22,13 @@ public class EditReservationBrowser extends ReservationBrowser{
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                ReservationEditor editor = new ReservationEditor(getChosen());
-                editor.setTitle("Redigér reservation");
-                Utils.transition(browser, editor);
+                if (DatabaseHandler.getHandler().isConnected()) {
+                    ReservationEditor editor = new ReservationEditor(getChosen());
+                    editor.setTitle("Redigér reservation");
+                    Utils.transition(browser, editor);
+                } else {
+                    Utils.showNoConnectionNotice("Reservationen kan ikke redigeres.");
+                }
             }
         });
     }

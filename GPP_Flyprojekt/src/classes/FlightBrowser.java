@@ -1,5 +1,6 @@
 package classes;
 
+import interfaces.IDatabaseHandler.ConnectionError;
 import interfaces.ISeating;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -32,7 +33,15 @@ public class FlightBrowser extends Browser {
      */
     public FlightBrowser() {
         initComponents();
-        flights = DatabaseHandler.getHandler().getFlights();
+        Flight[] tmpFlights;
+        try {
+            tmpFlights = DatabaseHandler.getHandler().getFlights();
+        } catch (ConnectionError ce) {
+            Utils.showNoConnectionNotice("Afgangene kunne ikke indlæses");
+            tmpFlights = (Flight[])ce.value;
+        }
+        flights = tmpFlights; //To stop making NetBeans glower over above statement
+        
         //Update Orgin and destination
         HashSet<String> origins = new HashSet<String>();
         HashSet<String> destinations = new HashSet<String>();
