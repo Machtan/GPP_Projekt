@@ -270,9 +270,10 @@ public class PassengerList extends JScrollPane implements IPersonDataList {
                         this.editor.setData(person);
                         break;
                 }
+            } else {
+                this.deletePerson(person);
+                this.editor.setData(person);
             }
-            
-            
         }
     }
     
