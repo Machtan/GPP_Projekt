@@ -199,7 +199,7 @@ public class DatabaseHandler implements IDatabaseHandler {
                         + "`AdditionalPassengersID` ,\n"
                         + "`Seats` ,\n"
                         + "`Tlf` ,\n"
-                        + "`Cardnumber` ,\n"
+                        + "`CardNumber` ,\n"
                         + "`BookingNumber`\n"
                         + ")\n"
                         + "VALUES (?,?,?,?,?,?,?,?);";
