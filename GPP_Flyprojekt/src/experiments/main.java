@@ -313,34 +313,7 @@ public class main {
         frame.setVisible(true);
     }
     
-    public static void manualBadDataTest() {
-    Person mainPer = new Person("HELLOOOOO", "Test User", "Testing personnel", "1011018888asdfasdfasdf");
-        Person per2 = new Person("saldkasjdlk", "asdasdl", "123we8ruwer8", "doisdfæfdø");
-        Person per3 = new Person("Derp", "Unicode test", "옵반 강남 스타일", "https://www.youtube.com/watch?v=z9yOQsheMEA");
-        ArrayList<Point> seats = new ArrayList<Point>(Arrays.asList(new Point(1,1), new Point(1,2), new Point(1,3)));
-        AirplaneSeat[] apSeats = new AirplaneSeat[10];
-        for (int i = 0; i < 10; i++) {
-            AirplaneSeat seat = new AirplaneSeat("I Duntknow", "ID-U", 32, i*16, i, 1);
-            apSeats[i] = seat;
-        }
-        AirplaneLayout layout = new AirplaneLayout("ID-U", "Dooooom.png", apSeats);
-        Airplane plane = new Airplane("No IDea", "Rusty old wreck", layout);
-        IFlight flight = new Flight("rfID", "Our boring everyday life", "Party", 
-            "1", //One airport to rule them all
-            plane, new java.sql.Date(2013, 12, 14) , new java.sql.Date(2013, 12, 14));
-        Reservation badReservation = new Reservation(mainPer, 
-            new ArrayList<Person>(Arrays.asList(per2, per3)), seats, 
-            flight, "BananaPhone", "$$$", "Secret Flight #7");
-        
-        // Load all the shit :i
-        ReservationEditor instance = new ReservationEditor(badReservation);
-        
-        // Manual part, 
-        instance.pack();
-        instance.setVisible(true);}
-    
     public static void main (String[] args) throws Exception {
-        manualBadDataTest();
         //testReservationEditor();
     }
 } 

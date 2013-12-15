@@ -10,6 +10,7 @@ import classes.Flight;
 import classes.SeatChooser;
 import experiments.TMPSeatingCreator;
 import experiments.TMPSeatingCreator2;
+import interfaces.IDatabaseHandler.ConnectionError;
 
 import javax.swing.JFrame;
 
@@ -29,7 +30,11 @@ public class mainTestSS
         tmp.makeSeats();
         tmp2.makeSeats();
         Flight fligt;
-        fligt = database.getFlights()[0];
+        try {
+            fligt = database.getFlights()[0];
+        } catch (ConnectionError ce) {
+            return;
+        }
         SeatChooser vis = new SeatChooser();
         
         vis.setRequestedSeats(8);
