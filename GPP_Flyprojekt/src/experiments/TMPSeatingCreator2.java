@@ -7,8 +7,13 @@ package experiments;
 
 import classes.AirplaneSeat;
 import classes.DatabaseHandler;
+import classes.Flight;
+import interfaces.IDatabaseHandler;
 
 import java.util.HashSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import main.GPP_Flyprojekt;
 
 /**
  *
@@ -61,6 +66,15 @@ public class TMPSeatingCreator2
                 
                 DatabaseHandler.getHandler().addAirplaneSeat(new AirplaneSeat("","2",startXOfset + col * seatSize,startYOfset + row * (seatSize + 1),row,col));
             }
+        }
+            Flight[] flights;
+        try {
+            flights = DatabaseHandler.getHandler().getFlights();
+            for (Flight flight : flights) {
+                DatabaseHandler.getHandler().updateFlightFreeSeats(flight);
+            }
+        } catch (IDatabaseHandler.ConnectionError ex) {
+            Logger.getLogger(GPP_Flyprojekt.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

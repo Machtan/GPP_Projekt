@@ -146,14 +146,12 @@ public class FlightBrowser extends Browser {
             }
 
             //Get number of avavlible seats
-            ISeating seating = new Seating(flight);
-            Iterator<Point> seats = seating.getSeatIterator();
-            int numberOfFreeSeats = seating.getNumberOfFreeSeats();
+            int numberOfFreeSeats = flight.numberOfFreeSeats;
             calendar.setTime(flight.getDepartureTime());
-            String departureDate = String.format("%02d-%02d-%04d %02d:%02d", calendar.get(Calendar.DAY_OF_MONTH),calendar.get(Calendar.MONTH),calendar.get(Calendar.YEAR),calendar.get(Calendar.HOUR_OF_DAY),calendar.get(Calendar.MINUTE));
+            String departureDate = String.format("%02d-%02d-%04d %02d:%02d", calendar.get(Calendar.DAY_OF_MONTH),calendar.get(Calendar.MONTH)+1,calendar.get(Calendar.YEAR),calendar.get(Calendar.HOUR_OF_DAY),calendar.get(Calendar.MINUTE));
               
             calendar.setTime(flight.getArrivalTime());
-            String arrivalDate =   String.format("%02d-%02d-%04d %02d:%02d", calendar.get(Calendar.DAY_OF_MONTH),calendar.get(Calendar.MONTH),calendar.get(Calendar.YEAR),calendar.get(Calendar.HOUR_OF_DAY),calendar.get(Calendar.MINUTE));
+            String arrivalDate =   String.format("%02d-%02d-%04d %02d:%02d", calendar.get(Calendar.DAY_OF_MONTH),calendar.get(Calendar.MONTH)+1,calendar.get(Calendar.YEAR),calendar.get(Calendar.HOUR_OF_DAY),calendar.get(Calendar.MINUTE));
      
             // Search based on free seats
             if (numberOfFreeSeats < Integer.parseInt(searchMinSeatsTextField.getText())) {

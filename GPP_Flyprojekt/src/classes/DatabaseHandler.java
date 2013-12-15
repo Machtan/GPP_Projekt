@@ -27,7 +27,7 @@ public class DatabaseHandler implements IDatabaseHandler {
     final String password = "testuser";
     Connection conn = null;
     static DatabaseHandler handler = null;
-    
+
     /**
      * Constructor for DatabaseHandler, provide AirportID to filter out entries
      * relevant to the specific airport.
@@ -70,13 +70,13 @@ public class DatabaseHandler implements IDatabaseHandler {
             Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
 
     /**
      * Get reservations from a flight.
+     *
      * @param flight
-     * @return 
-     * @throws interfaces.IDatabaseHandler.ConnectionError 
+     * @return
+     * @throws interfaces.IDatabaseHandler.ConnectionError
      */
     @Override
     public Reservation[] getReservations(IFlight flight) throws ConnectionError {
@@ -124,9 +124,9 @@ public class DatabaseHandler implements IDatabaseHandler {
                 reservations.add(new Reservation(id, peopleMapped.get(passengerid), additionalPassengers_array, seatpoints_array, flight, tlf, cardNumber, bookingNumber));
             }
         } catch (SQLException ex) {
-            System.out.println("No reservations could be loaded for flight '"+
-                flight.getID()+"' from "+flight.getOrigin()+" to "+
-                flight.getDestination()+".");
+            System.out.println("No reservations could be loaded for flight '"
+                    + flight.getID() + "' from " + flight.getOrigin() + " to "
+                    + flight.getDestination() + ".");
             //Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
         return (Reservation[]) reservations.toArray(new Reservation[0]);
@@ -211,7 +211,7 @@ public class DatabaseHandler implements IDatabaseHandler {
                     preparedStmt.setNull(1, java.sql.Types.INTEGER);
                 }
                 preparedStmt.setString(2, res.flight.getID());
-                if ((res.passenger.id != "")&&(res.passenger.id != null)) {
+                if ((res.passenger.id != "") && (res.passenger.id != null)) {
                     preparedStmt.setInt(3, Integer.parseInt(res.passenger.id));
                 } else {
                     preparedStmt.setNull(3, java.sql.Types.INTEGER);
@@ -229,6 +229,7 @@ public class DatabaseHandler implements IDatabaseHandler {
                 System.out.println("Could not add the requested Reservation");
             }
         }
+        updateFlightFreeSeats(res.flight);
         return res;
     }
     /*
@@ -275,12 +276,14 @@ public class DatabaseHandler implements IDatabaseHandler {
                     }
                 }
             } catch (SQLException ex) {
-                System.out.println("Couldn't find the reservation with the ID '"+
-                        res.reservationID+"'");
+                System.out.println("Couldn't find the reservation with the ID '"
+                        + res.reservationID + "'");
             }
         }
+        updateFlightFreeSeats(res.flight);
     }
- /**
+
+    /**
      * Add a new seat to the database.
      */
     public void addAirplaneSeat(AirplaneSeat res) {
@@ -292,37 +295,35 @@ public class DatabaseHandler implements IDatabaseHandler {
         }
         if (res != null) {
             try {
-               
-                    String query = "INSERT INTO  `Airport`.`AirplaneSeats` (\n"
-                            + "`ID` ,\n"
-                            + "`AirplaneLayoutID` ,\n"
-                            + "`PositionX` ,\n"
-                            + "`PositionY` ,\n"
-                            + "`RowIndex` ,\n"
-                            + "`ColumnIndex` \n"
-                            + ")\n"
-                            + "VALUES ( ?,?,?,?,?,?);";
 
-                    // create the mysql insert preparedstatement
-                    PreparedStatement preparedStmt = conn.prepareStatement(query);
-                    preparedStmt.setNull(1, java.sql.Types.INTEGER);
-                    preparedStmt.setInt(2, Integer.parseInt(res.airplaneLayoutID));
-                    preparedStmt.setInt(3, res.positionX);
-                    preparedStmt.setInt(4,  res.positionY);
-                    preparedStmt.setInt(5,  res.rowIndex);
-                    preparedStmt.setInt(6,  res.columnIndex);
+                String query = "INSERT INTO  `Airport`.`AirplaneSeats` (\n"
+                        + "`ID` ,\n"
+                        + "`AirplaneLayoutID` ,\n"
+                        + "`PositionX` ,\n"
+                        + "`PositionY` ,\n"
+                        + "`RowIndex` ,\n"
+                        + "`ColumnIndex` \n"
+                        + ")\n"
+                        + "VALUES ( ?,?,?,?,?,?);";
 
-                    // execute the preparedstatement
-                    preparedStmt.executeUpdate();
-                  
+                // create the mysql insert preparedstatement
+                PreparedStatement preparedStmt = conn.prepareStatement(query);
+                preparedStmt.setNull(1, java.sql.Types.INTEGER);
+                preparedStmt.setInt(2, Integer.parseInt(res.airplaneLayoutID));
+                preparedStmt.setInt(3, res.positionX);
+                preparedStmt.setInt(4, res.positionY);
+                preparedStmt.setInt(5, res.rowIndex);
+                preparedStmt.setInt(6, res.columnIndex);
 
-                }
-             catch (SQLException ex) {
+                // execute the preparedstatement
+                preparedStmt.executeUpdate();
+
+
+            } catch (SQLException ex) {
                 Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
-    
 
     /**
      * update a reservation.
@@ -352,9 +353,31 @@ public class DatabaseHandler implements IDatabaseHandler {
                     }
                 }
             }
-            System.out.println("Updated reservation with reference: "+res.bookingNumber);
+            System.out.println("Updated reservation with reference: " + res.bookingNumber);
             addReservation(res);
         }
+    }
+
+    /**
+     * update the numberOfFreeSeats collumn of the flights table.
+     */
+    public void updateFlightFreeSeats(IFlight flight) {
+
+        int numberOfFreeSeats = (new Seating(flight)).getNumberOfFreeSeats();
+        String query = "UPDATE  `Airport`.`Flight` SET  `numberOfFreeSeats` =  ? WHERE  `Flight`.`ID` =" + flight.getID() + ";";
+
+        // create the mysql insert preparedstatement
+        PreparedStatement preparedStmt;
+        try {
+            preparedStmt = conn.prepareStatement(query);
+            preparedStmt.setInt(1, numberOfFreeSeats);
+
+            // execute the preparedstatement
+            preparedStmt.executeUpdate();
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
     /**
@@ -390,9 +413,10 @@ public class DatabaseHandler implements IDatabaseHandler {
                 String airplaneID = rs.getString(5);
                 Date departureTime = rs.getTimestamp(6);
                 Date arrivalTime = rs.getTimestamp(7);
+                int numberOfFreeSeats = rs.getInt(8);
                 if (airportID.equals(this.AirportID) && airPlanesMapped.containsKey(airplaneID)) {
                     Airplane airPlane = airPlanesMapped.get(airplaneID);
-                    Flight newflight = new Flight(id, origin, destination, airportID, airPlane, departureTime, arrivalTime);
+                    Flight newflight = new Flight(id, origin, destination, airportID, airPlane, departureTime, arrivalTime, numberOfFreeSeats);
                     flights.add(newflight);
                 }
             }
@@ -472,7 +496,7 @@ public class DatabaseHandler implements IDatabaseHandler {
         } catch (Exception ex) {
             throw new ConnectionError(new Airplane[0]);
         }
-        
+
         //For performance reasons, convert to hashmap with airPlaneLayOutID as KEY.
         HashMap<String, AirplaneLayout> airPlaneLayoutsMapped = new HashMap<String, AirplaneLayout>();
         for (AirplaneLayout item : airPlaneLayouts) {
@@ -566,9 +590,10 @@ public class DatabaseHandler implements IDatabaseHandler {
         }
         return result;
     }
-    
+
     /**
      * Whether the databasehandler is currently connected
+     *
      * @return Whether the databasehandler is currently connected
      */
     public boolean isConnected() {
@@ -599,6 +624,6 @@ public class DatabaseHandler implements IDatabaseHandler {
             //Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
             throw new Exception("Connection to the MYSQL server could not be validated!");
         }
-        
+
     }
 }

@@ -18,9 +18,9 @@ public class Flight implements IFlight {
     Airplane airplane;
     Date departureTime;
     Date arrivalTime;
- 
+    int numberOfFreeSeats;
     public Flight(String ID, String Origin, String Destination, String AirportID, 
-            Airplane airplane, Date DepartureTime, Date ArrivalTime) {
+            Airplane airplane, Date DepartureTime, Date ArrivalTime, int numberOfFreeSeats) {
         this.id = ID;
         this.origin = Origin;
         this.destination = Destination;
@@ -28,6 +28,7 @@ public class Flight implements IFlight {
         this.airplane = airplane;
         this.departureTime = DepartureTime;
         this.arrivalTime = ArrivalTime;
+        this.numberOfFreeSeats = numberOfFreeSeats;
     }
 
     
