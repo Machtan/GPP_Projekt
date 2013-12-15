@@ -292,6 +292,7 @@ public class Utils {
      */
     public static void transition(final JFrame a, final ReturnableFrame b) {
         a.setEnabled(false);
+        b.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         b.bindReturnAction(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -309,7 +310,6 @@ public class Utils {
             }
         });
         // Transition as above
-        b.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setFrameIcon(b, "images/Plane.png"); // Remember the application icon <3
         b.pack();
         b.setVisible(true);

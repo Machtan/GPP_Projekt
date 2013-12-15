@@ -128,6 +128,7 @@ public class ReservationEditor extends ReturnableFrame {
         if (reservation != null ) { // If the user is just editing, don't prompt
             if (returnListener != null) {
                 returnListener.actionPerformed(evt);
+                return;
             }
         }
         
@@ -141,8 +142,10 @@ public class ReservationEditor extends ReturnableFrame {
                 JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
             switch (answer) {
                 case 0: //No => do nothing
+                    System.out.println("DONT LEAVE");
                     return;
                 case 1: //Yes => return
+                    System.out.println("YES LEAVE");
                     if (returnListener != null) {
                         returnListener.actionPerformed(evt);
                     }
