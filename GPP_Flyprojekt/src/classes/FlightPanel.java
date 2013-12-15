@@ -71,6 +71,10 @@ public class FlightPanel extends JPanel {
 
     public void loadFlight(IFlight flight) {
         if (flight == null) return;
+        if (flight.equals(this.flight)) {
+            System.out.println("Same flight :i");
+            return;
+        }
 
         this.flight = flight;
         // This is the 'action' performed by this component
@@ -170,6 +174,8 @@ public class FlightPanel extends JPanel {
         
             @Override
             public void actionPerformed(ActionEvent e) {
+                SwingUtilities.getWindowAncestor(fpanel).setEnabled(false); //Disable the editor
+                
                 final JFrame editor = (JFrame) SwingUtilities.getWindowAncestor(fpanel);
                 final FlightChooser chooser = new FlightChooser();
                 chooser.addActionListener(new ActionListener() {
@@ -177,8 +183,7 @@ public class FlightPanel extends JPanel {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         fpanel.loadFlight(chooser.getChosen());
-                        chooser.dispose();
-                        editor.setVisible(true);
+                        chooser.returnActionPerformed(e);
                     }
                 });
                 Utils.transition(editor, chooser);

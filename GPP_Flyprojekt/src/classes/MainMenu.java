@@ -112,18 +112,21 @@ public class MainMenu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void createNewReservationAction(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createNewReservationAction
+        setEnabled(false);
         ReservationEditor editor = new ReservationEditor();
         editor.setTitle("Tilføj ny Reservation");
         Utils.transition(this, editor);
     }//GEN-LAST:event_createNewReservationAction
 
     private void showFlightBrowserButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showFlightBrowserButtonActionPerformed
+        setEnabled(false);
         FlightInspector menu = new FlightInspector();
         Utils.transition(this, menu);
         
     }//GEN-LAST:event_showFlightBrowserButtonActionPerformed
 
     private void editReservationAction(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editReservationAction
+        setEnabled(false);
         final FlightBrowser win = new FlightBrowser(); //Unbound version :)
         win.addActionListener(new ActionListener() {
 
@@ -137,6 +140,7 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_editReservationAction
 
     private void removeReservationAction(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeReservationAction
+        setEnabled(false);
         final FlightBrowser win = new FlightBrowser(); //Unbound version :)
         win.addActionListener(new ActionListener() {
 

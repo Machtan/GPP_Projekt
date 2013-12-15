@@ -118,4 +118,12 @@ public class AdditionalPassengersPanel extends JPanel {
             listeners.add(a);
         }
     }
+    
+    /**
+     * Whether the passenger panel has data in the editing field
+     * @return whether the passenger panel has data in the editing field
+     */
+    public boolean isEditing() {
+        return !editPanel.isEmpty();
+    }
 }

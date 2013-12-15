@@ -4,8 +4,8 @@ import interfaces.IDatabaseHandler.ConnectionError;
 import interfaces.ISeatChooser;
 import interfaces.IValidatable;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,15 +16,13 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.EtchedBorder;
 
 /**
  * The ReservationEditor class <More docs goes here>
  * @author Jakob Lautrup Nysom (jaln@itu.dk)
  * @version 27-Nov-2013
  */
-public class ReservationEditor extends JFrame {
+public class ReservationEditor extends ReturnableFrame {
     
     Reservation reservation;
     AdditionalPassengersPanel pasPanel;
@@ -32,6 +30,7 @@ public class ReservationEditor extends JFrame {
     final SeatChooser chooser;
     FlightPanel flightPanel;
     JButton addReservationButton;
+    JButton returnButton;
     
     /**
      * Constructor for the ReservationEditor class
@@ -53,8 +52,22 @@ public class ReservationEditor extends JFrame {
         // Make the panel for the flight and seating info
         JPanel flightInfoPanel = new JPanel(new BorderLayout());
         flightPanel = new FlightPanel();
-        addReservationButton = new JButton("Gem reservation");
         
+        // Bottom stuff
+        JPanel bottomPanel = new JPanel(new GridLayout(0, 1));
+        JPanel saveButtonPanel = new JPanel(new BorderLayout());
+        JPanel returnButtonPanel = new JPanel(new BorderLayout());
+        
+        returnButton = new JButton("Gå tilbage");
+        returnButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                returnActionPerformed(e);
+            }
+        });
+        returnButtonPanel.add(returnButton, BorderLayout.NORTH);
+        
+        addReservationButton = new JButton("Gem reservation");
         final ReservationEditor editor = this;
         addReservationButton.addActionListener(new ActionListener() {
             @Override
@@ -63,8 +76,12 @@ public class ReservationEditor extends JFrame {
             }
         });
         
+        saveButtonPanel.add(addReservationButton, BorderLayout.SOUTH);
+        bottomPanel.add(returnButtonPanel);
+        bottomPanel.add(saveButtonPanel);
+        
         flightInfoPanel.add(flightPanel, BorderLayout.NORTH);
-        flightInfoPanel.add(addReservationButton, BorderLayout.SOUTH);
+        flightInfoPanel.add(bottomPanel, BorderLayout.SOUTH);
         
         
         // Pack all the info together
@@ -95,6 +112,41 @@ public class ReservationEditor extends JFrame {
         // Pack the editor window
         this.add(infoPanel, BorderLayout.WEST);
         this.add(chooser, BorderLayout.EAST);
+    }
+    
+    protected void returnActionPerformed(java.awt.event.ActionEvent evt) {
+        boolean hasPassengers = !pasPanel.getPersons().isEmpty();
+        boolean hasPasEdit = pasPanel.isEditing();
+        boolean hasFlight = flightPanel.getFlight() != null;
+        boolean hasInfo = false;
+        for (String val : resPanel.getReservationInfo().values()) {
+            if (!val.equals("")) {
+                hasInfo = true;
+            }
+        }
+        
+        //System.out.println(String.format("pas %s | edi %s | fli %s | inf %s", 
+        //        hasPassengers, hasPasEdit, hasFlight, hasInfo);
+        if (hasPassengers || hasPasEdit || hasFlight || hasInfo) { // Data added => prompt
+            String[] options = {"Nej", "Ja"};
+            int answer = JOptionPane.showOptionDialog(new JFrame(), 
+                "Du har indtastede informationer.\nVil du kassere disse og forlade editoren?", 
+                "Bekræft lukning", JOptionPane.YES_NO_OPTION, 
+                JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+            switch (answer) {
+                case 0: //No => do nothing
+                    return;
+                case 1: //Yes => return
+                    if (returnListener != null) {
+                        returnListener.actionPerformed(evt);
+                    }
+                    break;
+            }
+        } else {
+            if (returnListener != null) {
+            returnListener.actionPerformed(evt);
+        }
+        }
     }
     
     /**

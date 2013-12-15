@@ -4,17 +4,15 @@ import interfaces.IBrowser;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import javax.swing.JFrame;
 
 /**
  * The Browser class <More docs goes here>
  * @author Jakob Lautrup Nysom (jaln@itu.dk)
  * @version 12-Dec-2013
  */
-public abstract class Browser extends JFrame implements IBrowser{
+public abstract class Browser extends ReturnableFrame implements IBrowser{
     
     final ArrayList<ActionListener> listeners;
-    ActionListener returnListener;
     
     /**
      * Constructor for the Browser class
@@ -42,6 +40,7 @@ public abstract class Browser extends JFrame implements IBrowser{
      * Called when the user picks an item
      */
     protected void onActionPerformed() {
+        setEnabled(false); // Since this opens a new window, the window should disable
         for (ActionListener a : listeners) {
             a.actionPerformed(new ActionEvent(this, 
                 ActionEvent.ACTION_PERFORMED, null) {}
@@ -56,16 +55,6 @@ public abstract class Browser extends JFrame implements IBrowser{
      */
     @Override
     public abstract <T> T getChosen();
-    
-    /**
-     * Binds the 'return to previous window' button to notify this action 
-     * listener, so as to make the listener handle it.
-     * @param a An ActionListener which handles the browser asking to return
-     */
-    @Override
-    public void bindReturnButton(ActionListener a) {
-        returnListener = a;
-    }
 
     /**
      * Updates the layout of the browser to show recent changes (edits, deletes)
@@ -86,14 +75,4 @@ public abstract class Browser extends JFrame implements IBrowser{
      * Sets the text for the 'action' button of the browser
      */
     public abstract void setActionButtonText(String text);
-    
-    /**
-     * When the 'return to previous window' (or something) button is pressed
-     * @param evt An event of no notability
-     */
-    protected void returnActionPerformed(java.awt.event.ActionEvent evt) {
-        if (returnListener != null) {
-            returnListener.actionPerformed(evt);
-        }
-    }
 }

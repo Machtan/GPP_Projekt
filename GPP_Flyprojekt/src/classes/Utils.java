@@ -283,20 +283,37 @@ public class Utils {
 
     /**
      * Automatically transitions from component a to b, so that a closes and b
-     * opens, and so that a is reopened when b is closed again
+     * opens, and so that a is reopened when b is closed again. This variant
+     * works with frames with a "return" button in them
      *
      * @param a The origin window
      * @param b The new window
      */
-    public static void transition(final JFrame a, final Browser b) {
-        b.bindReturnButton(new ActionListener() {
+    public static void transition(final JFrame a, final ReturnableFrame b) {
+        a.setEnabled(false);
+        b.bindReturnAction(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                a.setEnabled(true);
                 a.setVisible(true);
                 b.dispose();
             }
         });
-        transition(a, (JFrame) b);
+        
+        // Do a specialized extendable close
+        b.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                b.returnActionPerformed(new ActionEvent(this, 
+                    ActionEvent.ACTION_PERFORMED, "none"));
+            }
+        });
+        // Transition as above
+        b.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setFrameIcon(b, "images/Plane.png"); // Remember the application icon <3
+        b.pack();
+        b.setVisible(true);
+        
+        a.setVisible(false);
     }
 
     /**
