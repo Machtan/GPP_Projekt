@@ -9,6 +9,7 @@ import classes.AirplaneSeat;
 import classes.DatabaseHandler;
 import classes.Flight;
 import interfaces.IDatabaseHandler;
+import interfaces.IDatabaseHandler.ConnectionError;
 
 import java.util.HashSet;
 import java.util.logging.Level;
@@ -24,7 +25,7 @@ import main.GPP_Flyprojekt;
 public class TMPSeatingCreator 
 {
     
-    public void makeSeats()
+    public void makeSeats() throws ConnectionError
     {
         int startXOfset = 31;
         int startYOfset = 135; 

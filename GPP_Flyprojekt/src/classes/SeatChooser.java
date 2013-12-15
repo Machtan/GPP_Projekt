@@ -97,10 +97,12 @@ public class SeatChooser extends JPanel implements ISeatChooser
         
         // - TODO integra dette i databasen / med databasen
         try {
-            url = SeatChooser.class.getClassLoader().getResource(flight.getPlane().airplaneLayout.placementImagePath);
+            ClassLoader cl = SeatChooser.class.getClassLoader();
+            String path = flight.getPlane().airplaneLayout.placementImagePath;
+            url = cl.getResource(path);
         } catch (Exception ex) {
-            System.out.println("The image for this layout couldn't be loaded.\n"+
-                    "Try reloading NetBeans, it usually helps.");
+            System.out.println("The image for this layout couldn't be loaded."+
+                    "\nTry reloading NetBeans, it usually helps.");
         }
         
         repaint();
@@ -215,9 +217,9 @@ public class SeatChooser extends JPanel implements ISeatChooser
     @Override
     protected void paintComponent(Graphics g)
     {
-        super.paintComponent(g); //To change body of generated methods, choose Tools | Templates.
+        super.paintComponent(g); 
         
-        if(flight == null) // - TODO der skal vare en text som forteler at der ikke er noglen flight
+        if(flight == null)
         {
             Graphics2D g2d = (Graphics2D)g;
             g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
@@ -228,7 +230,7 @@ public class SeatChooser extends JPanel implements ISeatChooser
             return;
         }
         
-        //paint a pikture of the airplane
+        //paint a picture of the airplane
         try
         {
             if (url != null) {
@@ -240,11 +242,13 @@ public class SeatChooser extends JPanel implements ISeatChooser
         }
         catch (IOException ex)
         {
-            Logger.getLogger(SeatChooser.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SeatChooser.class.getName()).log(Level.SEVERE, 
+                    null, ex);
         }
 
         
-        //Paint all the seats in difrint colors: red = taken, green = free, blue = chosen.
+        //Paint all the seats in difrint colors: 
+        //red = taken, green = free, blue = chosen.
         Iterator<Point> iter = seating.getSeatIterator();
         while(iter.hasNext())
         {
@@ -256,9 +260,13 @@ public class SeatChooser extends JPanel implements ISeatChooser
             if(seating.getSeatChosen(iterPoint))
                 g.setColor(Color.blue);
             
-            g.fillRect(seating.getSeatPosition(iterPoint).x+1 - seatSize/2, seating.getSeatPosition(iterPoint).y+1 - seatSize/2, seatSize-1, seatSize-1);
+            g.fillRect(seating.getSeatPosition(iterPoint).x+1 - seatSize/2, 
+                    seating.getSeatPosition(iterPoint).y+1 - seatSize/2, 
+                    seatSize-1, seatSize-1);
             g.setColor(Color.black);
-            g.drawRect(seating.getSeatPosition(iterPoint).x+1 - seatSize/2, seating.getSeatPosition(iterPoint).y+1 - seatSize/2, seatSize-1, seatSize-1);
+            g.drawRect(seating.getSeatPosition(iterPoint).x+1 - seatSize/2, 
+                    seating.getSeatPosition(iterPoint).y+1 - seatSize/2, 
+                    seatSize-1, seatSize-1);
         }
     }
 
@@ -294,7 +302,8 @@ public class SeatChooser extends JPanel implements ISeatChooser
         if(seating.getChosenSeats().size() == numberOfSeats)
             return seating.getChosenSeats();
         else
-            throw new NotEnoughSeatsException(seating.getChosenSeats().size(), numberOfSeats);
+            throw new NotEnoughSeatsException(seating.getChosenSeats().size(), 
+                    numberOfSeats);
     }
 
     /**
