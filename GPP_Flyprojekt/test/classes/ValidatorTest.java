@@ -6,9 +6,7 @@
 
 package classes;
 
-import interfaces.IValidatable;
 import interfaces.IValidator.NoValidatorException;
-import java.sql.Date;
 import java.util.Calendar;
 import java.util.Random;
 import org.junit.After;
