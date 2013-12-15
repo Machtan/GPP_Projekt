@@ -270,6 +270,7 @@ public class Utils {
         b.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         b.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
+                a.setEnabled(true); //Please don't hurt me
                 a.setVisible(true);
             }
         });
