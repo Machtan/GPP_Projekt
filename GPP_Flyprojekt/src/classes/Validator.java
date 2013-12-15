@@ -50,7 +50,9 @@ public class Validator implements IValidator {
     private static boolean validateCardnumber(String cardNumber) {
         try {
             String value = cardNumber.replaceAll(" ", "");
-            if (value.equals("")) {return false;}
+            if ((value.length() > 30) || (value.length() == 0)) {
+                return false;
+            }
             for (int i = 0; i < value.length(); i++) {
                 Integer.parseInt(value.substring(i, i+1));
             }
@@ -80,7 +82,7 @@ public class Validator implements IValidator {
      * @return Whether the given nationality is valid
      */
     private static boolean validateNationality(String nationality) {
-        return !nationality.equals("");
+        return !((nationality.length() == 0) || (nationality.length() > 50));
     }
     
     @Override
@@ -114,7 +116,7 @@ public class Validator implements IValidator {
         return "Feltet kan ikke valideres. Kontakt din systemadministrator";
     }
 
-    public static boolean validatePhonenumber(String value) {
+    private static boolean validatePhonenumber(String value) {
         value = value.replaceAll(" ", "");
         if (value.startsWith("+")) {
             value = value.replaceFirst("[+]", "00");

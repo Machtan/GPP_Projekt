@@ -125,6 +125,12 @@ public class ReservationEditor extends ReturnableFrame {
             }
         }
         
+        if (reservation != null ) { // If the user is just editing, don't prompt
+            if (returnListener != null) {
+                returnListener.actionPerformed(evt);
+            }
+        }
+        
         //System.out.println(String.format("pas %s | edi %s | fli %s | inf %s", 
         //        hasPassengers, hasPasEdit, hasFlight, hasInfo);
         if (hasPassengers || hasPasEdit || hasFlight || hasInfo) { // Data added => prompt
@@ -144,8 +150,8 @@ public class ReservationEditor extends ReturnableFrame {
             }
         } else {
             if (returnListener != null) {
-            returnListener.actionPerformed(evt);
-        }
+                returnListener.actionPerformed(evt);
+            }
         }
     }
     
