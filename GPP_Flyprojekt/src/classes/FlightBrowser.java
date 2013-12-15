@@ -4,15 +4,12 @@ import interfaces.IDatabaseHandler.ConnectionError;
 import interfaces.ISeating;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Locale;
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
 import org.jdesktop.swingx.JXDatePicker;
@@ -26,23 +23,54 @@ import org.jdesktop.swingx.JXDatePicker;
  */
 public class FlightBrowser extends Browser {
 
-    final Flight[] flights;
+    // Variables declarations
+    final Flight[] flights;               
+    private javax.swing.JButton clearSearchButton;
+    protected javax.swing.JTable flightTable; //Hahahahahahahaha
+    private javax.swing.JPanel actionsPanel;
+    private javax.swing.JScrollPane jScrollPane2;
+    protected javax.swing.JButton returnToMainMenuButton; // Needs to be modifiable
+    private javax.swing.JLabel searchArrivalLabel;
+    private JXDatePicker searchArrivalJXDatePicker;
+    private JXDatePicker searchDepartureJXDatePicker;
+    private javax.swing.JLabel searchArrivalTimeLabel;
+    private javax.swing.JLabel searchDepartureTimeLabel;
+    private javax.swing.JLabel searchTimeSplitLetterDepartureLabel;
+    private javax.swing.JLabel searchTimeSplitLetterArrivalLabel;
+    private external.HintTextField searchArrivalTimeHourTextField;
+    private external.HintTextField searchArrivalTimeMinuteTextField;
+    private external.HintTextField searchDepartureTimeHourTextField;
+    private external.HintTextField searchDepartureTimeMinuteTextField;
+    private javax.swing.JButton searchButton;
+    private javax.swing.JLabel searchDepartureDLabel;
+    private javax.swing.JComboBox searchDestinationComboBox;
+    private javax.swing.JLabel searchDestinationLabel;
+    private javax.swing.JLabel searchFlightIDLabel;
+    private javax.swing.JTextField searchFlightIDTextField;
+    private javax.swing.JLabel searchMinSeatsLabel;
+    private javax.swing.JFormattedTextField searchMinSeatsTextField;
+    private javax.swing.JComboBox searchOriginComboBox;
+    private javax.swing.JLabel searchOriginLabel;
+    private javax.swing.JPanel searchPanel;
+    protected javax.swing.JButton showReservationButton; // This should be modifiable
+    // End of variables declaration        
 
     /**
      * Creates new form FlightBrowser
      */
     public FlightBrowser() {
         initComponents();
+        //Get the flights from the database
         Flight[] tmpFlights;
         try {
             tmpFlights = DatabaseHandler.getHandler().getFlights();
         } catch (ConnectionError ce) {
             Utils.showNoConnectionNotice("Afgangene kunne ikke indlæses");
-            tmpFlights = (Flight[])ce.value;
+            tmpFlights = (Flight[]) ce.value;
         }
         flights = tmpFlights; //To stop making NetBeans glower over above statement
-        
-        //Update Orgin and destination
+
+        //Get all possible origins and destinations
         HashSet<String> origins = new HashSet<String>();
         HashSet<String> destinations = new HashSet<String>();
         for (Flight flight : flights) {
@@ -53,11 +81,13 @@ public class FlightBrowser extends Browser {
                 destinations.add(flight.getDestination());
             }
         }
-        //Sort
+        //Sort the origins and destinations separately.
         String[] originsArray = (String[]) origins.toArray(new String[origins.size()]);
         String[] destinationsArray = (String[]) destinations.toArray(new String[destinations.size()]);
         Arrays.sort(originsArray);
         Arrays.sort(destinationsArray);
+        //Add the origins and destinations to the origin & destination comboboxes
+        //associated with search.
         searchOriginComboBox.removeAllItems();
         searchOriginComboBox.addItem("Alle");
         for (String item : originsArray) {
@@ -84,6 +114,10 @@ public class FlightBrowser extends Browser {
         }
     }
 
+    /**
+     * Updates the form table with flights. This method takes care of search
+     * properties as well as adding fitting flights to the table.
+     */
     void UpdateTable() {
         DefaultTableModel model = (DefaultTableModel) flightTable.getModel();
         if (model.getRowCount() > 0) {
@@ -91,7 +125,8 @@ public class FlightBrowser extends Browser {
                 model.removeRow(i);
             }
         }
-
+        //To prevent having the same type conversions, we will make them here
+        //and now.
         int arrivalHour = searchArrivalTimeHourTextField.GetIntegerValue();
         int arrivalMinute = searchArrivalTimeMinuteTextField.GetIntegerValue();
         int departureHour = searchDepartureTimeHourTextField.GetIntegerValue();
@@ -99,6 +134,7 @@ public class FlightBrowser extends Browser {
 
         Calendar calendar = Calendar.getInstance();
         for (Flight flight : flights) {
+            //Filter out what doesn't fit the search/filter settings.
             if ((flight.getID() != "" && !flight.getID().toLowerCase().contains(searchFlightIDTextField.getText()))) {
                 continue;
             }
@@ -147,23 +183,29 @@ public class FlightBrowser extends Browser {
 
             //Get number of avavlible seats
             int numberOfFreeSeats = flight.numberOfFreeSeats;
+            //Create datestrings for departure and arrival.
             calendar.setTime(flight.getDepartureTime());
-            String departureDate = String.format("%02d-%02d-%04d %02d:%02d", calendar.get(Calendar.DAY_OF_MONTH),calendar.get(Calendar.MONTH)+1,calendar.get(Calendar.YEAR),calendar.get(Calendar.HOUR_OF_DAY),calendar.get(Calendar.MINUTE));
-              
+            String departureDate = String.format("%02d-%02d-%04d %02d:%02d", calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.YEAR), calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
+
             calendar.setTime(flight.getArrivalTime());
-            String arrivalDate =   String.format("%02d-%02d-%04d %02d:%02d", calendar.get(Calendar.DAY_OF_MONTH),calendar.get(Calendar.MONTH)+1,calendar.get(Calendar.YEAR),calendar.get(Calendar.HOUR_OF_DAY),calendar.get(Calendar.MINUTE));
-     
-            // Search based on free seats
+            String arrivalDate = String.format("%02d-%02d-%04d %02d:%02d", calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.YEAR), calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
+
+            // Filter out what has fewer seats that provided in the search 
+            //min. seats textfield.
             if (numberOfFreeSeats < Integer.parseInt(searchMinSeatsTextField.getText())) {
                 continue;
             }
-
+            //add the row to the formtable.
             model.addRow(new Object[]{flight.id, flight.getOrigin(),
                 flight.getDestination(), departureDate, arrivalDate, numberOfFreeSeats});
 
         }
     }
 
+    /**
+     * Initializes all components and adds them to the form with a fitting
+     * layout.
+     */
     void initComponents() {
         setTitle("Vælg en afgang");
         setName("flightFrame"); // NOI18N
@@ -218,11 +260,7 @@ public class FlightBrowser extends Browser {
         searchPanel.add(searchOriginLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(14, 47, -1, 25));
 
         searchOriginComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"Alle"}));
-        searchOriginComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchOriginComboBoxActionPerformed(evt);
-            }
-        });
+
         searchPanel.add(searchOriginComboBox, new org.netbeans.lib.awtextra.AbsoluteConstraints(102, 47, 204, 25));
 
         searchDestinationLabel.setText("Destination");
@@ -328,11 +366,17 @@ public class FlightBrowser extends Browser {
         pack();
     }
 
+    /**
+     * Invoked method when user clicks the search button.
+     */
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
         UpdateTable();
     }
 
+    /**
+     * Invoked method when user clicks the clear search button.
+     */
     private void clearSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
         searchFlightIDTextField.setText("");
@@ -348,45 +392,18 @@ public class FlightBrowser extends Browser {
         UpdateTable();
     }
 
-    private void searchOriginComboBoxActionPerformed(java.awt.event.ActionEvent evt) {
-        // TODO add your handling code here:
-    }
-    // Variables declaration - do not modify                     
-    private javax.swing.JButton clearSearchButton;
-    protected javax.swing.JTable flightTable; //Hahahahahahahaha
-    private javax.swing.JPanel actionsPanel;
-    private javax.swing.JScrollPane jScrollPane2;
-    protected javax.swing.JButton returnToMainMenuButton; // Needs to be modifiable
-    private javax.swing.JLabel searchArrivalLabel;
-    private JXDatePicker searchArrivalJXDatePicker;
-    private JXDatePicker searchDepartureJXDatePicker;
-    private javax.swing.JLabel searchArrivalTimeLabel;
-    private javax.swing.JLabel searchDepartureTimeLabel;
-    private javax.swing.JLabel searchTimeSplitLetterDepartureLabel;
-    private javax.swing.JLabel searchTimeSplitLetterArrivalLabel;
-    private external.HintTextField searchArrivalTimeHourTextField;
-    private external.HintTextField searchArrivalTimeMinuteTextField;
-    private external.HintTextField searchDepartureTimeHourTextField;
-    private external.HintTextField searchDepartureTimeMinuteTextField;
-    private javax.swing.JButton searchButton;
-    private javax.swing.JLabel searchDepartureDLabel;
-    private javax.swing.JComboBox searchDestinationComboBox;
-    private javax.swing.JLabel searchDestinationLabel;
-    private javax.swing.JLabel searchFlightIDLabel;
-    private javax.swing.JTextField searchFlightIDTextField;
-    private javax.swing.JLabel searchMinSeatsLabel;
-    private javax.swing.JFormattedTextField searchMinSeatsTextField;
-    private javax.swing.JComboBox searchOriginComboBox;
-    private javax.swing.JLabel searchOriginLabel;
-    private javax.swing.JPanel searchPanel;
-    protected javax.swing.JButton showReservationButton; // This should be modifiable
-    // End of variables declaration           
-
+    /**
+     * Updates the browser's layout to reflect changes
+     */
     @Override
     public void updateLayout() {
         UpdateTable();
     }
 
+    /**
+     * This method allows external classes to change the text of the show
+     * selected flight button.
+     */
     @Override
     public void setActionButtonText(String text) {
         showReservationButton.setText(text);

@@ -22,7 +22,26 @@ public class ReservationBrowser extends Browser {
 
     private Reservation[] reservations;
     private final IFlight flight;
-    
+    // Variables declaration - do not modify                     
+    private javax.swing.JButton clearSearchButton;
+    private javax.swing.JPanel actionsPanel;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable reservationTable;
+    private javax.swing.JButton returnToFlightBrowserButton;
+    private javax.swing.JLabel searchArrivalLabel;
+    private javax.swing.JButton searchButton;
+    private javax.swing.JLabel searchDepartureDLabel;
+    private javax.swing.JLabel searchBookingIDLabel;
+    private javax.swing.JLabel searchMinSeatsLabel;
+    private javax.swing.JPanel searchPanel;
+    private javax.swing.JTextField searchPassengerNameTextField;
+    private javax.swing.JTextField searchBookingIDTextField;
+    private javax.swing.JTextField searchTlfTextField;
+    private javax.swing.JFormattedTextField searchTotalPassengersTextField;
+    private javax.swing.JButton showReservationButton;
+    private javax.swing.JLabel titleLabel;
+    // End of variables declaration 
+
     /**
      * Creates new form FlightBrowser
      */
@@ -30,22 +49,24 @@ public class ReservationBrowser extends Browser {
         super();
         this.flight = flight;
         initComponents();
+        //Get reservations for the given flight.
         reservations = flight.getReservations();
+        //Update the form table to show the reservations.
         updateTable();
         this.addComponentListener(new ComponentAdapter() {
-            public void componentHidden(ComponentEvent e) 
-            {
+            public void componentHidden(ComponentEvent e) {
                 /* code run when component hidden*/
             }
+
             public void componentShown(ComponentEvent e) {
                 updateLayout(); // update the layout ;)
             }
         });
     }
-    
-    
+
     /**
      * Returns the chosen reservation, or null if none is chosen
+     *
      * @return The selected reservation
      */
     @Override
@@ -56,21 +77,25 @@ public class ReservationBrowser extends Browser {
             return null;
         }
     }
-    
+
     /**
-     * Updates the browser's layout to reflect changes 
+     * Updates the browser's layout to reflect changes
      */
     @Override
     public void updateLayout() {
         try {
             reservations = DatabaseHandler.getHandler().getReservations(flight);
         } catch (ConnectionError ce) {
-            reservations = (Reservation[])ce.value;
+            reservations = (Reservation[]) ce.value;
         }
         updateTable(); //Redraw - ish
         repaint();
     }
 
+    /**
+     * Initializes all components and adds them to the form with a fitting
+     * layout.
+     */
     private void initComponents() {
         setTitle("Vælg en reservation");
         setMinimumSize(new Dimension(1000, 600));
@@ -109,7 +134,7 @@ public class ReservationBrowser extends Browser {
         searchPanel.add(searchBookingIDLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(14, 20, -1, 25));
 
         searchButton.setText("Søg");
-        searchButton.setPreferredSize(new Dimension(90,25));
+        searchButton.setPreferredSize(new Dimension(90, 25));
         searchButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 searchButtonActionPerformed(evt);
@@ -135,7 +160,7 @@ public class ReservationBrowser extends Browser {
         searchPanel.add(searchTotalPassengersTextField, new org.netbeans.lib.awtextra.AbsoluteConstraints(122, 78, 195, 25));
 
         clearSearchButton.setText("Ryd felter");
-        clearSearchButton.setPreferredSize(new Dimension(90,25));
+        clearSearchButton.setPreferredSize(new Dimension(90, 25));
         clearSearchButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 clearSearchButtonActionPerformed(evt);
@@ -165,15 +190,15 @@ public class ReservationBrowser extends Browser {
         reservationTable.setModel(tableModel);
         reservationTable.setRequestFocusEnabled(false);
         jScrollPane2.setViewportView(reservationTable);
-        showReservationButton.setPreferredSize(new Dimension(210,25));
+        showReservationButton.setPreferredSize(new Dimension(210, 25));
         showReservationButton.setText("Redigér den valgte reservation");
-        showReservationButton.addActionListener(new ActionListener(){
+        showReservationButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 onActionPerformed();
             }
         });
-        
+
         actionsPanel.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
 
@@ -184,9 +209,9 @@ public class ReservationBrowser extends Browser {
             }
         });
         actionsPanel.add(returnToFlightBrowserButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 80, -1, 25));
-        returnToFlightBrowserButton.setPreferredSize(new Dimension(210,25));
+        returnToFlightBrowserButton.setPreferredSize(new Dimension(210, 25));
         actionsPanel.add(showReservationButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 50, -1, 25));
-  
+
 
         actionsPanel.setPreferredSize(new Dimension(230, 120));
 
@@ -205,7 +230,10 @@ public class ReservationBrowser extends Browser {
 
         pack();
     }
-
+    /**
+     * Updates the form table to reflect the correct reservations.
+     * This method takes care of search properties as well as adding fitting flights to the table.
+     */
     void updateTable() {
         DefaultTableModel model = (DefaultTableModel) reservationTable.getModel();
         if (model.getRowCount() > 0) {
@@ -230,19 +258,23 @@ public class ReservationBrowser extends Browser {
                 }
             } catch (Exception ex) {
             }
-            model.addRow(new Object[]{reservation.bookingNumber, 
-                reservation.passenger.name, 
-                reservation.seats.size(), 
+            model.addRow(new Object[]{reservation.bookingNumber,
+                reservation.passenger.name,
+                reservation.seats.size(),
                 reservation.tlf});
         }
     }
-
+    /**
+     * Invoked method when user clicks the search button.
+     */
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
 
         updateTable();
     }
-
+    /**
+     * Invoked method when user clicks the clear search button.
+     */
     private void clearSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // TODO add your handling code here:
         searchBookingIDTextField.setText("");
@@ -250,26 +282,11 @@ public class ReservationBrowser extends Browser {
         searchTlfTextField.setText("");
         searchTotalPassengersTextField.setText("0");
     }
-    // Variables declaration - do not modify                     
-    private javax.swing.JButton clearSearchButton;
-    private javax.swing.JPanel actionsPanel;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable reservationTable;
-    private javax.swing.JButton returnToFlightBrowserButton;
-    private javax.swing.JLabel searchArrivalLabel;
-    private javax.swing.JButton searchButton;
-    private javax.swing.JLabel searchDepartureDLabel;
-    private javax.swing.JLabel searchBookingIDLabel;
-    private javax.swing.JLabel searchMinSeatsLabel;
-    private javax.swing.JPanel searchPanel;
-    private javax.swing.JTextField searchPassengerNameTextField;
-    private javax.swing.JTextField searchBookingIDTextField;
-    private javax.swing.JTextField searchTlfTextField;
-    private javax.swing.JFormattedTextField searchTotalPassengersTextField;
-    private javax.swing.JButton showReservationButton;
-    private javax.swing.JLabel titleLabel;
-    // End of variables declaration                  
-
+    /**
+     * This method allows external classes to change the text of the show
+     * selected reservation button. This is generally used to change from "show
+     * selected reservation" to "edit selected reservation".
+     */
     @Override
     public void setActionButtonText(String text) {
         showReservationButton.setText(text);

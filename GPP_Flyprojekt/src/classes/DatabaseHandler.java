@@ -8,40 +8,50 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import classes.Utils.*;
 
 /**
  *
+ * DatabaseHandler is the class responsible for interacting with the
+ * database.
+ * 
  * @author Patrick Evers Bjørkman (pebj@itu.dk)
  */
 public class DatabaseHandler implements IDatabaseHandler {
-    //MYSQL database connection information.
+    //AirportID makes sure that the user of this software can only access
+    //information regarding his own airport.
 
     final String AirportID = "1";
+    //MYSQL database connection information.
     final String url = "jdbc:mysql://mysql.itu.dk/";
     final String dbName = "Airport";
     final String driver = "com.mysql.jdbc.Driver";
     final String userName = "patr0805";
     final String password = "testuser";
+    //Driver that allows us to communicate with the database.
     Connection conn = null;
+    //This static variabel allows for all classes to use the same instance
+    //of DatabaseHandler by use of the static void named getHandler().
     static DatabaseHandler handler = null;
 
     /**
-     * Constructor for DatabaseHandler, provide AirportID to filter out entries
-     * relevant to the specific airport.
+     * Constructor for DatabaseHandler.
      */
     private DatabaseHandler() {
     }
 
+    /**
+     * getHandler returns the same DatabaseHandler instance amoung all classes
+     * that needs it. This allows the software to keep using the same connection
+     * to the database.
+     */
     public static DatabaseHandler getHandler() {
         if (handler == null) {
             handler = new DatabaseHandler();
             try {
                 handler.connect();
             } catch (Exception ex) {
-                System.out.println("");
+                System.out.println("Could not establish connection to the database, please check internet connection or contact support");
             }
         }
         return handler;
@@ -53,7 +63,7 @@ public class DatabaseHandler implements IDatabaseHandler {
     @Override
     public void connect() throws Exception {
         Class.forName(driver).newInstance();
-        conn = DriverManager.getConnection(url + dbName + "?autoReconnect=true", userName, password);
+        conn = DriverManager.getConnection(url + dbName, userName, password);
     }
 
     /**
@@ -67,15 +77,16 @@ public class DatabaseHandler implements IDatabaseHandler {
                 conn.close();
             }
         } catch (SQLException ex) {
-            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Could not close the connection to the database! Please try again.");
         }
     }
 
     /**
      * Get reservations from a flight.
      *
+     *
      * @param flight
-     * @return
+     * @return Reservations for a the given flight param.
      * @throws interfaces.IDatabaseHandler.ConnectionError
      */
     @Override
@@ -87,9 +98,11 @@ public class DatabaseHandler implements IDatabaseHandler {
             System.out.println("No connection could be established");
             throw new ConnectionError(new Reservation[0]);
         }
-
+        //Get all passengers
         Person[] people = getPeople();
         //For performance reasons, convert to hashmap with personID as KEY.
+        //This way we will be able to get the passenger given that we have
+        //the ID of the passenger we want.
         HashMap<String, Person> peopleMapped = new HashMap<String, Person>();
         for (Person item : people) {
             peopleMapped.put(item.id, item);
@@ -97,6 +110,8 @@ public class DatabaseHandler implements IDatabaseHandler {
         ArrayList<Reservation> reservations = new ArrayList<Reservation>();
         Statement stmt;
         try {
+            //Iterate all reservations from the reservation table of the
+            //database.
             stmt = conn.createStatement();
             String query = "SELECT * FROM  `Reservation` WHERE flightID = " + flight.getID();
             ResultSet rs = stmt.executeQuery(query);
@@ -108,6 +123,9 @@ public class DatabaseHandler implements IDatabaseHandler {
                 String tlf = rs.getString(6);
                 String cardNumber = rs.getString(7);
                 String bookingNumber = rs.getString(8);
+                //AdditionalPassengers contains the IDs of the additional passengers
+                //seperated by comma. We will now proceed to convert this to
+                //Person[] containing these passengers.
                 ArrayList<Person> additionalPassengers_array = new ArrayList<Person>();
                 ArrayList<Point> seatpoints_array = new ArrayList<Point>();
                 if (!additionalPassengers.equals("")) {
@@ -115,6 +133,9 @@ public class DatabaseHandler implements IDatabaseHandler {
                         additionalPassengers_array.add(peopleMapped.get(passengerID));
                     }
                 }
+                //seats explains the reserved seats. It consists of X,Y
+                //(row, collumn)
+                //coordinates seperated by semicolon.
                 for (String seat : seats.split(";")) {
                     String[] cordinates = seat.split(",");
                     if (cordinates.length > 1) {
@@ -134,7 +155,12 @@ public class DatabaseHandler implements IDatabaseHandler {
     }
 
     /**
-     * Add a new reservation to the database.
+     * Adds a new reservation to the database.
+     *
+     *
+     * @param reservation
+     * @return The same reservationen, but with a uniqe ID added to it.
+     * @throws interfaces.IDatabaseHandler.ConnectionError
      */
     @Override
     public Reservation addReservation(Reservation res) throws ConnectionError {
@@ -145,15 +171,15 @@ public class DatabaseHandler implements IDatabaseHandler {
         }
         if (res != null) {
             try {
+                //MYSQLtemplate for inserting a row in the Passenger table.
+                String query = "INSERT INTO  `Airport`.`Passenger` (\n"
+                        + "`ID` ,\n"
+                        + "`Name` ,\n"
+                        + "`Nationality` ,\n"
+                        + "`CPR` \n"
+                        + ")\n"
+                        + "VALUES ( ?,?,?,?);";
                 if (res.passenger != null) {
-                    String query = "INSERT INTO  `Airport`.`Passenger` (\n"
-                            + "`ID` ,\n"
-                            + "`Name` ,\n"
-                            + "`Nationality` ,\n"
-                            + "`CPR` \n"
-                            + ")\n"
-                            + "VALUES ( ?,?,?,?);";
-
                     // create the mysql insert preparedstatement
                     PreparedStatement preparedStmt = conn.prepareStatement(query);
                     preparedStmt.setNull(1, java.sql.Types.INTEGER);
@@ -168,14 +194,6 @@ public class DatabaseHandler implements IDatabaseHandler {
 
                 }
                 for (Person person : res.additionalPassengers) {
-                    String query = "INSERT INTO  `Airport`.`Passenger` (\n"
-                            + "`ID` ,\n"
-                            + "`Name` ,\n"
-                            + "`Nationality` ,\n"
-                            + "`CPR` \n"
-                            + ")\n"
-                            + "VALUES ( ?,?,?,?);";
-
                     // create the mysql insert preparedstatement
                     PreparedStatement preparedStmt = conn.prepareStatement(query);
                     preparedStmt.setNull(1, java.sql.Types.INTEGER);
@@ -191,8 +209,8 @@ public class DatabaseHandler implements IDatabaseHandler {
                 }
                 String result = Utils.formatAndJoinVars(res.additionalPassengers, "%s", ",", "id");
                 String result2 = Utils.formatAndJoinVars(res.seats, "%s,%s;", "", "x", "y");
-
-                String query = "INSERT INTO  `Airport`.`Reservation` (\n"
+                //MYSQLtemplate for inserting a row in the Reservation table.
+                query = "INSERT INTO  `Airport`.`Reservation` (\n"
                         + "`ID` ,\n"
                         + "`FlightID` ,\n"
                         + "`PassengerID` ,\n"
@@ -204,7 +222,10 @@ public class DatabaseHandler implements IDatabaseHandler {
                         + ")\n"
                         + "VALUES (?,?,?,?,?,?,?,?);";
 
+                // create the mysql insert preparedstatement
                 PreparedStatement preparedStmt = conn.prepareStatement(query);
+                //If no ID is present. Set it to null from which the database
+                //will autogenerate the ID for us.
                 if ((res.reservationID != "") && (res.reservationID != null)) {
                     preparedStmt.setInt(1, Integer.parseInt(res.reservationID));
                 } else {
@@ -223,23 +244,37 @@ public class DatabaseHandler implements IDatabaseHandler {
                 preparedStmt.setString(8, res.bookingNumber);
                 // execute the preparedstatement
                 preparedStmt.executeUpdate();
+
+                //Now that the database has autogenerated an ID. We will have to
+                //get this ID and assign it to the reservation param.
                 res.reservationID = GetAutoIncremented_Value("`Airport`.`Reservation`");
 
             } catch (SQLException ex) {
                 System.out.println("Could not add the requested Reservation");
             }
         }
+        //When updating the reservation table, we will have to update
+        //the flight with the new correct number of free seats.
         updateFlightFreeSeats(res.flight);
         return res;
     }
-    /*
-     * delete a reservation from the database.
-     */
 
+    /**
+     * Deletes a reservation from the database.
+     *
+     *
+     * @param databasepath to the table
+     * @return current autoincrement value as a String
+     */
     private String GetAutoIncremented_Value(String path) {
         Statement stmt;
         try {
             stmt = conn.createStatement();
+            //Autoincrement that autogenerates ID' for the rows we insert in our
+            //tables works by increasing a counter by +1 every time we add a 
+            //new row and use the current value. Therefore the highest ID
+            //will allways be the ID of the last inserted row or autoincrement
+            //value.
             String query = "select max(ID) from " + path;
             ResultSet rs = stmt.executeQuery(query);
             while (rs.next()) {
@@ -247,11 +282,18 @@ public class DatabaseHandler implements IDatabaseHandler {
             }
 
         } catch (SQLException ex) {
-            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Could not fetch current autoincrement value from the database. Please contact support!");
         }
         return "";
     }
 
+    /**
+     * Deletes a reservation from the database.
+     *
+     *
+     * @param reservation
+     * @throws interfaces.IDatabaseHandler.ConnectionError
+     */
     @Override
     public void deleteReservation(Reservation res) throws ConnectionError {
         try {
@@ -262,14 +304,19 @@ public class DatabaseHandler implements IDatabaseHandler {
         if (res != null) {
             Statement stmt;
             try {
+                //Execute a delete statement for the reservation param.
                 stmt = conn.createStatement();
                 String query = "DELETE FROM  `Reservation` WHERE ID = " + res.reservationID;
                 stmt.executeUpdate(query);
                 if (res.passenger != null) {
+                    //Delete the main passenger that is created this 
+                    //reservation.
                     query = "DELETE FROM  `Passenger` WHERE ID = " + res.passenger.id;
                     stmt.executeUpdate(query);
                 }
                 for (Person person : res.additionalPassengers) {
+                    //Deletes other passengers associated with this
+                    //reservation.
                     if (person != null) {
                         query = "DELETE FROM  `Passenger` WHERE ID = " + person.id;
                         stmt.executeUpdate(query);
@@ -280,22 +327,27 @@ public class DatabaseHandler implements IDatabaseHandler {
                         + res.reservationID + "'");
             }
         }
+        //When updating the reservation table, we will have to update
+        //the flight with the new correct number of free seats.
         updateFlightFreeSeats(res.flight);
     }
 
     /**
-     * Add a new seat to the database.
+     * Adds a new seat to an airplane to the database.
+     *
+     * @param AirplaneSeat to be added
+     * @throws interfaces.IDatabaseHandler.ConnectionError
      */
-    public void addAirplaneSeat(AirplaneSeat res) {
+    public void addAirplaneSeat(AirplaneSeat res) throws ConnectionError {
         try {
             validateConnect();
         } catch (Exception ex) {
-            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
-            return;
+            throw new ConnectionError(null);
         }
         if (res != null) {
             try {
 
+                //MYSQLtemplate for inserting a row in the AirplaneSeats table.
                 String query = "INSERT INTO  `Airport`.`AirplaneSeats` (\n"
                         + "`ID` ,\n"
                         + "`AirplaneLayoutID` ,\n"
@@ -320,13 +372,16 @@ public class DatabaseHandler implements IDatabaseHandler {
 
 
             } catch (SQLException ex) {
-                Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("A problem accoured while trying to add a seat to the database! Please contact support!");
             }
         }
     }
 
     /**
-     * update a reservation.
+     * Updates a given reservation.
+     *
+     * @param AirplaneSeat to be added
+     * @throws interfaces.IDatabaseHandler.ConnectionError
      */
     @Override
     public void updateReservation(Reservation res) throws ConnectionError {
@@ -337,7 +392,10 @@ public class DatabaseHandler implements IDatabaseHandler {
         } catch (Exception ex) {
             throw new ConnectionError(res);
         }
-
+        //It is possible to do an update using MYSQL UPDATE, however due to the
+        //fact that we would have to find out which passengers should be updated,
+        //removed or added, we ended it making it as remove and readd the
+        //reservation.
         if (res != null) {
             for (IFlight flight : flights) {
                 Reservation[] reservations;
@@ -358,12 +416,20 @@ public class DatabaseHandler implements IDatabaseHandler {
         }
     }
 
-    /**
-     * update the numberOfFreeSeats collumn of the flights table.
+    /*
+     * Updates the numberOfFreeSeats collumn of the flights table.
+     * @param flight to update
+     * @throws interfaces.IDatabaseHandler.ConnectionError
      */
-    public void updateFlightFreeSeats(IFlight flight) {
-
+    public void updateFlightFreeSeats(IFlight flight) throws ConnectionError {
+        try {
+            validateConnect();
+        } catch (Exception ex) {
+            throw new ConnectionError(flight);
+        }
         int numberOfFreeSeats = (new Seating(flight)).getNumberOfFreeSeats();
+
+        //MYSQLtemplate for updating a row in the Flight table.
         String query = "UPDATE  `Airport`.`Flight` SET  `numberOfFreeSeats` =  ? WHERE  `Flight`.`ID` =" + flight.getID() + ";";
 
         // create the mysql insert preparedstatement
@@ -375,13 +441,15 @@ public class DatabaseHandler implements IDatabaseHandler {
             // execute the preparedstatement
             preparedStmt.executeUpdate();
         } catch (SQLException ex) {
-            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("A problem accoured while trying to update the number of free seats in the database! Please report this to support!");
         }
 
     }
 
     /**
-     * get flights.
+     * Gets the flights from the database
+     *
+     * @return Flight[]
      */
     @Override
     public Flight[] getFlights() throws ConnectionError {
@@ -394,11 +462,13 @@ public class DatabaseHandler implements IDatabaseHandler {
         }
 
         //For performance reasons, convert to hashmap with airplaneID as KEY.
+        //This way we will be able to get the airplane given that we have
+        //the ID of the airplane we want.
         HashMap<String, Airplane> airPlanesMapped = new HashMap<String, Airplane>();
         for (Airplane item : airPlanes) {
             airPlanesMapped.put(item.id, item);
         }
-        //Get all flights
+        //Get/Iterate all flights
         ArrayList<Flight> flights = new ArrayList<Flight>();
         Statement stmt;
         try {
@@ -414,6 +484,7 @@ public class DatabaseHandler implements IDatabaseHandler {
                 Date departureTime = rs.getTimestamp(6);
                 Date arrivalTime = rs.getTimestamp(7);
                 int numberOfFreeSeats = rs.getInt(8);
+                //Is the flight associated with the current airport
                 if (airportID.equals(this.AirportID) && airPlanesMapped.containsKey(airplaneID)) {
                     Airplane airPlane = airPlanesMapped.get(airplaneID);
                     Flight newflight = new Flight(id, origin, destination, airportID, airPlane, departureTime, arrivalTime, numberOfFreeSeats);
@@ -421,13 +492,16 @@ public class DatabaseHandler implements IDatabaseHandler {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("A problem accoured while trying to fetch flights, please check your internet connection or contact support!");
         }
         return (Flight[]) flights.toArray(new Flight[0]);
     }
 
     /**
-     * get general airport information.
+     * Gets an instance of IAirport with general information regarding the
+     * airport.
+     *
+     * @return IAirport
      */
     @Override
     public IAirport getAirport() throws ConnectionError {
@@ -439,6 +513,7 @@ public class DatabaseHandler implements IDatabaseHandler {
         Airport airport = null;
         Statement stmt;
         try {
+            //Execute the MYSQL statement and get/iterate airports.
             stmt = conn.createStatement();
             String query = "SELECT * FROM `Airport`";
             ResultSet rs = stmt.executeQuery(query);
@@ -452,13 +527,15 @@ public class DatabaseHandler implements IDatabaseHandler {
                 airport = new Airport(id, name, code, cand, town, address);
             }
         } catch (SQLException ex) {
-            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("A problem accoured while trying to fetch airport information, please check your internet connection or contact support!");
         }
         return airport;
     }
 
     /**
-     * get all passengers.
+     * Gets all the passengers from the database.
+     *
+     * @return Person[]
      */
     Person[] getPeople() throws ConnectionError {
         try {
@@ -469,6 +546,7 @@ public class DatabaseHandler implements IDatabaseHandler {
         ArrayList<Person> result = new ArrayList<Person>();
         Statement stmt;
         try {
+            //Get/itterate all passengers
             stmt = conn.createStatement();
             String query = "SELECT * FROM  `Passenger`";
             ResultSet rs = stmt.executeQuery(query);
@@ -480,13 +558,15 @@ public class DatabaseHandler implements IDatabaseHandler {
                 result.add(new Person(id, name, nationality, cpr));
             }
         } catch (SQLException ex) {
-            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("A problem accoured while trying to fetch the passengers, please check your internet connection or contact support!");
         }
         return (Person[]) result.toArray(new Person[0]);
     }
 
     /**
-     * get all airplanes.
+     * Gets all the airplanes from the database
+     *
+     * @return Airplane[]
      */
     Airplane[] getAirplanes() throws ConnectionError {
         AirplaneLayout[] airPlaneLayouts;
@@ -498,6 +578,8 @@ public class DatabaseHandler implements IDatabaseHandler {
         }
 
         //For performance reasons, convert to hashmap with airPlaneLayOutID as KEY.
+        //This way we will be able to get the airPlaneLayout given that we have
+        //the ID of the airPlaneLayout we want.
         HashMap<String, AirplaneLayout> airPlaneLayoutsMapped = new HashMap<String, AirplaneLayout>();
         for (AirplaneLayout item : airPlaneLayouts) {
             airPlaneLayoutsMapped.put(item.id, item);
@@ -505,6 +587,7 @@ public class DatabaseHandler implements IDatabaseHandler {
         ArrayList<Airplane> result = new ArrayList<Airplane>();
         Statement stmt;
         try {
+            //get/iterate all airplanes
             stmt = conn.createStatement();
             String query = "SELECT * FROM  `Airplane`";
             ResultSet rs = stmt.executeQuery(query);
@@ -517,14 +600,16 @@ public class DatabaseHandler implements IDatabaseHandler {
                 }
             }
         } catch (SQLException ex) {
-            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("A problem accoured while trying to fetch the airplanes, please check your internet connection or contact support!");
         }
         return (Airplane[]) result.toArray(new Airplane[0]);
     }
-    /*
-     * get airplane layouts
-     */
 
+    /**
+     * Gets all the airplanes' layout from the database
+     *
+     * @return AirplaneLayout[]
+     */
     AirplaneLayout[] getAirplaneLayOuts() throws ConnectionError {
         ArrayList<AirplaneSeat> airPlaneSeats;
         try {
@@ -537,6 +622,7 @@ public class DatabaseHandler implements IDatabaseHandler {
         ArrayList<AirplaneLayout> result = new ArrayList<AirplaneLayout>();
         Statement stmt;
         try {
+            //get/iterate all airplanelayouts
             stmt = conn.createStatement();
             String query = "SELECT * FROM  `AirplaneLayout`";
             ResultSet rs = stmt.executeQuery(query);
@@ -553,14 +639,16 @@ public class DatabaseHandler implements IDatabaseHandler {
 
             }
         } catch (SQLException ex) {
-            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("A problem accoured while trying to fetch the airplanes' layout, please check your internet connection or contact support!");
         }
         return (AirplaneLayout[]) result.toArray(new AirplaneLayout[0]);
     }
-    /*
-     * get airplaneseat setup.
-     */
 
+    /**
+     * Gets all the seats for all airplanes from the database
+     *
+     * @return ArrayList<AirplaneSeat>
+     */
     ArrayList<AirplaneSeat> getAirplaneSeats() throws ConnectionError {
         try {
             validateConnect();
@@ -570,6 +658,7 @@ public class DatabaseHandler implements IDatabaseHandler {
         ArrayList<AirplaneSeat> result = new ArrayList<AirplaneSeat>();
         Statement stmt;
         try {
+            //get/iterate all Airplaneseats
             stmt = conn.createStatement();
             String query = "SELECT * FROM  `AirplaneSeats`";
             ResultSet rs = stmt.executeQuery(query);
@@ -586,7 +675,7 @@ public class DatabaseHandler implements IDatabaseHandler {
 
             }
         } catch (SQLException ex) {
-            Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("A problem accoured while trying to fetch the seats of the airplane, please check your internet connection or contact support!");
         }
         return result;
     }
@@ -601,6 +690,8 @@ public class DatabaseHandler implements IDatabaseHandler {
             return false;
         } else {
             try {
+                //if the software fails to connect within 60 seconds, return
+                //false.
                 return conn.isValid(60000);
             } catch (Exception ex) {
                 return false;
@@ -608,11 +699,18 @@ public class DatabaseHandler implements IDatabaseHandler {
         }
     }
 
+    /**
+     * Checks whether the databasehandler is currently connected and will
+     * reconnect if nessesary.
+     *
+     * @return Whether the databasehandler is currently connected
+     */
     void validateConnect() throws Exception {
         try {
             if (conn == null) {
                 connect();
             }
+            //if the software fails to connect within 60 seconds, reconnect.
             if (!conn.isValid(60000)) {
                 if (!conn.isClosed()) {
                     disconnect();
