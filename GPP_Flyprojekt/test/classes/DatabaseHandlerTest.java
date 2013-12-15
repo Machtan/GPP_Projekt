@@ -6,7 +6,10 @@ package classes;
 
 import interfaces.IAirport;
 import interfaces.IFlight;
+import java.awt.Point;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -19,37 +22,41 @@ import static org.junit.Assert.*;
  * @author patr0805
  */
 public class DatabaseHandlerTest {
-    
+
     public DatabaseHandlerTest() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
     }
-    
+
     @After
     public void tearDown() {
     }
 
     /**
-     * Test of getHandler method, of class DatabaseHandler.
+     * Test of getHandler method, makes sure that every class gets the same
+     * instance of DatabaseHandler.
      */
     @Test
     public void testGetHandler() {
         System.out.println("getHandler");
-        DatabaseHandler expResult = null;
         DatabaseHandler result = DatabaseHandler.getHandler();
-        assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        if (result == null) {
+            fail("Failed to get an instance of DatabaseHandler.");
+        } else {
+            DatabaseHandler result2 = DatabaseHandler.getHandler();
+            assertEquals(result, result2);
+        }
     }
 
     /**
@@ -57,11 +64,14 @@ public class DatabaseHandlerTest {
      */
     @Test
     public void testConnect() throws Exception {
-        System.out.println("connect");
-        DatabaseHandler instance = null;
-        instance.connect();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        try {
+            System.out.println("connect");
+            DatabaseHandler instance = DatabaseHandler.getHandler();
+            instance.connect();
+            // TODO review the generated test code and remove the default call to fail.
+        } catch (Exception ex) {
+            fail("Could not establish connection to the database.");
+        }
     }
 
     /**
@@ -70,10 +80,21 @@ public class DatabaseHandlerTest {
     @Test
     public void testDisconnect() {
         System.out.println("disconnect");
-        DatabaseHandler instance = null;
-        instance.disconnect();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
+        DatabaseHandler instance = DatabaseHandler.getHandler();
+        try {
+            instance.connect();
+            try {
+                instance.connect();
+                instance.disconnect();
+            } catch (Exception ex) {
+                // TODO review the generated test code and remove the default call to fail.
+                fail("Failed to disconnect.");
+            }
+        } catch (Exception ex) {
+            // TODO review the generated test code and remove the default call to fail.
+            fail("Failed to connect.");
+        }
     }
 
     /**
@@ -82,13 +103,16 @@ public class DatabaseHandlerTest {
     @Test
     public void testGetReservations() throws Exception {
         System.out.println("getReservations");
-        IFlight flight = null;
-        DatabaseHandler instance = null;
-        Reservation[] expResult = null;
-        Reservation[] result = instance.getReservations(flight);
-        assertArrayEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        try {
+            IFlight flight = DatabaseHandler.getHandler().getFlights()[0];
+            Reservation[] result = DatabaseHandler.getHandler().getReservations(flight);
+            if (result == null) // TODO review the generated test code and remove the default call to fail.
+            {
+                fail("getReservations failed, returned null.");
+            }
+        } catch (Exception ex) {
+            fail("getReservations failed. " + ex.getMessage());
+        }
     }
 
     /**
@@ -97,13 +121,40 @@ public class DatabaseHandlerTest {
     @Test
     public void testAddReservation() throws Exception {
         System.out.println("addReservation");
-        Reservation res = null;
-        DatabaseHandler instance = null;
-        Reservation expResult = null;
-        Reservation result = instance.addReservation(res);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        try {
+            DatabaseHandler instance = DatabaseHandler.getHandler();
+            ArrayList<Person> additionalPassengers = new ArrayList<Person>() {
+            };
+            additionalPassengers.add(new Person("Mason Ocupma", "Danish", "26322"));
+            ArrayList<Point> seatPoints = new ArrayList<Point>();
+            seatPoints.add(new Point(0, 1));
+            seatPoints.add(new Point(1, 1));
+            Reservation reservation = new Reservation("", new Person("Jason Ocupma", "Danish", "13435"), additionalPassengers, seatPoints, DatabaseHandler.getHandler().getFlights()[0], "2362466", "35463636", "dgdgr22");
+            instance.addReservation(reservation);
+            Reservation[] reservationsFetchedFromDatabase = instance.getReservations(reservation.flight);
+            Reservation fetchedReservation = reservationsFetchedFromDatabase[reservationsFetchedFromDatabase.length - 1];
+            assertEquals(reservation.reservationID, fetchedReservation.reservationID);
+            assertEquals(reservation.passenger.id, fetchedReservation.passenger.id);
+            assertEquals(reservation.passenger.name, fetchedReservation.passenger.name);
+            assertEquals(reservation.passenger.cpr, fetchedReservation.passenger.cpr);
+            assertEquals(reservation.passenger.nationality, fetchedReservation.passenger.nationality);
+            assertEquals(reservation.additionalPassengers.get(0).id, fetchedReservation.additionalPassengers.get(0).id);
+            assertEquals(reservation.additionalPassengers.get(0).name, fetchedReservation.additionalPassengers.get(0).name);
+            assertEquals(reservation.additionalPassengers.get(0).cpr, fetchedReservation.additionalPassengers.get(0).cpr);
+            assertEquals(reservation.additionalPassengers.get(0).nationality, fetchedReservation.additionalPassengers.get(0).nationality);
+            assertEquals(reservation.seats.get(0).x, fetchedReservation.seats.get(0).x);
+            assertEquals(reservation.seats.get(0).y, fetchedReservation.seats.get(0).y);
+            assertEquals(reservation.seats.get(1).x, fetchedReservation.seats.get(1).x);
+            assertEquals(reservation.seats.get(1).y, fetchedReservation.seats.get(1).y);
+            assertEquals(reservation.seats.size(), fetchedReservation.seats.size());
+            assertEquals(reservation.tlf, fetchedReservation.tlf);
+            assertEquals(reservation.cardnumber, fetchedReservation.cardnumber);
+            assertEquals(reservation.bookingNumber, fetchedReservation.bookingNumber);
+
+            // TODO review the generated test code and remove the default call to fail.
+        } catch (Exception ex) {
+            fail("Failed to add an reservation.");
+        }
     }
 
     /**
@@ -112,11 +163,33 @@ public class DatabaseHandlerTest {
     @Test
     public void testDeleteReservation() throws Exception {
         System.out.println("deleteReservation");
-        Reservation res = null;
-        DatabaseHandler instance = null;
-        instance.deleteReservation(res);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        try {
+            DatabaseHandler instance = DatabaseHandler.getHandler();
+            ArrayList<Person> additionalPassengers = new ArrayList<Person>() {
+            };
+            additionalPassengers.add(new Person("Mason Ocupma", "Danish", "26322"));
+            ArrayList<Point> seatPoints = new ArrayList<Point>();
+            seatPoints.add(new Point(0, 1));
+            seatPoints.add(new Point(1, 1));
+            Reservation reservation = new Reservation("", new Person("Jason Ocupma", "Danish", "13435"), additionalPassengers, seatPoints, DatabaseHandler.getHandler().getFlights()[0], "2362466", "35463636", "dgdgr22");
+            instance.addReservation(reservation);
+            Reservation[] reservationsFetchedFromDatabase = instance.getReservations(reservation.flight);
+            if (reservation.reservationID == reservationsFetchedFromDatabase[reservationsFetchedFromDatabase.length - 1].reservationID) {
+                instance.deleteReservation(reservation);
+                reservationsFetchedFromDatabase = instance.getReservations(reservation.flight);
+                if (reservation.reservationID == reservationsFetchedFromDatabase[reservationsFetchedFromDatabase.length - 1].reservationID) {
+
+                    fail("DeleteReservation does not workt. Added reservation still exists in database");
+                }
+
+            } else {
+                fail("Failed to add a reservation for removal test.");
+
+            }
+        } catch (Exception ex) {
+            fail("A problem accoured while trying to test deletion of reservations.");
+
+        }
     }
 
     /**
@@ -125,11 +198,30 @@ public class DatabaseHandlerTest {
     @Test
     public void testAddAirplaneSeat() throws Exception {
         System.out.println("addAirplaneSeat");
-        AirplaneSeat res = null;
-        DatabaseHandler instance = null;
-        instance.addAirplaneSeat(res);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        try {
+            DatabaseHandler instance = DatabaseHandler.getHandler();
+            ArrayList<Person> additionalPassengers = new ArrayList<Person>() {
+            };
+            additionalPassengers.add(new Person("Mason Ocupma", "Danish", "26322"));
+            ArrayList<Point> seatPoints = new ArrayList<Point>();
+            seatPoints.add(new Point(0, 1));
+            seatPoints.add(new Point(1, 1));
+            AirplaneSeat seat = new AirplaneSeat("", "1", 0, 0, 1, 1);
+            instance.addAirplaneSeat(seat);
+            ArrayList<AirplaneSeat> airplaneSeatsFetchedFromDatabase = instance.getAirplaneSeats();
+            AirplaneSeat fetchedSeat = airplaneSeatsFetchedFromDatabase.get(airplaneSeatsFetchedFromDatabase.size() - 1);
+            assertEquals(seat.id, fetchedSeat);
+            assertEquals(seat.airplaneLayoutID, fetchedSeat.airplaneLayoutID);
+            assertEquals(seat.columnIndex, fetchedSeat.columnIndex);
+            assertEquals(seat.positionX, fetchedSeat.positionX);
+            assertEquals(seat.positionY, fetchedSeat.positionY);
+            assertEquals(seat.rowIndex, fetchedSeat.rowIndex);
+
+
+            // TODO review the generated test code and remove the default call to fail.
+        } catch (Exception ex) {
+            fail("Failed to add a new seat.");
+        }
     }
 
     /**
@@ -138,11 +230,23 @@ public class DatabaseHandlerTest {
     @Test
     public void testUpdateReservation() throws Exception {
         System.out.println("updateReservation");
-        Reservation res = null;
-        DatabaseHandler instance = null;
-        instance.updateReservation(res);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        try {
+            DatabaseHandler instance = DatabaseHandler.getHandler();
+            Reservation[] reservations = instance.getReservations(instance.getFlights()[0]);
+            Reservation reservationToUpdate = reservations[0];
+            reservationToUpdate.cardnumber += "2";
+            String newValue = reservationToUpdate.cardnumber;
+            instance.updateReservation(reservationToUpdate);
+            reservations = instance.getReservations(instance.getFlights()[0]);
+            Reservation reservationToCheck = reservations[0];
+
+            assertEquals(newValue, reservationToCheck);
+
+
+            // TODO review the generated test code and remove the default call to fail.
+        } catch (Exception ex) {
+            fail("Failed to add a new seat.");
+        }
     }
 
     /**
@@ -151,11 +255,19 @@ public class DatabaseHandlerTest {
     @Test
     public void testUpdateFlightFreeSeats() throws Exception {
         System.out.println("updateFlightFreeSeats");
-        IFlight flight = null;
-        DatabaseHandler instance = null;
-        instance.updateFlightFreeSeats(flight);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        try {
+
+            DatabaseHandler instance = DatabaseHandler.getHandler();
+            Flight flight = instance.getFlights()[0];
+            instance.updateFlightFreeSeats(flight);
+
+            assertEquals((new Seating(flight).getNumberOfFreeSeats()), flight.numberOfFreeSeats);
+
+
+            // TODO review the generated test code and remove the default call to fail.
+        } catch (Exception ex) {
+            fail("Failed to test updateFlightFreeSeats.");
+        }
     }
 
     /**
@@ -164,12 +276,15 @@ public class DatabaseHandlerTest {
     @Test
     public void testGetFlights() throws Exception {
         System.out.println("getFlights");
-        DatabaseHandler instance = null;
-        Flight[] expResult = null;
-        Flight[] result = instance.getFlights();
-        assertArrayEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        try {
+            Flight[] result = DatabaseHandler.getHandler().getFlights();
+            if (result == null) // TODO review the generated test code and remove the default call to fail.
+            {
+                fail("getFlights failed, returned null.");
+            }
+        } catch (Exception ex) {
+            fail("getFlights failed. " + ex.getMessage());
+        }
     }
 
     /**
@@ -178,12 +293,15 @@ public class DatabaseHandlerTest {
     @Test
     public void testGetAirport() throws Exception {
         System.out.println("getAirport");
-        DatabaseHandler instance = null;
-        IAirport expResult = null;
-        IAirport result = instance.getAirport();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        try {
+            IAirport result = DatabaseHandler.getHandler().getAirport();
+            if (result == null) // TODO review the generated test code and remove the default call to fail.
+            {
+                fail("getAirport failed, returned null.");
+            }
+        } catch (Exception ex) {
+            fail("getAirport failed. " + ex.getMessage());
+        }
     }
 
     /**
@@ -192,12 +310,15 @@ public class DatabaseHandlerTest {
     @Test
     public void testGetPeople() throws Exception {
         System.out.println("getPeople");
-        DatabaseHandler instance = null;
-        Person[] expResult = null;
-        Person[] result = instance.getPeople();
-        assertArrayEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        try {
+            Person[] result = DatabaseHandler.getHandler().getPeople();
+            if (result == null) // TODO review the generated test code and remove the default call to fail.
+            {
+                fail("getPeople failed, returned null.");
+            }
+        } catch (Exception ex) {
+            fail("getPeople failed. " + ex.getMessage());
+        }
     }
 
     /**
@@ -206,12 +327,15 @@ public class DatabaseHandlerTest {
     @Test
     public void testGetAirplanes() throws Exception {
         System.out.println("getAirplanes");
-        DatabaseHandler instance = null;
-        Airplane[] expResult = null;
-        Airplane[] result = instance.getAirplanes();
-        assertArrayEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        try {
+            Airplane[] result = DatabaseHandler.getHandler().getAirplanes();
+            if (result == null) // TODO review the generated test code and remove the default call to fail.
+            {
+                fail("getAirplanes failed, returned null.");
+            }
+        } catch (Exception ex) {
+            fail("getAirplanes failed. " + ex.getMessage());
+        }
     }
 
     /**
@@ -220,12 +344,15 @@ public class DatabaseHandlerTest {
     @Test
     public void testGetAirplaneLayOuts() throws Exception {
         System.out.println("getAirplaneLayOuts");
-        DatabaseHandler instance = null;
-        AirplaneLayout[] expResult = null;
-        AirplaneLayout[] result = instance.getAirplaneLayOuts();
-        assertArrayEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        try {
+            AirplaneLayout[] result = DatabaseHandler.getHandler().getAirplaneLayouts();
+            if (result == null) // TODO review the generated test code and remove the default call to fail.
+            {
+                fail("getAirplaneLayOuts failed, returned null.");
+            }
+        } catch (Exception ex) {
+            fail("getAirplaneLayOuts failed. " + ex.getMessage());
+        }
     }
 
     /**
@@ -234,12 +361,15 @@ public class DatabaseHandlerTest {
     @Test
     public void testGetAirplaneSeats() throws Exception {
         System.out.println("getAirplaneSeats");
-        DatabaseHandler instance = null;
-        ArrayList expResult = null;
-        ArrayList result = instance.getAirplaneSeats();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        try {
+            ArrayList<AirplaneSeat> result = DatabaseHandler.getHandler().getAirplaneSeats();
+            if (result == null) // TODO review the generated test code and remove the default call to fail.
+            {
+                fail("getAirplaneSeats failed, returned null.");
+            }
+        } catch (Exception ex) {
+            fail("getAirplaneSeats failed. " + ex.getMessage());
+        }
     }
 
     /**
@@ -247,13 +377,16 @@ public class DatabaseHandlerTest {
      */
     @Test
     public void testIsConnected() {
-        System.out.println("isConnected");
-        DatabaseHandler instance = null;
-        boolean expResult = false;
-        boolean result = instance.isConnected();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        try {
+            System.out.println("isConnected");
+            DatabaseHandler instance = DatabaseHandler.getHandler();
+            boolean result = instance.isConnected();
+            assertEquals(true, result);
+        } catch (Exception ex) {
+            fail("isConnected failed. " + ex.getMessage());
+
+        }
+
     }
 
     /**
@@ -261,10 +394,15 @@ public class DatabaseHandlerTest {
      */
     @Test
     public void testValidateConnect() throws Exception {
-        System.out.println("validateConnect");
-        DatabaseHandler instance = null;
-        instance.validateConnect();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        try {
+            System.out.println("validateConnect");
+            DatabaseHandler instance = DatabaseHandler.getHandler();
+            instance.validateConnect();
+        } catch (Exception ex) {
+            fail("validateConnect failed. " + ex.getMessage());
+
+        }
+
+
     }
 }
