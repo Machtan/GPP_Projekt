@@ -52,6 +52,7 @@ public class AdditionalPassengersPanel extends JPanel {
         pasEditButton.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
+                if (editPanel.isEmpty()) {return;}
                 HashMap<IValidatable, String> data = editPanel.getData();
                 HashMap<PersonData, String> person = new HashMap<PersonData, String>();
                 for (IValidatable key : data.keySet()) {

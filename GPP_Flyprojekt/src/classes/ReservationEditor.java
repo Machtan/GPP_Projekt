@@ -116,10 +116,10 @@ public class ReservationEditor extends JFrame {
                 seats = chooser.getSeats(numberOfPassengers());
             } catch (ISeatChooser.NotEnoughSeatsException ex) {
                 seatError = true;
-                errorString.append("- "+ex.getMessage()+" (KRITISK!)\n");
+                errorString.append("- "+ex.getMessage()+"\n");
             }
         } else {
-            errorString.append("- Ingen afgang valgt (KRITISK!)\n");
+            errorString.append("- Ingen afgang valgt\n");
         }
          
         if (!resPanel.isDataValid()) {
@@ -133,7 +133,7 @@ public class ReservationEditor extends JFrame {
 
         if (passengerError || seatError || infoError || flightError) {
             JOptionPane.showMessageDialog(new JFrame(), 
-                "der er følgende fejl i de indtastede informationer:\n" +
+                "Der er følgende fejl i de indtastede informationer:\n" +
                 errorString.toString()+"\n"+
                 "Reservationen kan ikke gemmes.", 
                 "Fejl!", 
