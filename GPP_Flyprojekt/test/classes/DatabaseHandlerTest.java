@@ -60,44 +60,6 @@ public class DatabaseHandlerTest {
     }
 
     /**
-     * Test of connect method, of class DatabaseHandler.
-     */
-    @Test
-    public void testConnect() throws Exception {
-        try {
-            System.out.println("connect");
-            DatabaseHandler instance = DatabaseHandler.getHandler();
-            instance.connect();
-            // TODO review the generated test code and remove the default call to fail.
-        } catch (Exception ex) {
-            fail("Could not establish connection to the database.");
-        }
-    }
-
-    /**
-     * Test of disconnect method, of class DatabaseHandler.
-     */
-    @Test
-    public void testDisconnect() {
-        System.out.println("disconnect");
-
-        DatabaseHandler instance = DatabaseHandler.getHandler();
-        try {
-            instance.connect();
-            try {
-                instance.connect();
-                instance.disconnect();
-            } catch (Exception ex) {
-                // TODO review the generated test code and remove the default call to fail.
-                fail("Failed to disconnect.");
-            }
-        } catch (Exception ex) {
-            // TODO review the generated test code and remove the default call to fail.
-            fail("Failed to connect.");
-        }
-    }
-
-    /**
      * Test of getReservations method, of class DatabaseHandler.
      */
     @Test
@@ -116,48 +78,6 @@ public class DatabaseHandlerTest {
     }
 
     /**
-     * Test of addReservation method, of class DatabaseHandler.
-     */
-    @Test
-    public void testAddReservation() throws Exception {
-        System.out.println("addReservation");
-        try {
-            DatabaseHandler instance = DatabaseHandler.getHandler();
-            ArrayList<Person> additionalPassengers = new ArrayList<Person>() {
-            };
-            additionalPassengers.add(new Person("Mason Ocupma", "Danish", "26322"));
-            ArrayList<Point> seatPoints = new ArrayList<Point>();
-            seatPoints.add(new Point(0, 1));
-            seatPoints.add(new Point(1, 1));
-            Reservation reservation = new Reservation("", new Person("Jason Ocupma", "Danish", "13435"), additionalPassengers, seatPoints, DatabaseHandler.getHandler().getFlights()[0], "2362466", "35463636", "dgdgr22");
-            instance.addReservation(reservation);
-            Reservation[] reservationsFetchedFromDatabase = instance.getReservations(reservation.flight);
-            Reservation fetchedReservation = reservationsFetchedFromDatabase[reservationsFetchedFromDatabase.length - 1];
-            assertEquals(reservation.reservationID, fetchedReservation.reservationID);
-            assertEquals(reservation.passenger.id, fetchedReservation.passenger.id);
-            assertEquals(reservation.passenger.name, fetchedReservation.passenger.name);
-            assertEquals(reservation.passenger.cpr, fetchedReservation.passenger.cpr);
-            assertEquals(reservation.passenger.nationality, fetchedReservation.passenger.nationality);
-            assertEquals(reservation.additionalPassengers.get(0).id, fetchedReservation.additionalPassengers.get(0).id);
-            assertEquals(reservation.additionalPassengers.get(0).name, fetchedReservation.additionalPassengers.get(0).name);
-            assertEquals(reservation.additionalPassengers.get(0).cpr, fetchedReservation.additionalPassengers.get(0).cpr);
-            assertEquals(reservation.additionalPassengers.get(0).nationality, fetchedReservation.additionalPassengers.get(0).nationality);
-            assertEquals(reservation.seats.get(0).x, fetchedReservation.seats.get(0).x);
-            assertEquals(reservation.seats.get(0).y, fetchedReservation.seats.get(0).y);
-            assertEquals(reservation.seats.get(1).x, fetchedReservation.seats.get(1).x);
-            assertEquals(reservation.seats.get(1).y, fetchedReservation.seats.get(1).y);
-            assertEquals(reservation.seats.size(), fetchedReservation.seats.size());
-            assertEquals(reservation.tlf, fetchedReservation.tlf);
-            assertEquals(reservation.cardnumber, fetchedReservation.cardnumber);
-            assertEquals(reservation.bookingNumber, fetchedReservation.bookingNumber);
-
-            // TODO review the generated test code and remove the default call to fail.
-        } catch (Exception ex) {
-            fail("Failed to add an reservation.");
-        }
-    }
-
-    /**
      * Test of deleteReservation method, of class DatabaseHandler.
      */
     @Test
@@ -171,13 +91,13 @@ public class DatabaseHandlerTest {
             ArrayList<Point> seatPoints = new ArrayList<Point>();
             seatPoints.add(new Point(0, 1));
             seatPoints.add(new Point(1, 1));
-            Reservation reservation = new Reservation("", new Person("Jason Ocupma", "Danish", "13435"), additionalPassengers, seatPoints, DatabaseHandler.getHandler().getFlights()[0], "2362466", "35463636", "dgdgr22");
+            Reservation reservation = new Reservation("", new Person("Jason Ocupma", "Danish", "13435"), additionalPassengers, seatPoints, instance.getFlights()[0], "2362466", "35463636", "dgdgr22");
             instance.addReservation(reservation);
             Reservation[] reservationsFetchedFromDatabase = instance.getReservations(reservation.flight);
-            if (reservation.reservationID == reservationsFetchedFromDatabase[reservationsFetchedFromDatabase.length - 1].reservationID) {
+            if (reservation.reservationID == null ? reservationsFetchedFromDatabase[reservationsFetchedFromDatabase.length - 1].reservationID == null : reservation.reservationID.equals(reservationsFetchedFromDatabase[reservationsFetchedFromDatabase.length - 1].reservationID)) {
                 instance.deleteReservation(reservation);
                 reservationsFetchedFromDatabase = instance.getReservations(reservation.flight);
-                if (reservation.reservationID == reservationsFetchedFromDatabase[reservationsFetchedFromDatabase.length - 1].reservationID) {
+                if (reservation.reservationID == null ? reservationsFetchedFromDatabase[reservationsFetchedFromDatabase.length - 1].reservationID == null : reservation.reservationID.equals(reservationsFetchedFromDatabase[reservationsFetchedFromDatabase.length - 1].reservationID)) {
 
                     fail("DeleteReservation does not workt. Added reservation still exists in database");
                 }
@@ -193,11 +113,11 @@ public class DatabaseHandlerTest {
     }
 
     /**
-     * Test of addAirplaneSeat method, of class DatabaseHandler.
+     * Test of addReservation method, of class DatabaseHandler.
      */
     @Test
-    public void testAddAirplaneSeat() throws Exception {
-        System.out.println("addAirplaneSeat");
+    public void testAddReservationAndMYSQLInjection() throws Exception {
+        System.out.println("addReservation");
         try {
             DatabaseHandler instance = DatabaseHandler.getHandler();
             ArrayList<Person> additionalPassengers = new ArrayList<Person>() {
@@ -206,21 +126,19 @@ public class DatabaseHandlerTest {
             ArrayList<Point> seatPoints = new ArrayList<Point>();
             seatPoints.add(new Point(0, 1));
             seatPoints.add(new Point(1, 1));
-            AirplaneSeat seat = new AirplaneSeat("", "1", 0, 0, 1, 1);
-            instance.addAirplaneSeat(seat);
-            ArrayList<AirplaneSeat> airplaneSeatsFetchedFromDatabase = instance.getAirplaneSeats();
-            AirplaneSeat fetchedSeat = airplaneSeatsFetchedFromDatabase.get(airplaneSeatsFetchedFromDatabase.size() - 1);
-            assertEquals(seat.id, fetchedSeat);
-            assertEquals(seat.airplaneLayoutID, fetchedSeat.airplaneLayoutID);
-            assertEquals(seat.columnIndex, fetchedSeat.columnIndex);
-            assertEquals(seat.positionX, fetchedSeat.positionX);
-            assertEquals(seat.positionY, fetchedSeat.positionY);
-            assertEquals(seat.rowIndex, fetchedSeat.rowIndex);
+            //Test MYSQL injection
+            Reservation reservation = new Reservation("", new Person("Jason Ocupma", "Danish", "13435"), additionalPassengers, seatPoints, DatabaseHandler.getHandler().getFlights()[0], "2362466", "35463636", "');TRUNCATE TABLE  `Reservation`");
+            instance.addReservation(reservation);
 
+            if (instance.getReservations(reservation.flight).length == 0) {
+                fail("MYSQLinjection is posible with current setup! All reservations are now lost!");
+            } else {
+                instance.deleteReservation(reservation);
+            }
 
             // TODO review the generated test code and remove the default call to fail.
         } catch (Exception ex) {
-            fail("Failed to add a new seat.");
+            fail("Failed to add an reservation.");
         }
     }
 
@@ -240,7 +158,11 @@ public class DatabaseHandlerTest {
             reservations = instance.getReservations(instance.getFlights()[0]);
             Reservation reservationToCheck = reservations[0];
 
-            assertEquals(newValue, reservationToCheck);
+            assertEquals(newValue, reservationToCheck.cardnumber);
+
+            //Return things to normal
+            reservationToUpdate.cardnumber = reservationToUpdate.cardnumber.substring(0, reservationToUpdate.cardnumber.length());
+            instance.updateReservation(reservationToUpdate);
 
 
             // TODO review the generated test code and remove the default call to fail.
@@ -370,39 +292,5 @@ public class DatabaseHandlerTest {
         } catch (Exception ex) {
             fail("getAirplaneSeats failed. " + ex.getMessage());
         }
-    }
-
-    /**
-     * Test of isConnected method, of class DatabaseHandler.
-     */
-    @Test
-    public void testIsConnected() {
-        try {
-            System.out.println("isConnected");
-            DatabaseHandler instance = DatabaseHandler.getHandler();
-            boolean result = instance.isConnected();
-            assertEquals(true, result);
-        } catch (Exception ex) {
-            fail("isConnected failed. " + ex.getMessage());
-
-        }
-
-    }
-
-    /**
-     * Test of validateConnect method, of class DatabaseHandler.
-     */
-    @Test
-    public void testValidateConnect() throws Exception {
-        try {
-            System.out.println("validateConnect");
-            DatabaseHandler instance = DatabaseHandler.getHandler();
-            instance.validateConnect();
-        } catch (Exception ex) {
-            fail("validateConnect failed. " + ex.getMessage());
-
-        }
-
-
     }
 }
