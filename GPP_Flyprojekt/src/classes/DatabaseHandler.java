@@ -196,7 +196,7 @@ public class DatabaseHandler implements IDatabaseHandler {
                         + "`ID` ,\n"
                         + "`FlightID` ,\n"
                         + "`PassengerID` ,\n"
-                        + "`additionalPassengersID` ,\n"
+                        + "`AdditionalPassengersID` ,\n"
                         + "`Seats` ,\n"
                         + "`Tlf` ,\n"
                         + "`Cardnumber` ,\n"
