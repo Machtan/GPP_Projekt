@@ -27,8 +27,12 @@ public class mainTestSS
         DatabaseHandler database = DatabaseHandler.getHandler();
         TMPSeatingCreator tmp = new TMPSeatingCreator();
         TMPSeatingCreator2 tmp2 = new TMPSeatingCreator2();
-        tmp.makeSeats();
-        tmp2.makeSeats();
+        try {
+            tmp.makeSeats();
+            tmp2.makeSeats();
+        } catch (Exception ex) {
+            return;
+        }
         Flight fligt;
         try {
             fligt = database.getFlights()[0];
