@@ -24,13 +24,13 @@ import javax.swing.JPanel;
  */
 public class ReservationEditor extends ReturnableFrame {
     
-    Reservation reservation;
-    AdditionalPassengersPanel pasPanel;
-    ReservationInfoPanel resPanel;
-    final SeatChooser chooser;
-    FlightPanel flightPanel;
-    JButton addReservationButton;
-    JButton returnButton;
+    private Reservation reservation;
+    private AdditionalPassengersPanel pasPanel;
+    private ReservationInfoPanel resPanel;
+    private final SeatChooser chooser;
+    private FlightPanel flightPanel;
+    private JButton addReservationButton;
+    private JButton returnButton;
     
     /**
      * Constructor for the ReservationEditor class
@@ -114,6 +114,11 @@ public class ReservationEditor extends ReturnableFrame {
         this.add(chooser, BorderLayout.EAST);
     }
     
+    /**
+     * Overriden method of ReturnableFrame to ensure that the editor doesn't
+     * delete all the user's data on accident.
+     * @param evt Any actionevent that will notify an ActionListener
+     */
     protected void returnActionPerformed(java.awt.event.ActionEvent evt) {
         boolean hasPassengers = !pasPanel.getPersons().isEmpty();
         boolean hasPasEdit = pasPanel.isEditing();
@@ -224,7 +229,7 @@ public class ReservationEditor extends ReturnableFrame {
     
     /**
      * Returns the reservation assembled from the data currently in the editor
-     * @return 
+     * @return The combined reservation in the editor
      */
     private Reservation getReservation() {
         HashMap<IValidatable, String> resData = resPanel.getReservationInfo();

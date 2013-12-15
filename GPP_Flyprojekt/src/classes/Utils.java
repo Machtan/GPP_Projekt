@@ -17,7 +17,8 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 /**
- * The Utils class <More docs goes here>
+ * The Utils class includes various static utility methods used throughout the 
+ * different classes, but not belonging in the logical domain of any of them.
  *
  * @author Jakob Lautrup Nysom (jaln@itu.dk)
  * @version 26-Nov-2013

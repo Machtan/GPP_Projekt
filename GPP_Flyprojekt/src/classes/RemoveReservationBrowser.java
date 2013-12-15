@@ -9,7 +9,7 @@ import javax.swing.JOptionPane;
 
 /**
  * The RemoveReservationBrowser lets the user browse for a reservation, and
- prompts the user to delete a reservation when it is double-clicked
+ * prompts the user to delete a reservation when it is double-clicked
  * @author Jakob Lautrup Nysom (jaln@itu.dk)
  * @version 07-Dec-2013
  */

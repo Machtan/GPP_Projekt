@@ -126,7 +126,7 @@ public class ValidatedListPanel extends JPanel implements IValidatedList {
     
     /**
      * Returns a HashMap of the data contained in the list
-     * @return 
+     * @return a HashMap of the data contained in the list
      */
     @Override
     public HashMap<IValidatable, String> getData() {
@@ -139,8 +139,9 @@ public class ValidatedListPanel extends JPanel implements IValidatedList {
     
     /**
      * Adds data from the given HashMap to the corresponding fields on the list
-     * @param <T>
-     * @param data 
+     * @param <T> An IValidatable type
+     * @param data A hashmap of values for each field in the list (more or less
+     * are accepted as well)
      */
     @Override
     public <T extends IValidatable> void addData(HashMap<T, String> data) {
@@ -182,7 +183,7 @@ public class ValidatedListPanel extends JPanel implements IValidatedList {
     
     /**
      * Returns whether all fields of the list are empty
-     * @return 
+     * @return whether all fields of the list are empty
      */
     @Override
     public boolean isEmpty() {
@@ -196,7 +197,7 @@ public class ValidatedListPanel extends JPanel implements IValidatedList {
     
     /**
      * Returns whether all data in the list is valid
-     * @return 
+     * @return whether all data in the list is valid
      */
     @Override
     public boolean areFieldsValid() {
@@ -207,7 +208,11 @@ public class ValidatedListPanel extends JPanel implements IValidatedList {
         }
         return true;
     }
-
+    
+    /**
+     * Returns a list of field types that are currently filled with invalid data
+     * @return a list of field types that are currently filled with invalid data
+     */
     @Override
     public IValidatable[] getInvalidFields() {
         ArrayList<IValidatable> fields = new ArrayList<IValidatable>();
@@ -219,6 +224,10 @@ public class ValidatedListPanel extends JPanel implements IValidatedList {
         return fields.toArray(new IValidatable[fields.size()]);
     }
 
+    /**
+     * Tells all status labels in the list to validate their fields and update
+     * their icon
+     */
     @Override
     public void updateStatus() {
         for (IValidatable key : labels.keySet()) {

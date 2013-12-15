@@ -145,7 +145,7 @@ public class ReservationInfoPanel extends JPanel {
      * Sets the information in this panel based on the given HashMap.
      * The HashMap should contain an entry for every possible ReservationData 
      * and PersonData key.
-     * @param data 
+     * @param data A hashmap of data about the reservation to add to the panel
      */
     public void setReservationInfo(HashMap<IValidatable, String> data) {
         resInfoList.setData(data); // These should sort themselves out :)
@@ -154,7 +154,7 @@ public class ReservationInfoPanel extends JPanel {
     
     /**
      * Returns the reservation's booking reference
-     * @return 
+     * @return the reservation's booking reference
      */
     public String getBookingReference() {
         return resRefLabel.getText();
@@ -170,7 +170,7 @@ public class ReservationInfoPanel extends JPanel {
 
     /**
      * Returns whether all data entries in this component are valid
-     * @return 
+     * @return whether all data entries in this component are valid
      */
     public boolean isDataValid() {
         return (resInfoList.areFieldsValid() && pasInfoList.areFieldsValid());
@@ -178,7 +178,7 @@ public class ReservationInfoPanel extends JPanel {
 
     /**
      * Returns a list of the invalid fields for this component
-     * @return 
+     * @return a list of the invalid fields for this component
      */
     public IValidatable[] getInvalidFields() {
         IValidatable[] badResFields = resInfoList.getInvalidFields();

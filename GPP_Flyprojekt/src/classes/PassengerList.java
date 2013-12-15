@@ -82,8 +82,9 @@ public class PassengerList extends JScrollPane implements IPersonDataList {
     }
     
     /**
-     * Returns whether all fields on the given person are valid
-     * @return 
+     * Updates all status labels for the list of persons, and returns whether 
+     * all fields on the given person are valid
+     * @return whether all fields on the given person are valid
      */
     private boolean verifyPerson(HashMap<PersonData, String> person) throws IValidator.NoValidatorException {
         for (PersonData field : person.keySet()) {

@@ -9,7 +9,7 @@ import java.util.GregorianCalendar;
 
 
 /**
- * The Validator class validates fields on persons based on their PersonData
+ * The Validator class validates fields on persons based on their IValidatable
  * identifier. 
  * @author Jakob Lautrup Nysom (jaln@itu.dk)
  * @version 02-Dec-2013
@@ -47,6 +47,11 @@ public class Validator implements IValidator {
         }
     }
     
+    /**
+     * Validates the given card number
+     * @param cardNumber The card number to validate
+     * @return whether the given card number is valid
+     */
     private static boolean validateCardnumber(String cardNumber) {
         try {
             String value = cardNumber.replaceAll(" ", "");
@@ -85,6 +90,14 @@ public class Validator implements IValidator {
         return !((nationality.length() == 0) || (nationality.length() > 50));
     }
     
+    /**
+     * Validates the given value based on the given IValidatable field
+     * @param field The type of field
+     * @param value The value to validate
+     * @return Whether the value is valid for this type of field
+     * @throws interfaces.IValidator.NoValidatorException If a method to 
+     * validate the given field isn't found. 
+     */
     @Override
     public boolean validate(IValidatable field, String value) throws IValidator.NoValidatorException {
         if (PersonData.class.isInstance(field)) {
@@ -116,6 +129,11 @@ public class Validator implements IValidator {
         return "Feltet kan ikke valideres. Kontakt din systemadministrator";
     }
 
+    /**
+     * Validates the given phone number
+     * @param value The phone number to be validated
+     * @return Whether the phone number is valid
+     */
     private static boolean validatePhonenumber(String value) {
         value = value.replaceAll(" ", "");
         if (value.startsWith("+")) {

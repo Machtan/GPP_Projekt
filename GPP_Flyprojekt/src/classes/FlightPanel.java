@@ -69,6 +69,11 @@ public class FlightPanel extends JPanel {
         return flight;
     }
 
+    /**
+     * Loads a flight into the panel and updates the layout of the panel to show
+     * this
+     * @param flight The flight to load
+     */
     public void loadFlight(IFlight flight) {
         if (flight == null) return;
         if (flight.equals(this.flight)) {
@@ -113,6 +118,9 @@ public class FlightPanel extends JPanel {
         flightArrivalTime.setText(arriveTime);
     }
 
+    /**
+     * Initalizes the GUI
+     */
     private void initComponents() {
         JPanel infoPanel = new JPanel(new BorderLayout());
 

@@ -8,8 +8,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 /**
- * The FlightInspector class lets the user browse flights and inspect reservations
- on these, without being able to edit them.
+ * The FlightInspector class lets the user browse flights and inspect 
+ * reservations on these, without being able to edit them.
  * @author Jakob Lautrup Nysom (jaln@itu.dk)
  * @version 07-Dec-2013
  */

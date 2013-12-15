@@ -6,7 +6,8 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 /**
- * The Browser class <More docs goes here>
+ * The Browser class is a top level class for browsers with a few customization
+ * options, and options common in their functionality
  * @author Jakob Lautrup Nysom (jaln@itu.dk)
  * @version 12-Dec-2013
  */
