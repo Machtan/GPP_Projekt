@@ -27,6 +27,7 @@ public class RemoveReservationBrowser extends ReservationBrowser {
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                browser.setEnabled(true);
                 Object[] options = {"Nej", "Ja"};
                 int n = JOptionPane.showOptionDialog(new JFrame(),
                     "Vil du slette den valgte reservation?",
