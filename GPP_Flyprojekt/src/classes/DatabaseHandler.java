@@ -149,7 +149,7 @@ public class DatabaseHandler implements IDatabaseHandler {
                     String query = "INSERT INTO  `Airport`.`Passenger` (\n"
                             + "`ID` ,\n"
                             + "`Name` ,\n"
-                            + "`Nationallity` ,\n"
+                            + "`Nationality` ,\n"
                             + "`CPR` \n"
                             + ")\n"
                             + "VALUES ( ?,?,?,?);";
@@ -171,7 +171,7 @@ public class DatabaseHandler implements IDatabaseHandler {
                     String query = "INSERT INTO  `Airport`.`Passenger` (\n"
                             + "`ID` ,\n"
                             + "`Name` ,\n"
-                            + "`Nationallity` ,\n"
+                            + "`Nationality` ,\n"
                             + "`CPR` \n"
                             + ")\n"
                             + "VALUES ( ?,?,?,?);";
@@ -195,8 +195,8 @@ public class DatabaseHandler implements IDatabaseHandler {
                 String query = "INSERT INTO  `Airport`.`Reservation` (\n"
                         + "`ID` ,\n"
                         + "`FlightID` ,\n"
-                        + "`Passenger` ,\n"
-                        + "`additionalPassengers` ,\n"
+                        + "`PassengerID` ,\n"
+                        + "`additionalPassengersID` ,\n"
                         + "`Seats` ,\n"
                         + "`Tlf` ,\n"
                         + "`Cardnumber` ,\n"
@@ -475,9 +475,9 @@ public class DatabaseHandler implements IDatabaseHandler {
             while (rs.next()) {
                 String id = rs.getString(1);
                 String name = rs.getString(2);
-                String nationallity = rs.getString(3);
+                String nationality = rs.getString(3);
                 String cpr = rs.getString(4);
-                result.add(new Person(id, name, nationallity, cpr));
+                result.add(new Person(id, name, nationality, cpr));
             }
         } catch (SQLException ex) {
             Logger.getLogger(DatabaseHandler.class.getName()).log(Level.SEVERE, null, ex);
